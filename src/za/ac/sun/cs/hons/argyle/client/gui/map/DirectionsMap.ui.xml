@@ -1,0 +1,18 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:maps="urn:import:com.google.gwt.maps.client"
+	xmlns:geo="urn:import:com.google.gwt.maps.client.geocode">
+	<ui:style>
+		.outer {
+			border-left: 1px solid #999;
+			border-bottom: 1px solid #999;
+		}
+	</ui:style>
+
+
+
+	<g:HorizontalPanel styleName="{style.outer}">
+		<maps:MapWidget ui:field="map" height="400px" width="400px" />
+		<geo:DirectionsPanel ui:field="directionsPanel" />
+	</g:HorizontalPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="argyle" >
+
+    <inherits name="com.google.gwt.user.User" />
+
+    <inherits name="com.google.gwt.user.theme.clean.Clean" />
+
+    <inherits name="com.google.gwt.widgetideas.WidgetIdeas" />
+
+    <inherits name="com.google.gwt.libideas.LibIdeas" />
+
+    <inherits name="com.google.gwt.maps.GoogleMaps" />
+
+    <inherits name="com.googlecode.objectify.Objectify" />
+
+    <inherits name="com.google.gwt.visualization.Visualization" />
+
+    <entry-point class="za.ac.sun.cs.hons.argyle.client.Argyle" />
+
+    <source path="client" />
+
+    <source path="shared" />
+
+    <set-configuration-property
+        name="CssResource.obfuscationPrefix"
+        value="M" />
+
+</module>

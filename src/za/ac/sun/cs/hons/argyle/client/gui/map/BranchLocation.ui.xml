@@ -1,0 +1,14 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	<ui:style>
+		.outer {
+			border-left: 1px solid #999;
+			border-bottom: 1px solid #999;
+		}
+	</ui:style>
+
+	<g:VerticalPanel styleName='{style.outer}'>
+			<g:SimplePanel ui:field = 'mapPanel' width="800" height="550"/>
+			<g:SuggestBox ui:field="locationBox"/>
+	</g:VerticalPanel>
+</ui:UiBinder>

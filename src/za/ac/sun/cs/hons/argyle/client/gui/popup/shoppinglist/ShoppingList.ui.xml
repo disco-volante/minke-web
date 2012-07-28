@@ -1,0 +1,20 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:style>
+		.outer {
+			border-left: 1px solid #999;
+			border-bottom: 1px solid #999;
+		}
+	</ui:style>
+	<g:FlowPanel styleName='{style.outer}'>
+	<g:HorizontalPanel>
+			<g:SuggestBox ui:field='productBox'/>
+	<g:Button ui:field="addButton" text="Add"/>
+	</g:HorizontalPanel>
+		<g:ScrollPanel>
+			<g:VerticalPanel ui:field='itemList'/>
+		</g:ScrollPanel>
+		<g:Button ui:field='processButton' text="Process"/>
+	</g:FlowPanel>
+</ui:UiBinder>
