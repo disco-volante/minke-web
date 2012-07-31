@@ -16,7 +16,7 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class ProductCategory extends IsEntity {
     @Id
-    private Long   ID;
+    private Long   id;
     private String type;
     private String secondary;
     private String main;
@@ -24,15 +24,31 @@ public class ProductCategory extends IsEntity {
     public ProductCategory() {
     }
 
-    public ProductCategory(long ID, String type, String secondary, String main) {
-	this.ID = ID;
+    public ProductCategory(String type, String secondary, String main) {
+	super();
 	this.type = type;
 	this.secondary = secondary;
 	this.main = main;
     }
 
+    public void setID(long id) {
+	this.id = id;
+    }
+
+    public void setType(String type) {
+	this.type = type;
+    }
+
+    public void setSecondary(String secondary) {
+	this.secondary = secondary;
+    }
+
+    public void setMain(String main) {
+	this.main = main;
+    }
+
     public long getID() {
-	return ID;
+	return id;
     }
 
     public String getType() {
@@ -51,21 +67,6 @@ public class ProductCategory extends IsEntity {
     public String toString() {
 	return type + ", " + secondary + ", " + main;
 
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (!obj.getClass().equals(ProductCategory.class)) {
-	    return false;
-	}
-	ProductCategory productCategory = (ProductCategory) obj;
-	return getMain().equals(productCategory.getMain())
-		&& getSecondary().equals(productCategory.getSecondary())
-		&& getType().equals(productCategory.getType())
-		&& getID() == productCategory.getID();
     }
 
 }

@@ -2,15 +2,15 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 	<ui:with field="images"
 		type="za.ac.sun.cs.hons.argyle.client.util.ImageUtils.Images" />
-		<ui:style>
+	<ui:style>
 		.transparent {
-			opacity: 0.8;
+			opacity: 0.4;
 		}
+		
 		.visible {
 			opacity: 1.0;
 		}
-		</ui:style>
-	<g:FlowPanel styleName='{style.transparent}' >
-		<g:Image ui:field="loaderImg" resource="{images.loader}" styleName='{style.visible}'/>
-	</g:FlowPanel>
+	</ui:style>
+	<g:Image ui:field="loaderImg" resource="{images.loader}"
+		styleName='{style.visible}' />
 </ui:UiBinder>

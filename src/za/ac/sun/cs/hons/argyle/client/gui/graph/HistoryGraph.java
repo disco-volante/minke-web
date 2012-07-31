@@ -10,20 +10,20 @@ import za.ac.sun.cs.hons.argyle.client.util.Utils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 
-public class HistoryGraph extends Composite {
-    interface Binder extends UiBinder<Widget, HistoryGraph> {
+public class HistoryGraph extends ResizeComposite {
+    interface Binder extends UiBinder<DockLayoutPanel, HistoryGraph> {
     }
 
     private static final Binder binder = GWT.create(Binder.class);
     private Runnable	    chartBuilder;
     @UiField
-    SimplePanel		 panel;
+    LayoutPanel		 panel;
     private LineGraph	   graph;
 
     public HistoryGraph() {

@@ -3,27 +3,25 @@ package za.ac.sun.cs.hons.argyle.client.gui.graph;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
+import com.google.gwt.visualization.client.visualizations.corechart.ScatterChart;
 
-public class LineGraph extends Composite {
-    interface Binder extends UiBinder<Widget, LineGraph> {
+public class LineGraph extends ResizeComposite {
+    interface Binder extends UiBinder<DockLayoutPanel, LineGraph> {
     }
 
     private static final Binder binder = GWT.create(Binder.class);
     @UiField(provided = true)
-    SimplePanel		 chartPanel;
-    @UiField
-    Label		       mouseLbl;
-    private LineChart	   chart;
+    LayoutPanel chartPanel;
+    private ScatterChart chart;
 
     public LineGraph() {
-	chartPanel = new SimplePanel();
+	chartPanel = new LayoutPanel();
 	initWidget(binder.createAndBindUi(this));
 
     }
@@ -32,15 +30,14 @@ public class LineGraph extends Composite {
 	if (chart != null) {
 	    chartPanel.remove(chart);
 	}
-	chart = new LineChart(data, createOptions());
+	chart = new ScatterChart(data, createOptions());
 	chart.addSelectHandler(new GraphSelectHandler(chart));
-	chart.addOnMouseOverHandler(new GraphOnMouseOverHandler(mouseLbl));
-	chart.addOnMouseOutHandler(new GraphOnMouseOutHandler(mouseLbl));
 	chartPanel.add(chart);
     }
 
     private Options createOptions() {
 	Options options = LineChart.createOptions();
+	options.setBackgroundColor("c0f9a7");
 	options.setWidth(700);
 	options.setHeight(500);
 	options.setTitle("Price History");

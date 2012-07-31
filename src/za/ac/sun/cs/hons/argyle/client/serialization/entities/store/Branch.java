@@ -18,41 +18,71 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Branch extends IsEntity {
     @Id
-    private Long     ID;
+    private Long     iD;
+    private String   name;
     @Embedded
     private Store    store;
+    private long     storeID;
     @Embedded
     private Location location;
-    private String   name;
+    private long     locationID;
 
     public Branch() {
     }
 
-    public Branch(long ID, String name, Store store, Location location) {
-	this.ID = ID;
-	this.name = name;
-	this.store = store;
-	this.location = location;
+    public Branch(String name, Store store, Location location) {
+	super();
+	setName(name);
+	setStore(store);
+	setLocation(location);
     }
 
     public long getID() {
-	return ID;
+	return iD;
     }
 
     public String getName() {
 	return name;
     }
 
-    public Location getLocation() {
-	return location;
+    public void setID(long iD) {
+	this.iD = iD;
+    }
+
+    public void setName(String name) {
+	this.name = name;
     }
 
     public Store getStore() {
 	return store;
     }
 
+    public void setStore(Store store) {
+	this.store = store;
+	this.storeID = store.getID();
+    }
+
+    public Location getLocation() {
+	return location;
+    }
+
+    public void setLocation(Location location) {
+	this.location = location;
+	this.locationID = location.getID();
+    }
+
+    public long getStoreID() {
+	return storeID;
+    }
+
+    public long getLocationID() {
+	return locationID;
+    }
+
+    @Override
     public String toString() {
-	return name + " " + store;
+	return store.toString() + " @ " + name + " (" + location.toString()
+		+ ")";
     }
 
 }

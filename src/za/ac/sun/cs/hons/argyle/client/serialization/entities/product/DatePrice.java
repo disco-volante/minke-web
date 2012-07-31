@@ -11,24 +11,35 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class DatePrice extends IsEntity implements Comparable<DatePrice> {
     @Id
-    private Long   ID;
-    private Date   date;
+    private Long id;
+    private Date date;
     private double price;
-    private Long   branchProductID;
+    private long branchProductID;
 
     public DatePrice() {
     }
 
-    public DatePrice(long ID, Date date, double price, Long branchProductID) {
+    public DatePrice(Date date, double price, long branchProductID) {
 	super();
-	this.ID = ID;
-	this.date = date;
-	this.price = price;
+	setDate(date);
+	setPrice(price);
 	setBranchProductID(branchProductID);
     }
 
+    public void setID(long id) {
+	this.id = id;
+    }
+
+    public void setDate(Date date) {
+	this.date = date;
+    }
+
+    public void setPrice(double price) {
+	this.price = price;
+    }
+
     public long getID() {
-	return ID;
+	return id;
     }
 
     public Date getDate() {
@@ -39,40 +50,25 @@ public class DatePrice extends IsEntity implements Comparable<DatePrice> {
 	return price;
     }
 
-    public Long getBranchProductID() {
-	return branchProductID;
-    }
-
-    public void setBranchProductID(Long branchProductID) {
+    public void setBranchProductID(long branchProductID) {
 	this.branchProductID = branchProductID;
     }
 
-    public String toString() {
-	return date.toString() + " " + price + " " + branchProductID;
+    public long getBranchProductID() {
+	return branchProductID;
     }
 
-    @Override
-    public int compareTo(DatePrice anotherDatePrice) {
-	int compare = compareTo(anotherDatePrice.getDate());
-	if (compare != 0) {
-	    return compare;
+    public int compareTo(DatePrice datePrice) {
+	if (datePrice == null || datePrice.getDate() == null) {
+	    return 1;
+	} else if (date == null) {
+	    return -1;
 	}
-	return compareTo((Double) anotherDatePrice.getPrice());
-    }
-
-    private int compareTo(Date date) {
-	return getDate().compareTo(date);
-    }
-
-    private int compareTo(Double price) {
-	return ((Double) getPrice()).compareTo(price);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	return obj instanceof DatePrice && getID() == ((DatePrice) obj).getID()
-		&& getDate().equals(((DatePrice) obj).getDate())
-		&& getPrice() == ((DatePrice) obj).getPrice();
+	int cd;
+	if ((cd = date.compareTo(datePrice.getDate())) != 0) {
+	    return cd;
+	}
+	return ((Double) price).compareTo((Double) datePrice.getPrice());
     }
 
 }

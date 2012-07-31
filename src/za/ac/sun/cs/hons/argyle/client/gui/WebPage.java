@@ -3,10 +3,12 @@ package za.ac.sun.cs.hons.argyle.client.gui;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import za.ac.sun.cs.hons.argyle.client.Argyle;
 import za.ac.sun.cs.hons.argyle.client.gui.graph.HistoryGraph;
 import za.ac.sun.cs.hons.argyle.client.gui.map.BranchLocation;
+import za.ac.sun.cs.hons.argyle.client.gui.popup.LocationPopup;
 import za.ac.sun.cs.hons.argyle.client.gui.popup.ProductDetail;
 import za.ac.sun.cs.hons.argyle.client.gui.popup.ProductSearch;
 import za.ac.sun.cs.hons.argyle.client.gui.popup.ShoppingListDetailPopup;
@@ -15,6 +17,7 @@ import za.ac.sun.cs.hons.argyle.client.gui.table.BranchList;
 import za.ac.sun.cs.hons.argyle.client.gui.table.ProductList;
 import za.ac.sun.cs.hons.argyle.client.gui.table.TableView;
 import za.ac.sun.cs.hons.argyle.client.gui.table.TableView.TABLE;
+import za.ac.sun.cs.hons.argyle.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
@@ -50,27 +53,26 @@ public class WebPage {
     interface Binder extends UiBinder<DockLayoutPanel, WebPage> {
     }
 
-    private static final Binder     binder = GWT.create(Binder.class);
+    private static final Binder binder = GWT.create(Binder.class);
+    @UiField(provided = true)
+    ProductList productList;
+    @UiField(provided = true)
+    BranchList storeList;
+    @UiField(provided = true)
+    BranchLocation storeLocation;
     @UiField
-    TopPanel			topPanel;
+    HistoryGraph historyGraph;
+    @UiField(provided = true)
+    ViewTree views;
     @UiField
-    ProductList		     productList;
-    @UiField
-    BranchList		      storeList;
-    @UiField
-    BranchLocation		  storeLocation;
-    @UiField
-    HistoryGraph		    historyGraph;
-    @UiField
-    ViewTree			views;
-    @UiField
-    DeckPanel		       deck;
-    private DockLayoutPanel	 outer;
-    private ProductDetail	   details;
+    DeckPanel deck;
+    private DockLayoutPanel outer;
+    private ProductDetail details;
     private ShoppingListDetailPopup listDetails;
-    private ProductSearch	   search;
-    private ShoppingList	    shopping;
-    private Argyle		  argyle;
+    private ProductSearch search;
+    private LocationPopup locationPopup;
+    private ShoppingList shopping;
+    public Argyle argyle;
 
     /**
      * Creates a new {@link WebPage} and initialises its components.
@@ -106,16 +108,16 @@ public class WebPage {
      */
     protected void buildPage() {
 	CSSUtils.addCSS();
+	productList = new ProductList(this);
+	storeList = new BranchList(this);
+	storeLocation = new BranchLocation(this);
+	views = new ViewTree(this);
 	outer = binder.createAndBindUi(this);
 	details = new ProductDetail();
-	listDetails = new ShoppingListDetailPopup();
-	search = new ProductSearch();
-	shopping = new ShoppingList();
-	search.setWebPage(this);
-	views.setWebPage(this);
-	productList.setWebPage(this);
-	shopping.setWebPage(this);
-	storeList.setWebPage(this);
+	listDetails = new ShoppingListDetailPopup(this);
+	search = new ProductSearch(this);
+	locationPopup = new LocationPopup(this);
+	shopping = new ShoppingList(this);
 	deck.showWidget(0);
 	Window.setMargin("0px");
 	RootLayoutPanel.get().add(outer);
@@ -152,10 +154,10 @@ public class WebPage {
      */
     @SuppressWarnings("unchecked")
     public void requestGraph(Set<?> itemSet, TABLE tableType) {
-	if (tableType.equals(TABLE.BROWSE)) {
+	if (tableType.equals(TABLE.BROWSE) || tableType.equals(TABLE.SHOPPING)) {
 	    Set<BranchProduct> branchProducts = (Set<BranchProduct>) itemSet;
 	    argyle.requestHistories(branchProducts);
-	    GuiUtils.showLoader("Loading graph...");
+	    GuiUtils.showLoader();
 	}
     }
 
@@ -167,7 +169,7 @@ public class WebPage {
      */
     public void requestShopping(HashMap<Long, Integer> addedProducts) {
 	argyle.requestBranches(addedProducts);
-	GuiUtils.showLoader("Loading stores...");
+	GuiUtils.showLoader();
     }
 
     /**
@@ -183,14 +185,16 @@ public class WebPage {
      */
     public void requestBrowsing(long cityID, long productCategoryID) {
 	argyle.requestBranchProducts(cityID, productCategoryID);
-	GuiUtils.showLoader("Loading products...");
+	GuiUtils.showLoader();
     }
 
     public void showBrowsing() {
+	views.setSelected("browsing");
 	deck.showWidget(0);
     }
 
     public void showShopping() {
+	views.setSelected("shopping");
 	deck.showWidget(1);
     }
 
@@ -198,10 +202,12 @@ public class WebPage {
      * Shows the {@link BranchLocation} interface.
      */
     public void showMap() {
+	views.setSelected("map");
 	deck.showWidget(2);
     }
 
     public void showGraph() {
+	views.setSelected("graph");
 	listDetails.hide();
 	deck.showWidget(3);
     }
@@ -209,15 +215,22 @@ public class WebPage {
     /**
      * Shows the {@link BranchLocation} interface with directions.
      * 
-     * @param location
+     * @param gpsCoords
      *            the {@link Location} the user wants to get directions to.
      */
-    public void showMap(Location location) {
-	storeLocation.setDirectionCoords(argyle.getCoords(),
-		location.getCoords());
-	storeLocation.setMapCenter(Utils.coordsConvert(location.getCoords()));
-	storeLocation.draw();
-	showMap();
+    public void showMap(GPSCoords gpsCoords) {
+	if (argyle.getCoords() == null) {
+	    locationPopup.setLocation(gpsCoords);
+	    locationPopup.addCities(argyle.data.getCities());
+	    locationPopup.center();
+	} else {
+	    storeLocation
+		    .setMapCenter(Utils.coordsConvert(gpsCoords));
+	    storeLocation.setDirectionCoords(argyle.getCoords(),
+		    gpsCoords);
+	    storeLocation.draw();
+	    showMap();
+	}
     }
 
     /**
@@ -281,10 +294,10 @@ public class WebPage {
      * 
      * @param branchProducts
      */
-    public void addBranchProducts(HashMap<String, BranchProduct> branchProducts) {
-	HashSet<BranchProduct> bps = new HashSet<BranchProduct>();
-	bps.addAll(branchProducts.values());
-	productList.setItemSet(bps);
+    public void addBranchProducts(HashSet<BranchProduct> branchProducts) {
+	TreeSet<BranchProduct> sorted = new TreeSet<BranchProduct>();
+	sorted.addAll(branchProducts);
+	productList.setItemSet(sorted);
 	showBrowsing();
 	GuiUtils.hideLoader();
     }

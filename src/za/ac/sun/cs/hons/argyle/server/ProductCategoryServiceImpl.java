@@ -1,14 +1,15 @@
 package za.ac.sun.cs.hons.argyle.server;
 
 import java.util.HashMap;
+import java.util.List;
 
 import za.ac.sun.cs.hons.argyle.client.rpc.ProductCategoryService;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.ProductCategory;
 
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Query;
 
 public class ProductCategoryServiceImpl extends RemoteServiceServlet implements
 	ProductCategoryService {
@@ -19,10 +20,10 @@ public class ProductCategoryServiceImpl extends RemoteServiceServlet implements
 
     @Override
     public HashMap<String, ProductCategory> getProductCategories() {
-	Objectify ofy = ObjectifyService.begin();
-	Query<ProductCategory> q = ofy.query(ProductCategory.class);
+	List<ProductCategory> retrieved = DAOService.productCategoryDAO
+		.listAll();
 	HashMap<String, ProductCategory> types = new HashMap<String, ProductCategory>();
-	for (ProductCategory type : q) {
+	for (ProductCategory type : retrieved) {
 	    types.put(type.toString(), type);
 	}
 	return types;
@@ -30,9 +31,15 @@ public class ProductCategoryServiceImpl extends RemoteServiceServlet implements
     }
 
     @Override
-    public void addProductCategory(ProductCategory type) {
-	Objectify ofy = ObjectifyService.begin();
-	ofy.put(type);
+    public ProductCategory getProductCategory(BranchProduct bp) {
+	Product product;
+	try {
+	    product = DAOService.productDAO.get(bp.getProductID());
+	    return DAOService.productCategoryDAO.get(product.getCategoryID());
+	} catch (EntityNotFoundException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
 }

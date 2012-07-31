@@ -1,8 +1,8 @@
 package za.ac.sun.cs.hons.argyle.server.dao;
 
-import za.ac.sun.cs.hons.argyle.server.entities.Brand;
-
 import com.googlecode.objectify.ObjectifyService;
+
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.Brand;
 
 public class BrandDAO extends ObjectifyDAO<Brand> {
     static {
@@ -11,8 +11,8 @@ public class BrandDAO extends ObjectifyDAO<Brand> {
 
     }
 
-    protected BrandDAO(Class<Brand> clazz) {
-	super(clazz);
+    public BrandDAO() {
+	super(Brand.class);
     }
 
 }

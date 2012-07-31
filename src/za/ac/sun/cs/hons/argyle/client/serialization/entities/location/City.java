@@ -11,7 +11,7 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class City extends IsEntity {
     @Id
-    private Long      ID;
+    private Long      id;
     private String    name;
     private String    province;
     private String    country;
@@ -21,17 +21,33 @@ public class City extends IsEntity {
     public City() {
     }
 
-    public City(long ID, GPSCoords coords, String name, String province,
-	    String country) {
-	this.ID = ID;
+    public City(String name, String province, String country,
+	    GPSCoords coords) {
+	super();
 	this.name = name;
 	this.province = province;
 	this.country = country;
 	this.coords = coords;
     }
 
+    public void setID(long id) {
+	this.id = id;
+    }
+
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    public void setProvince(String province) {
+	this.province = province;
+    }
+
+    public void setCountry(String country) {
+	this.country = country;
+    }
+
     public long getID() {
-	return ID;
+	return id;
     }
 
     public String getName() {
@@ -50,25 +66,13 @@ public class City extends IsEntity {
 	return coords;
     }
 
-    @Override
-    public String toString() {
-	return getName() + ", " + getProvince() + ", " + getCountry();
+    public void setCoords(GPSCoords coords) {
+	this.coords = coords;
     }
 
     @Override
-    public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (!obj.getClass().equals(City.class)) {
-	    return false;
-	}
-	City city = (City) obj;
-	return getCountry().equals(city.getCountry())
-		&& getProvince().equals(city.getProvince())
-		&& getName().equals(city.getName())
-		&& getCoords().equals(city.getCoords())
-		&& getID() == city.getID();
+    public String toString() {
+	return getName() + ", " + getProvince() + ", " + getCountry();
     }
 
 }

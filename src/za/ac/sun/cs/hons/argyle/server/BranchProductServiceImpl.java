@@ -2,33 +2,55 @@ package za.ac.sun.cs.hons.argyle.server;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import za.ac.sun.cs.hons.argyle.client.rpc.BranchProductService;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.DatePrice;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.store.Branch;
 
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Query;
 
 public class BranchProductServiceImpl extends RemoteServiceServlet implements
 	BranchProductService {
     private static final long serialVersionUID = -1072938579303987439L;
 
     @Override
-    public HashMap<String, BranchProduct> getBranchProducts(
-	    long productCategoryID, long cityID) {
-	Objectify ofy = ObjectifyService.begin();
-	Query<BranchProduct> q = ofy.query(BranchProduct.class);
-	HashMap<String, BranchProduct> branchProducts = new HashMap<String, BranchProduct>();
-	for (BranchProduct bp : q) {
-	    if (bp.getBranch().getLocation().getCity().getID() == cityID
-		    && bp.getProduct().getCategory().getID() == productCategoryID) {
-		branchProducts.put(bp.toString(), bp);
+    public HashSet<BranchProduct> getBranchProducts(long productCategoryID,
+	    long cityID) {
+	String[] propNames = new String[] { "cityID" };
+	Object[] propValues = new Object[] { cityID };
+	List<Location> locations = DAOService.locationDAO.listByProperties(
+		propNames, propValues);
+	HashSet<Branch> branches = new HashSet<Branch>();
+	propNames = new String[] { "locationID" };
+	for (Location loc : locations) {
+	    propValues = new Object[] { loc.getID() };
+	    Branch branch = DAOService.branchDAO.getByProperties(propNames,
+		    propValues);
+	    if (branch != null) {
+		branches.add(branch);
+	    }
+	}
+	propNames = new String[] { "categoryID" };
+	propValues = new Object[] { productCategoryID };
+	List<Product> products = DAOService.productDAO.listByProperties(
+		propNames, propValues);
+	HashSet<BranchProduct> branchProducts = new HashSet<BranchProduct>();
+	propNames = new String[] { "productID", "branchID" };
+	for (Product product : products) {
+	    for (Branch branch : branches) {
+		propValues = new Object[] { product.getID(), branch.getID() };
+		BranchProduct bp = DAOService.branchProductDAO.getByProperties(
+			propNames, propValues);
+		if (bp != null) {
+		    branchProducts.add(bp);
+		}
 	    }
 	}
 	return branchProducts;
@@ -37,22 +59,34 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
     @Override
     public HashMap<Branch, HashSet<BranchProduct>> getBranches(
 	    HashMap<Long, Integer> productMap) {
-	Objectify ofy = ObjectifyService.begin();
-	Query<BranchProduct> q = ofy.query(BranchProduct.class);
+	if (productMap == null) {
+	    return null;
+	}
+	String[] propNames = new String[] { "productID" };
+	Object[] propValues;
 	HashMap<Long, HashSet<BranchProduct>> branchProducts = new HashMap<Long, HashSet<BranchProduct>>();
 	HashMap<Long, Branch> branches = new HashMap<Long, Branch>();
-	// Set<Long> productIDs = productMap.keySet();
-	for (BranchProduct bp : q) {
-	    if (productMap.containsKey(bp.getProduct().getID())) {
+	for (Long productID : productMap.keySet()) {
+	    propValues = new Object[] { productID };
+	    BranchProduct bp = DAOService.branchProductDAO.getByProperties(
+		    propNames, propValues);
+	    if (bp != null) {
 		HashSet<BranchProduct> bpSet = branchProducts.get(bp
-			.getBranch().getID());
+			.getBranchID());
 		if (bpSet == null) {
-		    branchProducts.put(bp.getBranch().getID(),
-			    new HashSet<BranchProduct>());
-		    bpSet = branchProducts.get(bp.getBranch().getID());
-		    branches.put(bp.getBranch().getID(), bp.getBranch());
+		    try {
+			Branch branch = DAOService.branchDAO.get(bp
+				.getBranchID());
+			branchProducts.put(branch.getID(),
+				new HashSet<BranchProduct>());
+			bpSet = branchProducts.get(branch.getID());
+			branches.put(branch.getID(), branch);
+		    } catch (EntityNotFoundException e) {
+			e.printStackTrace();
+		    }
 		}
 		bpSet.add(bp);
+
 	    }
 	}
 	HashMap<Branch, HashSet<BranchProduct>> matches = new HashMap<Branch, HashSet<BranchProduct>>();
@@ -67,24 +101,20 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
     @Override
     public HashMap<BranchProduct, HashSet<DatePrice>> getHistories(
 	    Set<BranchProduct> branchProducts) {
-	HashMap<BranchProduct, HashSet<DatePrice>> histories = new HashMap<BranchProduct, HashSet<DatePrice>>();
-	Objectify ofy = ObjectifyService.begin();
-	Query<DatePrice> q = ofy.query(DatePrice.class);
-	System.out.println(q.count());
-	for (BranchProduct bp : branchProducts) {
-	    for (DatePrice dp : q) {
-		if (dp.getBranchProductID() != null && dp.getBranchProductID().equals(bp.getID())) {
-		    HashSet<DatePrice> contents = histories.get(bp);
-		    if(contents == null){
-			contents = new HashSet<DatePrice>();
-		    }
-		    contents.add(dp);
-		    histories.put(bp, contents);
-		}
-	    }
+	if(branchProducts == null){
+	    return null;
 	}
-	for (HashSet<DatePrice> set : histories.values()) {
-	    System.out.println(set.size());
+	HashMap<BranchProduct, HashSet<DatePrice>> histories = new HashMap<BranchProduct, HashSet<DatePrice>>();
+
+	String[] propNames = new String[] { "branchProductID" };
+	Object[] propValues;
+	for (BranchProduct bp : branchProducts) {
+	    propValues = new Object[] { bp.getID() };
+	    List<DatePrice> datePriceList = DAOService.datePriceDAO
+		    .listByProperties(propNames, propValues);
+	    HashSet<DatePrice> datePrices = new HashSet<DatePrice>();
+	    datePrices.addAll(datePriceList);
+	    histories.put(bp, datePrices);
 	}
 	return histories;
     }

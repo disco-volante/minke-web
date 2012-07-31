@@ -2,14 +2,16 @@ package za.ac.sun.cs.hons.argyle.client.gui.table;
 
 import java.util.HashMap;
 
+import za.ac.sun.cs.hons.argyle.client.gui.WebPage;
+import za.ac.sun.cs.hons.argyle.client.gui.button.GraphButton;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
 
 public class ShoppingListDetail extends TableView {
 
     private HashMap<Long, Integer> products;
 
-    public ShoppingListDetail() {
-	super(false);
+    public ShoppingListDetail(WebPage webPage) {
+	super(webPage);
 	viewButton.setEnabled(false);
 	viewButton.setVisible(false);
     }
@@ -31,7 +33,7 @@ public class ShoppingListDetail extends TableView {
 	table.setText(pos, 2, bp.getProduct().getCategory().getType());
 	table.setText(pos, 3, Double.toString(getPrice(bp)));
 	table.setText(pos, 4, bp.getDatePrice().getDate().toString());
-	table.setWidget(pos, 5, createInfoButton(item));
+	table.setWidget(pos, 5, new GraphButton(getTableType(), item, webPage));
     }
 
     @Override

@@ -14,39 +14,37 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class ShoppingList extends FocusedPopupPanel {
 
-    interface Binder extends UiBinder<Widget, ShoppingList> {
+    interface Binder extends UiBinder<DockLayoutPanel, ShoppingList> {
     }
 
-    private static final Binder      binder = GWT.create(Binder.class);
+    private static final Binder binder = GWT.create(Binder.class);
     @UiField
-    Button			   addButton, processButton;
+    Button addButton, processButton, cancelButton;
     @UiField
-    VerticalPanel		    itemList;
+    VerticalPanel itemList;
     @UiField(provided = true)
-    SuggestBox		       productBox;
+    SuggestBox productBox;
 
-    private WebPage		  webPage;
-    private MultiWordSuggestOracle   productOracle;
+    private WebPage webPage;
+    private MultiWordSuggestOracle productOracle;
 
     private HashMap<String, Product> products;
-    private HashMap<Long, Integer>   addedProducts;
+    private HashMap<Long, Integer> addedProducts;
 
-    public ShoppingList() {
+    public ShoppingList(WebPage webPage) {
 	super(false);
 	productOracle = new MultiWordSuggestOracle();
 	productBox = new SuggestBox(productOracle);
-	add(binder.createAndBindUi(this));
-    }
-
-    public void setWebPage(WebPage webPage) {
 	this.webPage = webPage;
+	add(binder.createAndBindUi(this));
+
     }
 
     private void addProduct() {
@@ -82,6 +80,11 @@ public class ShoppingList extends FocusedPopupPanel {
 	}
     }
 
+    @UiHandler("cancelButton")
+    void cancelClicked(ClickEvent event) {
+	hide();
+    }
+
     @Override
     public void hide() {
 	super.hide();
@@ -91,7 +94,7 @@ public class ShoppingList extends FocusedPopupPanel {
     }
 
     public void removeItem(ShopListItem item) {
-	addedProducts.remove(item.getText());
+	addedProducts.remove(item.getName());
 	itemList.remove(item);
 
     }

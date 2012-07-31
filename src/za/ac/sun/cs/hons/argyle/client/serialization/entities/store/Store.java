@@ -29,8 +29,7 @@ public class Store extends IsEntity {
      * @param name
      *            the object's name.
      */
-    public Store(long ID, String name) {
-	this.ID = ID;
+    public Store(String name) {
 	this.name = name;
     }
 

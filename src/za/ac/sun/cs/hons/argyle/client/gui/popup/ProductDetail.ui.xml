@@ -26,5 +26,6 @@
 			<g:Label text="Size" horizontalAlignment="ALIGN_LEFT" />
 			<g:Label ui:field='size' horizontalAlignment="ALIGN_RIGHT" />
 		</g:HorizontalPanel>
+	<g:Button ui:field='closeButton' text="Close" />
 	</g:FlowPanel>
 </ui:UiBinder>

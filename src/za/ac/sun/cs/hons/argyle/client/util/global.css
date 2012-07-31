@@ -3,9 +3,42 @@ body,table {
 }
 
 body {
-	font-family: Helvetica, Arial, sans-serif;
-	color: 000033;
-	background: #fff;
+	font-family: "Times New Roman", "MS Serif", "New York", serif;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #c0f9a7;
+	text-shadow: #fff 0 1px 1px;
+}
+
+body,html {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+h1 {
+	font: bold italic 5em/3em "Times New Roman", "MS Serif", "New York",
+		serif;
+	text-align: center;
+	margin: 0;
+	text-shadow: #fff 0 2px 2px;
+}
+
+h2 {
+	font: bold italic 2em/1em "Times New Roman", "MS Serif", "New York",
+		serif;
+	text-align: left;
+	margin: 0;
+	text-shadow: #fff 0 2px 2px;
+	padding: 2px 0 1px 10px;
+}
+
+#screen {
+	height: 100%;
+	width: 100%;
+	overflow: scroll;
+	position: relative;
 }
 
 a:link,a:visited,a:hover,a:active {
@@ -20,7 +53,6 @@ a:link,a:visited,a:hover,a:active {
 
 .gwt-DialogBox {
 	background-color: white;
-	border: 1px solid #666;
 	z-index: 2;
 }
 
@@ -39,30 +71,52 @@ a:link,a:visited,a:hover,a:active {
 }
 
 .gwt-DialogBox .gwt-Button {
-	margin: 10px;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #c0f9a7;
+	background-color: #c0f9a7;
 }
 
 .gwt-PopupPanelGlass {
 	background-color: #000;
-	opacity: 0.3;
+	opacity: 0.4;
 	filter: literal("alpha(opacity=30)");
 	z-index: 2;
 }
 
-/* GWT Tree */
-.gwt-Tree {
-	
+.gwt-PopupPanel {
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #c0f9a7;
+	background-color: #c0f9a7;
+}
+.ImageButton {
+	margin: 0;
+  padding: 0px 0px;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand;
+  font-size:small;
+  border:0px solid #bbb;
+  border-bottom: 0px solid #a0a0a0;
+  border-radius: 0px;
+ -moz-border-radius: 0px;
+}
+.gwt-Button {
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #93bf80;
+	background-color: #93bf80;
 }
 
 .gwt-Tree .gwt-TreeItem {
 	padding: 0;
 	cursor: hand;
-	cursor: pointer;
 	display: block !important;
-}
-
-.gwt-Tree .gwt-TreeItem-selected {
-	background: #ccc;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #c0f9a7;
+	background-color: #c0f9a7;
 }
 
 /* Splitters */
@@ -76,8 +130,4 @@ a:link,a:visited,a:hover,a:active {
 
 .gwt-SplitLayoutPanel-VDragger {
 	cursor: row-resize;
-}
-
-.transparent {
-	opacity: 0.0;
 }

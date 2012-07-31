@@ -11,27 +11,46 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Location extends IsEntity {
     @Id
-    private Long      ID;
+    private Long      id;
     @Embedded
     private City      city;
+    private long      cityID;
     @Embedded
     private GPSCoords coords;
 
     public Location() {
     }
 
-    public Location(long ID, GPSCoords coords, City city) {
-	this.ID = ID;
-	this.coords = coords;
-	this.city = city;
+    public Location(City city, GPSCoords coords) {
+	super();
+	setCity(city);
+	setCoords(coords);
     }
 
     public long getID() {
-	return ID;
+	return id;
+    }
+
+    public void setID(long id) {
+	this.id = id;
     }
 
     public City getCity() {
 	return city;
+    }
+
+    public void setCity(City city) {
+	this.city = city;
+	this.cityID = city.getID();
+
+    }
+
+    public long getCityID() {
+	return cityID;
+    }
+
+    public void setCoords(GPSCoords coords) {
+	this.coords = coords;
     }
 
     public GPSCoords getCoords() {
@@ -39,17 +58,7 @@ public class Location extends IsEntity {
     }
 
     @Override
-    public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (!obj.getClass().equals(Location.class)) {
-	    return false;
-	}
-	Location loc = (Location) obj;
-	return getCity().equals(loc.getCity())
-		&& getCoords().equals(loc.getCoords())
-		&& getID() == loc.getID();
+    public String toString() {
+	return city.getName();
     }
-
 }

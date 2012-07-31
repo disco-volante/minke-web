@@ -1,6 +1,6 @@
 package za.ac.sun.cs.hons.argyle.server.dao;
 
-import za.ac.sun.cs.hons.argyle.server.entities.BranchProduct;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
 
 import com.googlecode.objectify.ObjectifyService;
 
@@ -11,8 +11,8 @@ public class BranchProductDAO extends ObjectifyDAO<BranchProduct> {
 
     }
 
-    protected BranchProductDAO(Class<BranchProduct> clazz) {
-	super(clazz);
+    public BranchProductDAO() {
+	super(BranchProduct.class);
     }
 
 }

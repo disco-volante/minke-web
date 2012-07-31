@@ -27,9 +27,24 @@ public class ImageUtils {
 
 	@Source("images/map.png")
 	ImageResource map();
-	
+
 	@Source("images/loader.gif")
 	ImageResource loader();
+
+	@Source("images/graph.png")
+	ImageResource graph();
+
+	@Source("images/minke.png")
+	ImageResource minke();
+
+	@Source("images/remove.png")
+	ImageResource remove();
+
+	@Source("images/up.png")
+	ImageResource up();
+
+	@Source("images/down.png")
+	ImageResource down();
     }
 
     public static String imageItemHTML(ImageResource imageProto) {

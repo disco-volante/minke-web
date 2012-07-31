@@ -2,17 +2,26 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:maps="urn:import:com.google.gwt.maps.client"
 	xmlns:geo="urn:import:com.google.gwt.maps.client.geocode">
 	<ui:style>
-		.outer {
-			border-left: 1px solid #999;
-			border-bottom: 1px solid #999;
+		.header {
+			width: 98%;
+			height: 98%;
+		}
+		
+		.header td {
+			font-weight: bold;
+			text-shadow: #fff 0 2px 2px;
+			padding: 2px 0 1px 10px;
 		}
 	</ui:style>
-
-
-
-	<g:HorizontalPanel styleName="{style.outer}">
-		<maps:MapWidget ui:field="map" height="400px" width="400px" />
-		<geo:DirectionsPanel ui:field="directionsPanel" />
-	</g:HorizontalPanel>
-
+	<g:DockLayoutPanel unit="EM" styleName="{style.header}">
+		<g:west size="30">
+			<g:ScrollPanel styleName="{style.header}" ui:field="holderPanel">
+				<geo:DirectionsPanel ui:field="directionsPanel"
+					styleName="{style.header}" />
+			</g:ScrollPanel>
+		</g:west>
+		<g:center>
+			<maps:MapWidget ui:field="map" styleName="{style.header}" />
+		</g:center>
+	</g:DockLayoutPanel>
 </ui:UiBinder>

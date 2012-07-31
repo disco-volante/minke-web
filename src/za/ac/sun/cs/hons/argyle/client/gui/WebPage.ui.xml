@@ -6,10 +6,15 @@
 	xmlns:table="urn:import:za.ac.sun.cs.hons.argyle.client.gui.table"
 	xmlns:webpage="urn:import:za.ac.sun.cs.hons.argyle.client.gui"
 	xmlns:graph="urn:import:za.ac.sun.cs.hons.argyle.client.gui.graph">
+	<ui:with field="images"
+		type="za.ac.sun.cs.hons.argyle.client.util.ImageUtils.Images" />
 
 	<g:DockLayoutPanel unit="EM">
-		<g:north size="12">
-			<webpage:TopPanel ui:field="topPanel" />
+
+		<g:north size="10">
+			<g:HTML>
+				<h1>minke</h1>
+			</g:HTML>
 		</g:north>
 		<g:west size="12">
 			<webpage:ViewTree ui:field="views" />

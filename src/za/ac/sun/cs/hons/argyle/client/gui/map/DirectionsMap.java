@@ -12,8 +12,9 @@ import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 /**
  * Provides a map centered on a given location and directions between an origin
@@ -22,21 +23,23 @@ import com.google.gwt.user.client.ui.Widget;
  * @author godfried
  * 
  */
-public class DirectionsMap extends Composite {
+public class DirectionsMap extends ResizeComposite {
     /**
      * UiBinder for the map interface.
      * 
      * @author godfried
      * 
      */
-    interface Binder extends UiBinder<Widget, DirectionsMap> {
+    interface Binder extends UiBinder<DockLayoutPanel, DirectionsMap> {
     }
 
     private static final Binder binder = GWT.create(Binder.class);
     @UiField
-    MapWidget		   map;
+    ScrollPanel holderPanel;
     @UiField
-    DirectionsPanel	     directionsPanel;
+    MapWidget map;
+    @UiField
+    DirectionsPanel directionsPanel;
 
     /**
      * Constructs a new map with the given center point.
@@ -44,9 +47,8 @@ public class DirectionsMap extends Composite {
      * @param center
      *            the center of the map.
      */
-    public DirectionsMap(LatLng center) {
+    public DirectionsMap() {
 	initWidget(binder.createAndBindUi(this));
-	setCenter(center);
     }
 
     /**
@@ -55,8 +57,8 @@ public class DirectionsMap extends Composite {
      * @param center
      */
     public void setCenter(LatLng center) {
+	// map.setZoomLevel(15);
 	map.setCenter(center);
-	map.setZoomLevel(15);
     }
 
     /**
@@ -67,6 +69,7 @@ public class DirectionsMap extends Composite {
      *            format: from: *origin info* to: *destination info*.
      */
     public void loadDirections(String directionsQuery) {
+	holderPanel.remove(directionsPanel);
 	directionsPanel = new DirectionsPanel();
 	DirectionQueryOptions opts = new DirectionQueryOptions(map,
 		directionsPanel);
@@ -80,5 +83,6 @@ public class DirectionsMap extends Composite {
 		GWT.log("Successfully loaded directions.", null);
 	    }
 	});
+	holderPanel.add(directionsPanel);
     }
 }

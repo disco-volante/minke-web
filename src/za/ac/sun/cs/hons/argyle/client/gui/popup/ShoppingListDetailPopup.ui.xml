@@ -1,7 +1,11 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:table='urn:import:za.ac.sun.cs.hons.argyle.client.gui.table'>
-	<g:FlowPanel>
-		<table:ShoppingListDetail ui:field="listDetails" />
-	</g:FlowPanel>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:table='urn:import:za.ac.sun.cs.hons.argyle.client.gui.table'>
+	<g:DockLayoutPanel unit="EM">
+		<g:center>
+			<table:ShoppingListDetail ui:field="listDetails" />
+		</g:center>
+		<g:south size="4">
+			<g:Button ui:field='closeButton' text="Close" />
+		</g:south>
+	</g:DockLayoutPanel>
 </ui:UiBinder>

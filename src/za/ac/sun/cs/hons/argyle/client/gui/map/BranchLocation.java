@@ -1,16 +1,19 @@
 package za.ac.sun.cs.hons.argyle.client.gui.map;
 
+import za.ac.sun.cs.hons.argyle.client.gui.WebPage;
 import za.ac.sun.cs.hons.argyle.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.argyle.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 
 /**
  * An graphical interface which displays {@link DirectionsMap} on the
@@ -19,30 +22,34 @@ import com.google.gwt.user.client.ui.Widget;
  * @author godfried
  * 
  */
-public class BranchLocation extends Composite {
+public class BranchLocation extends ResizeComposite {
     /**
      * {@link UiBinder} for this class.
      * 
      * @author godfried
      * 
      */
-    interface Binder extends UiBinder<Widget, BranchLocation> {
+    interface Binder extends UiBinder<DockLayoutPanel, BranchLocation> {
     }
 
     private static final Binder binder = GWT.create(Binder.class);
     @UiField
-    SimplePanel		 mapPanel;
-    private boolean	     loaded;
-    private Runnable	    mapBuilder;
-    private LatLng	      center;
-    private GPSCoords	   origin, destination;
-    private DirectionsMap       map;
+    DockLayoutPanel mapPanel;
+    @UiField
+    Button correctionButton;
+    private boolean loaded;
+    private Runnable mapBuilder;
+    private LatLng center;
+    private GPSCoords origin, destination;
+    private DirectionsMap map;
+    private WebPage webPage;
 
     /**
      * Creates the interface and loads the maps.
      */
-    public BranchLocation() {
+    public BranchLocation(WebPage webPage) {
 	initWidget(binder.createAndBindUi(this));
+	this.webPage = webPage;
 	loadMaps();
     }
 
@@ -53,8 +60,9 @@ public class BranchLocation extends Composite {
 	mapBuilder = new Runnable() {
 	    @Override
 	    public void run() {
-		drawMap(center);
+		drawMap();
 		loadDirections(Utils.toDirections(origin, destination));
+		centerMap(center);
 	    }
 
 	};
@@ -63,6 +71,7 @@ public class BranchLocation extends Composite {
 	    public void run() {
 		loaded = true;
 		initCoords();
+		draw();
 		draw();
 	    }
 	};
@@ -75,13 +84,18 @@ public class BranchLocation extends Composite {
      * @param center
      *            the center of the map.
      */
-    protected void drawMap(LatLng center) {
-	if (map == null) {
-	    map = new DirectionsMap(center);
-	    mapPanel.add(map);
-	} else {
-	    map.setCenter(center);
+    protected void drawMap() {
+	if (map != null) {
+	    mapPanel.remove(map);
 	}
+	map = new DirectionsMap();
+	mapPanel.add(map);
+
+    }
+
+    protected void centerMap(LatLng center) {
+	map.setCenter(center);
+
     }
 
     /**
@@ -92,6 +106,7 @@ public class BranchLocation extends Composite {
      */
     protected void loadDirections(String directions) {
 	map.loadDirections(directions);
+	map.setCenter(center);
     }
 
     /**
@@ -132,6 +147,12 @@ public class BranchLocation extends Composite {
     public void setMapCenter(LatLng coords) {
 	this.center = coords;
 
+    }
+    
+    @UiHandler("correctionButton")
+    void correction(ClickEvent event){
+	webPage.argyle.setLocation(null);
+	webPage.showMap(destination);
     }
 
 }

@@ -1,32 +1,38 @@
 package za.ac.sun.cs.hons.argyle.client.gui.popup;
 
-import za.ac.sun.cs.hons.argyle.client.util.GuiUtils;
-
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.widgetideas.client.GlassPanel;
 
 public class FocusedPopupPanel extends PopupPanel {
+    private GlassPanel glass;
+
     public FocusedPopupPanel(boolean autohide) {
 	super(autohide);
-	hide();
 	setAnimationEnabled(true);
-
+	glass = new GlassPanel(autohide);
+	DOM.setStyleAttribute(glass.getElement(), "width", "100%");
+	DOM.setStyleAttribute(glass.getElement(), "height", "100%");
+	RootPanel.get().add(glass);
+	hide();
     }
 
     @Override
     public void hide() {
 	super.hide();
-	GuiUtils.uncover();
+	RootPanel.get().remove(glass);
     }
 
     @Override
     public void center() {
-	GuiUtils.cover();
+	RootPanel.get().add(glass);
 	super.center();
     }
 
     @Override
     public void show() {
-	GuiUtils.cover();
+	RootPanel.get().add(glass);
 	super.show();
     }
 }

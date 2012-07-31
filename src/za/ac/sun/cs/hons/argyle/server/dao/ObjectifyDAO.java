@@ -7,8 +7,10 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.QueryResultIterable;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Query;
 import com.googlecode.objectify.util.DAOBase;
@@ -33,7 +35,12 @@ public class ObjectifyDAO<T> extends DAOBase {
 	Key<T> key = ofy().put(entity);
 	return key;
     }
+    public Map<Key<T>, T> add(T... entities)
 
+    {
+	Map<Key<T>, T> keys = ofy().put(entities);
+	return keys;
+    }
     public void delete(T entity) {
 	ofy().delete(entity);
     }
@@ -47,6 +54,11 @@ public class ObjectifyDAO<T> extends DAOBase {
 	return obj;
     }
 
+    public T get(Key<T> key) {
+	T obj = ofy().get(key);
+	return obj;
+    }
+
     /**
      * Convenience method to get an object matching a single property
      * 
@@ -54,18 +66,39 @@ public class ObjectifyDAO<T> extends DAOBase {
      * @param propValue
      * @return T matching Object
      */
-    public T getByProperty(String propName, Object propValue) {
-	Query<T> q = ofy().query(clazz);
-	q.filter(propName, propValue);
-	T obj = q.get();
-	return obj;
+    public T getByProperties(String[] propNames, Object[] propValues) {
+	if (propNames.length != propValues.length) {
+	    return null;
+	}
+	Query<T> q = queryByProperties(propNames, propValues);
+	return q.get();
     }
 
-    public List<T> listByProperty(String propName, Object propValue) {
+    public Query<T> queryByProperties(String[] propNames, Object[] propValues) {
 	Query<T> q = ofy().query(clazz);
-	q.filter(propName, propValue);
+	for (int i = 0; i < propValues.length; i++) {
+	    q.filter(propNames[i], propValues[i]);
+	}
+	return q;
+    }
+
+    public List<T> listByProperties(String[] propNames, Object[] propValues) {
+	if (propNames.length != propValues.length) {
+	    return null;
+	}
+	Query<T> q = queryByProperties(propNames, propValues);
 	List<T> list = q.list();
 	return list;
+    }
+
+    public QueryResultIterable<Key<T>> listKeysByProperties(String[] propNames,
+	    Object[] propValues) {
+	if (propNames.length != propValues.length) {
+	    return null;
+	}
+	Query<T> q = queryByProperties(propNames, propValues);
+	QueryResultIterable<Key<T>> keys = q.fetchKeys();
+	return keys;
     }
 
     public T getByExample(T u, String... matchProperties) {
@@ -86,6 +119,12 @@ public class ObjectifyDAO<T> extends DAOBase {
 	    Object propValue = getPropertyValue(u, propName);
 	    q.filter(propName, propValue);
 	}
+	List<T> list = q.list();
+	return list;
+    }
+
+    public List<T> listAll() {
+	Query<T> q = ofy().query(clazz);
 	List<T> list = q.list();
 	return list;
     }

@@ -1,6 +1,6 @@
 package za.ac.sun.cs.hons.argyle.server.dao;
 
-import za.ac.sun.cs.hons.argyle.server.entities.City;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.City;
 
 import com.googlecode.objectify.ObjectifyService;
 
@@ -11,8 +11,8 @@ public class CityDAO extends ObjectifyDAO<City> {
 
     }
 
-    protected CityDAO(Class<City> clazz) {
-	super(clazz);
+    public CityDAO() {
+	super(City.class);
     }
 
 }

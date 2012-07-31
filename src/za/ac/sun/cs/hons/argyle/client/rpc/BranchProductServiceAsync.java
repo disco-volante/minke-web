@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface BranchProductServiceAsync {
 
 	void getBranchProducts(long productCategoryID, long cityID,
-			AsyncCallback<HashMap<String, BranchProduct>> callback);
+		AsyncCallback<HashSet<BranchProduct>> callback);
 
 	void getBranches(HashMap<Long, Integer> addedProducts,
 			AsyncCallback<HashMap<Branch, HashSet<BranchProduct>>> callback);

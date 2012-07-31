@@ -17,42 +17,70 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Product extends IsEntity {
     @Id
-    private Long	    ID;
+    private Long	    id;
     private String	  name;
     @Embedded
     private Brand	   brand;
+    private long	    brandID;
     @Embedded
     private ProductCategory category;
+    private long	    categoryID;
     private double	  size;
     private String	  measurement;
 
     public Product() {
     }
 
-    public Product(long ID, String name, Brand brand, ProductCategory category,
+    public Product(String name, Brand brand, ProductCategory category,
 	    double size, String measurement) {
-	this.ID = ID;
-	this.name = name;
-	this.brand = brand;
-	this.category = category;
-	this.size = size;
-	this.measurement = measurement;
+	super();
+	setName(name);
+	setBrand(brand);
+	setCategory(category);
+	setSize(size);
+	setMeasurement(measurement);
+    }
+
+    public void setID(long id) {
+	this.id = id;
     }
 
     public long getID() {
-	return ID;
+	return id;
     }
 
     public String getName() {
 	return name;
     }
 
+    public void setName(String name) {
+	this.name = name;
+    }
+
     public Brand getBrand() {
 	return brand;
     }
 
+    public void setBrand(Brand brand) {
+	this.brand = brand;
+	this.brandID = brand.getID();
+    }
+
     public ProductCategory getCategory() {
 	return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+	this.category = category;
+	this.categoryID = category.getID();
+    }
+
+    public long getBrandID() {
+	return brandID;
+    }
+
+    public long getCategoryID() {
+	return categoryID;
     }
 
     public double getSize() {
@@ -63,24 +91,16 @@ public class Product extends IsEntity {
 	return measurement;
     }
 
-    public String toString() {
-	return name +" - "+ getBrand() + " ("+getCategory().getType()+")";
+    public void setSize(double size) {
+	this.size = size;
+    }
+
+    public void setMeasurement(String measurement) {
+	this.measurement = measurement;
     }
 
     @Override
-    public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (!obj.getClass().equals(Product.class)) {
-	    return false;
-	}
-	Product product = (Product) obj;
-	return getName().equals(product.getName())
-		&& getCategory().equals(product.getCategory())
-		&& getSize() == product.getSize()
-		&& getMeasurement().equals(product.getMeasurement())
-		&& getID() == product.getID();
+    public String toString() {
+	return brand.getName() + " " + name + " (" + category.getType() + ")";
     }
-
 }

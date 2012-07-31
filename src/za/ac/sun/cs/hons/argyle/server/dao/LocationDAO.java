@@ -1,6 +1,6 @@
 package za.ac.sun.cs.hons.argyle.server.dao;
 
-import za.ac.sun.cs.hons.argyle.server.entities.Location;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.Location;
 
 import com.googlecode.objectify.ObjectifyService;
 
@@ -11,8 +11,8 @@ public class LocationDAO extends ObjectifyDAO<Location> {
 
     }
 
-    protected LocationDAO(Class<Location> clazz) {
-	super(clazz);
+    public LocationDAO() {
+	super(Location.class);
     }
 
 }

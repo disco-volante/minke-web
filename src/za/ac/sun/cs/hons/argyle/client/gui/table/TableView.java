@@ -1,8 +1,10 @@
 package za.ac.sun.cs.hons.argyle.client.gui.table;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import za.ac.sun.cs.hons.argyle.client.gui.WebPage;
+import za.ac.sun.cs.hons.argyle.client.gui.button.InfoButton;
 import za.ac.sun.cs.hons.argyle.client.util.CSSUtils.SelectionStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -12,8 +14,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,34 +48,39 @@ public abstract class TableView extends ResizeComposite {
     interface Binder extends UiBinder<Widget, TableView> {
     }
 
-    private static final Binder binder	= GWT.create(Binder.class);
-    public static final int     VISIBLE_COUNT = 20;
+    private static final Binder	binder	= GWT.create(Binder.class);
+    public static final int	    VISIBLE_COUNT = 20;
 
+    @UiField(provided = true)
+    HTML			       tableHeader;
     @UiField
-    FlexTable		   header;
+    FlexTable			  header;
     @UiField
-    FlexTable		   table;
+    FlexTable			  table;
     @UiField
-    SelectionStyle	      selectionStyle;
+    HorizontalPanel		    footer;
     @UiField
-    Button		      viewButton;
+    SelectionStyle		     selectionStyle;
     @UiField
-    Button		      graphButton;
-    private int		 startIndex, selectedRow = -1;
-    private NavBar	      navBar;
-    private WebPage	     webPage;
-    private Set<?>	      itemSet;
+    Button			     viewButton;
+    private int			startIndex, selectedRow = -1;
+    private NavBar		     navBar;
+    protected WebPage		  webPage;
+    protected Set<?>		   itemSet;
+    protected HashMap<Integer, Object> indexMap;
+    protected Object		   selected;
 
     /**
      * Constructs a new {@link TableView} object.
      */
-    public TableView(boolean graphing) {
+    public TableView(WebPage webPage) {
+	setTableHeader(getTableType());
 	initWidget(binder.createAndBindUi(this));
+	this.webPage = webPage;
+	indexMap = new HashMap<Integer, Object>();
 	navBar = new NavBar(this);
 	initTable(getTableCols(), getHeadings());
 	update();
-	graphButton.setEnabled(graphing);
-	graphButton.setVisible(graphing);
     }
 
     /**
@@ -134,6 +143,9 @@ public abstract class TableView extends ResizeComposite {
      * @return the size of the {@link #itemSet}
      */
     protected int getMaxIndex() {
+	if (itemSet == null) {
+	    return 0;
+	}
 	return itemSet.size();
     }
 
@@ -143,7 +155,7 @@ public abstract class TableView extends ResizeComposite {
      * @return {@code true} if the {@link #itemSet} is not {@code null};
      *         {@code false} if it is {@code null}.
      */
-    protected boolean avialible() {
+    protected boolean available() {
 	return itemSet != null;
     }
 
@@ -159,23 +171,18 @@ public abstract class TableView extends ResizeComposite {
 	update();
     }
 
-    @Override
-    protected void onLoad() {
-	if (selectedRow == -1) {
-	    selectRow(0);
-	}
-    }
-
     /**
      * Moves the table to a newer page.
      */
     protected void newer() {
-	startIndex -= VISIBLE_COUNT;
-	if (startIndex < 0) {
-	    startIndex = 0;
-	} else {
-	    styleRow(selectedRow, false);
-	    selectedRow = -1;
+	if (available()) {
+	    startIndex -= VISIBLE_COUNT;
+	    if (startIndex < 0) {
+		startIndex = 0;
+	    } else {
+		styleRow(selectedRow, false);
+		selectedRow = -1;
+	    }
 	}
     }
 
@@ -183,13 +190,15 @@ public abstract class TableView extends ResizeComposite {
      * Moves the table to an older page.
      */
     protected void older() {
-	startIndex += VISIBLE_COUNT;
-	if (startIndex >= getMaxIndex()) {
-	    startIndex -= VISIBLE_COUNT;
-	} else {
-	    styleRow(selectedRow, false);
-	    selectedRow = -1;
-	    update();
+	if (available()) {
+	    startIndex += VISIBLE_COUNT;
+	    if (startIndex >= getMaxIndex()) {
+		startIndex -= VISIBLE_COUNT;
+	    } else {
+		styleRow(selectedRow, false);
+		selectedRow = -1;
+		update();
+	    }
 	}
     }
 
@@ -203,11 +212,6 @@ public abstract class TableView extends ResizeComposite {
 	webPage.process(getTableType());
     }
 
-    @UiHandler("graphButton")
-    void graphClicked(ClickEvent event) {
-	webPage.requestGraph(itemSet, getTableType());
-    }
-
     /**
      * Processes the {@link #table}'s ClickEvent.
      * 
@@ -215,10 +219,12 @@ public abstract class TableView extends ResizeComposite {
      */
     @UiHandler("table")
     void onTableClicked(ClickEvent event) {
-	Cell cell = table.getCellForEvent(event);
-	if (cell != null) {
-	    int row = cell.getRowIndex();
-	    selectRow(row);
+	if (available()) {
+	    Cell cell = table.getCellForEvent(event);
+	    if (cell != null) {
+		int row = cell.getRowIndex();
+		selectRow(row);
+	    }
 	}
     }
 
@@ -253,6 +259,7 @@ public abstract class TableView extends ResizeComposite {
 	styleRow(selectedRow, false);
 	styleRow(row, true);
 	selectedRow = row;
+	selected = indexMap.get(row);
     }
 
     /**
@@ -278,7 +285,7 @@ public abstract class TableView extends ResizeComposite {
      * Updates the data in the table.
      */
     private void update() {
-	if (!avialible()) {
+	if (!available()) {
 	    return;
 	}
 	int count = getMaxIndex();
@@ -288,10 +295,12 @@ public abstract class TableView extends ResizeComposite {
 	}
 	navBar.update(startIndex, count, max);
 	int i = 0;
+	indexMap.clear();
 	for (Object item : itemSet) {
 	    if (startIndex + i >= getMaxIndex() || i == VISIBLE_COUNT) {
 		break;
 	    }
+	    indexMap.put(i, item);
 	    addItem(item, startIndex + i);
 	    i++;
 	}
@@ -299,9 +308,31 @@ public abstract class TableView extends ResizeComposite {
 	    for (; i < VISIBLE_COUNT; ++i) {
 		if (table.getRowCount() > 0) {
 		    table.removeRow(table.getRowCount() - 1);
+		    indexMap.remove(table.getRowCount() - 1);
 		}
 	    }
 	}
     }
 
+    public void addToFooter(Widget w) {
+	footer.add(w);
+    }
+
+    private void setTableHeader(TABLE tableType) {
+	tableHeader = new HTML();
+	switch (tableType) {
+	    case DEFAULT:
+		break;
+	    case BROWSE:
+		tableHeader.setHTML("<h2>Product Browser</h2>");
+		break;
+	    case STORE:
+		tableHeader.setHTML("<h2>Store Browser</h2>");
+		break;
+	    case SHOPPING:
+		tableHeader.setHTML("<h2>Shopping List Browser</h2>");
+		break;
+	}
+	;
+    }
 }

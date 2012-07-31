@@ -14,6 +14,7 @@ import za.ac.sun.cs.hons.argyle.client.rpc.ProductCategoryService;
 import za.ac.sun.cs.hons.argyle.client.rpc.ProductCategoryServiceAsync;
 import za.ac.sun.cs.hons.argyle.client.rpc.ProductService;
 import za.ac.sun.cs.hons.argyle.client.rpc.ProductServiceAsync;
+import za.ac.sun.cs.hons.argyle.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.argyle.client.serialization.entities.product.BranchProduct;
@@ -36,12 +37,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class RPC {
-    private Argyle		      argyle;
-    private ClassServiceAsync	   classSvc;
-    private LocationServiceAsync	locSvc;
-    private ProductServiceAsync	 prodSvc;
-    private BranchProductServiceAsync   brProdSvc;
-    private ProductCategoryServiceAsync prodCatSvc;
+    private Argyle argyle;
+    public ClassServiceAsync classSvc;
+    public LocationServiceAsync locSvc;
+    public ProductServiceAsync prodSvc;
+    public BranchProductServiceAsync brProdSvc;
+    public ProductCategoryServiceAsync prodCatSvc;
 
     /**
      * Creates an {@link RPC} object and instantiates its rpcs.
@@ -101,7 +102,9 @@ public class RPC {
 
 	@Override
 	public void onSuccess(Position result) {
-	    getArgyle().setLocation(result);
+	    getArgyle().setLocation(
+		    new GPSCoords(result.getCoordinates().getLatitude(), result
+			    .getCoordinates().getLongitude()));
 	}
     };
 
@@ -138,7 +141,7 @@ public class RPC {
 
 	@Override
 	public void onSuccess(Boolean result) {
-	    getArgyle().addData();
+	    getArgyle().getDisplayData();
 	}
     };
 
@@ -210,14 +213,14 @@ public class RPC {
      * 
      */
     protected class BranchProductAsyncCallback1 implements
-	    AsyncCallback<HashMap<String, BranchProduct>> {
+	    AsyncCallback<HashSet<BranchProduct>> {
 	@Override
 	public void onFailure(Throwable caught) {
 	    caught.printStackTrace();
 	}
 
 	@Override
-	public void onSuccess(HashMap<String, BranchProduct> result) {
+	public void onSuccess(HashSet<BranchProduct> result) {
 	    getArgyle().displayBranchProducts(result);
 	}
     };
@@ -276,7 +279,7 @@ public class RPC {
      *            the data to be added.
      */
     public void addData(IsEntity[] dbData) {
-	classSvc.addData(dbData, new DataAsyncCallback());
+	// classSvc.addData(dbData, new DataAsyncCallback());
     }
 
     /**

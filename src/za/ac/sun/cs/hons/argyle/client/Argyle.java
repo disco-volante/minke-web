@@ -16,7 +16,6 @@ import za.ac.sun.cs.hons.argyle.client.util.GuiUtils;
 import za.ac.sun.cs.hons.argyle.client.util.Utils;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.geolocation.client.Position;
 
 /**
  * {@link EntryPoint} class for the project. Binds the different facets
@@ -27,16 +26,17 @@ import com.google.gwt.geolocation.client.Position;
  */
 public class Argyle implements EntryPoint {
 
-    private SystemData data;
-    private RPC	rpcs;
-    private WebPage    webPage;
-    private GPSCoords  coords;
+    public SystemData data;
+    private RPC rpcs;
+    private WebPage webPage;
+    private GPSCoords coords;
 
     /**
      * Loads and initialises project.
      */
     public void onModuleLoad() {
-	GuiUtils.showLoader("Loading page...");
+	GuiUtils.init();
+	GuiUtils.showLoader();
 	data = new SystemData();
 	initRPCS();
 	setWebPage(new WebPage(this));
@@ -49,13 +49,6 @@ public class Argyle implements EntryPoint {
 	rpcs = new RPC(this);
 	rpcs.registerClasses();
 	rpcs.getUserLocation();
-    }
-
-    /**
-     * Add test data to the db.
-     */
-    public void addData() {
-	rpcs.addData(data.getDBData());
     }
 
     /**
@@ -135,7 +128,7 @@ public class Argyle implements EntryPoint {
      * @param result
      *            the objects to be displayed
      */
-    public void displayBranchProducts(HashMap<String, BranchProduct> result) {
+    public void displayBranchProducts(HashSet<BranchProduct> result) {
 	if (result != null) {
 	    data.setBranchProducts(result);
 	}
@@ -224,9 +217,8 @@ public class Argyle implements EntryPoint {
 	this.webPage = webPage;
     }
 
-    public void setLocation(Position result) {
-	coords = new GPSCoords(result.getCoordinates().getLatitude(), result
-		.getCoordinates().getLongitude());
+    public void setLocation(GPSCoords gpsCoords) {
+	coords = gpsCoords; 
     }
 
     public GPSCoords getCoords() {

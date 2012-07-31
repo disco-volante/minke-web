@@ -21,23 +21,22 @@ public class ProductSearch extends FocusedPopupPanel {
     interface Binder extends UiBinder<Widget, ProductSearch> {
     }
 
-    private static final Binder	      binder = GWT.create(Binder.class);
+    private static final Binder binder = GWT.create(Binder.class);
     @UiField
-    Button				   productButton;
+    Button productButton, cancelButton;
     @UiField(provided = true)
-    SuggestBox			       productCategoryBox;
-    @UiField(provided = true)
-    SuggestBox			       cityBox;
+    SuggestBox productCategoryBox, cityBox;
 
-    private MultiWordSuggestOracle	   productCategoryOracle;
-    private MultiWordSuggestOracle	   cityOracle;
-    private WebPage			  webPage;
+    private MultiWordSuggestOracle productCategoryOracle;
+    private MultiWordSuggestOracle cityOracle;
+    private WebPage webPage;
     private HashMap<String, ProductCategory> productCategories;
-    private HashMap<String, City>	    cities;
+    private HashMap<String, City> cities;
 
-    public ProductSearch() {
+    public ProductSearch(WebPage webPage) {
 	super(false);
 	initSuggestBoxes();
+	this.webPage = webPage;
 	add(binder.createAndBindUi(this));
     }
 
@@ -80,8 +79,9 @@ public class ProductSearch extends FocusedPopupPanel {
 	}
     }
 
-    public void setWebPage(WebPage webPage) {
-	this.webPage = webPage;
+    @UiHandler("cancelButton")
+    void cancelClicked(ClickEvent event) {
+	hide();
     }
 
 }

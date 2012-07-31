@@ -12,7 +12,7 @@
 					title="Enter the category of the product you want to search for." />
 			</g:VerticalPanel>
 			<g:VerticalPanel>
-				<g:Label text="Location"/>
+				<g:Label text="Location" />
 				<g:SuggestBox ui:field="cityBox"
 					title="Enter the location of the product you want to search for." />
 			</g:VerticalPanel>
@@ -20,6 +20,9 @@
 		<g:HTMLPanel>
 			<br></br>
 		</g:HTMLPanel>
-		<g:Button ui:field='productButton' text="Get Products" />
+		<g:HorizontalPanel>
+			<g:Button ui:field='productButton' text="Get Products" />
+			<g:Button ui:field='cancelButton' text="Cancel" />
+		</g:HorizontalPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

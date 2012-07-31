@@ -9,25 +9,34 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Brand extends IsEntity {
     @Id
-    private Long   ID;
+    private Long   id;
     private String name;
 
     public Brand() {
     }
 
-    public Brand(long ID, String name) {
-	this.ID = ID;
+    public Brand(String name) {
+	super();
+	this.name = name;
+    }
+
+    public void setID(long id) {
+	this.id = id;
+    }
+
+    public void setName(String name) {
 	this.name = name;
     }
 
     public long getID() {
-	return ID;
+	return id;
     }
 
     public String getName() {
 	return name;
     }
-    public String toString(){
+
+    public String toString() {
 	return name;
     }
 

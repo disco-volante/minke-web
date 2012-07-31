@@ -1,6 +1,6 @@
 package za.ac.sun.cs.hons.argyle.server.dao;
 
-import za.ac.sun.cs.hons.argyle.server.entities.Store;
+import za.ac.sun.cs.hons.argyle.client.serialization.entities.store.Store;
 
 import com.googlecode.objectify.ObjectifyService;
 
@@ -11,8 +11,8 @@ public class StoreDAO extends ObjectifyDAO<Store> {
 
     }
 
-    protected StoreDAO(Class<Store> clazz) {
-	super(clazz);
+    public StoreDAO() {
+	super(Store.class);
     }
 
 }
