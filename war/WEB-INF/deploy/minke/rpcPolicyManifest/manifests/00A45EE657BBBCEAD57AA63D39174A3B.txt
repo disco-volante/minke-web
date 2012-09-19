@@ -1,2 +1,0 @@
-serviceClass: za.ac.sun.cs.hons.minke.client.rpc.LocationService
-path: 4BFD218360AFF430E4FCA146F5F3E7FF.gwt.rpc

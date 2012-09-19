@@ -1,2 +1,0 @@
-serviceClass: za.ac.sun.cs.hons.minke.client.rpc.ProductService
-path: 9D47A6CF56ED8C2B1877309FFB7CB379.gwt.rpc
