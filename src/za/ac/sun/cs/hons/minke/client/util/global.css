@@ -1,0 +1,95 @@
+body,table {
+	font-size: small;
+}
+
+body {
+	font-family: "Times New Roman", "MS Serif", "New York", serif;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #D6D8EA;
+	text-shadow: #fff 0 1px 1px;
+}
+
+body,html {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+h1 {
+	font: bold italic 5em/3em "Times New Roman", "MS Serif", "New York",
+		serif;
+	text-align: center;
+	margin: 0;
+	text-shadow: #fff 0 2px 2px;
+}
+
+h2 {
+	font: bold italic 2em/1em "Times New Roman", "MS Serif", "New York",
+		serif;
+	text-align: left;
+	margin: 0;
+	text-shadow: #fff 0 2px 2px;
+	padding: 2px 0 1px 10px;
+}
+
+h3 {
+	font: bold italic 1.5em/0.7em "Times New Roman", "MS Serif", "New York",
+		serif;
+	text-align: left;
+	margin: 0;
+	text-shadow: #fff 0 1px 1px;
+	padding: 1px 0 0.5px 5px;
+}
+
+a:link,a:visited,a:hover,a:active {
+	color: #000;
+}
+
+.gwt-PopupPanel {
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #D6D8EA;
+	background-color: #D6D8EA;
+}
+
+.ImageButton {
+	margin: 0;
+	padding: 0px 0px;
+	text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size: small;
+	border: 0px solid #D6D8EA;
+	border-bottom: 0px solid #D6D8EA;
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	background: #D6D8EA;
+	background-color: #D6D8EA;
+}
+
+.gwt-Button {
+	cursor: pointer;
+	cursor: hand;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #111721;
+	background: #9DAABB;
+	background-color: #9DAABB;
+}
+
+.gwt-Tree .gwt-TreeItem {
+	padding: 0;
+	cursor: pointer;
+	cursor: hand;
+	display: block !important;
+	font: bold italic "Times New Roman", "MS Serif", "New York", serif;
+	color: #646572;
+	background: #D6D8EA;
+	background-color: #D6D8EA;
+}
+
+.loader {
+  background-color: #000;
+  opacity: 0.3;
+}

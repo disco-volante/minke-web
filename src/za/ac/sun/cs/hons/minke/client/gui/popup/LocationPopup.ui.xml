@@ -1,0 +1,22 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	<g:FlowPanel>
+	    	            <g:HTML>
+<h3>Specify your location</h3>
+            <br>
+            </br>
+        </g:HTML>
+			<g:VerticalPanel>
+				<g:Label text="Location" />
+				<g:SuggestBox ui:field="locationBox"
+					title="Enter the location nearest to you." />
+			</g:VerticalPanel>
+		<g:HTMLPanel>
+			<br></br>
+		</g:HTMLPanel>
+		<g:HorizontalPanel>
+			<g:Button ui:field='mapButton' text="View Map" />
+			<g:Button ui:field='cancelButton' text="Cancel" />
+		</g:HorizontalPanel>
+	</g:FlowPanel>
+</ui:UiBinder>
