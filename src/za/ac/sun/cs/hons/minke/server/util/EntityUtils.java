@@ -444,6 +444,9 @@ public class EntityUtils {
      * 
      */
 	public static void addData() {
+		if(DAOService.categoryDAO.listAll().size() > 0){
+			return;
+		}
 		Category decafTea = new Category("Decaf Tea");
 		Category tea = new Category("Tea");
 		Category instantCoffee = new Category("Instant Coffee");

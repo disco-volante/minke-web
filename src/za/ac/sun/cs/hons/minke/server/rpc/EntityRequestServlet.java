@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +29,7 @@ import za.ac.sun.cs.hons.minke.server.util.EntityUtils;
 
 public class EntityRequestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	Logger log = Logger.getLogger("SERVER");
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -84,13 +88,14 @@ public class EntityRequestServlet extends HttpServlet {
 			ret =  EntityToXMLConverter
 					.convertBranchProducts(addBranchProduct(request));
 		} else if (requestType.equals("_brands")) {
-
 			ret = EntityToXMLConverter.convertBrands(EntityUtils.getBrands());
 		} else if (requestType.equals("price_branchproduct")) {
 			ret = EntityToXMLConverter
 					.convertBranchProducts(updateBranchProduct(request));
 
 		}
+		log.log(new LogRecord(Level.INFO, ret));
+		System.out.println(ret);
 		response.setContentType("text/xml");
 		response.setHeader("Cache-Control", "no-cache");
 		response.getWriter().write(ret);
@@ -152,6 +157,7 @@ public class EntityRequestServlet extends HttpServlet {
 		if (param != null) {
 			String[] sIds = request.getParameter(entityType).split(",");
 			for (String s : sIds) {
+				log.log(new LogRecord(Level.INFO,s));
 				if (s != null && s.matches("([1-9][0-9]*)")) {
 					ids.add(Long.parseLong(s));
 				}

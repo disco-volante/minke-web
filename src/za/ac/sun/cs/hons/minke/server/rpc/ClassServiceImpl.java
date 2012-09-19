@@ -2,6 +2,7 @@ package za.ac.sun.cs.hons.minke.server.rpc;
 
 import za.ac.sun.cs.hons.minke.client.rpc.ClassService;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
+import za.ac.sun.cs.hons.minke.server.util.EntityUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -17,7 +18,7 @@ public class ClassServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public boolean registerClasses() {
 		DAOService.init();
-		//EntityUtils.addData();
+		EntityUtils.addData();
 		return true;
 	}
 

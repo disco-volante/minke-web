@@ -1,7 +1,6 @@
 package za.ac.sun.cs.hons.minke.client.gui.graph;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
