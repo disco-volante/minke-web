@@ -8,7 +8,6 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocati
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
-
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;

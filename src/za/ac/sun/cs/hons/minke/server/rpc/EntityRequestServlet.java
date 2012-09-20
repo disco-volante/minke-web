@@ -34,6 +34,7 @@ public class EntityRequestServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
+		log.log(Level.INFO, request.toString());
 		String auth = request.getParameter("authority");
 		if (auth == null || !auth.equals("c5f4486abc034369842fc16a7b744085")) {
 			return;
@@ -85,7 +86,7 @@ public class EntityRequestServlet extends HttpServlet {
 				ret = EntityToXMLConverter.convert(bp, null);
 			}
 		} else if (requestType.equals("branchproduct_branchproduct")) {
-			ret =  EntityToXMLConverter
+			ret = EntityToXMLConverter
 					.convertBranchProducts(addBranchProduct(request));
 		} else if (requestType.equals("_brands")) {
 			ret = EntityToXMLConverter.convertBrands(EntityUtils.getBrands());
@@ -93,6 +94,8 @@ public class EntityRequestServlet extends HttpServlet {
 			ret = EntityToXMLConverter
 					.convertBranchProducts(updateBranchProduct(request));
 
+		} else if (requestType.equals("branch_branch")) {
+			ret = EntityToXMLConverter.convertBranches(addBranch(request));
 		}
 		log.log(new LogRecord(Level.INFO, ret));
 		System.out.println(ret);
@@ -101,7 +104,26 @@ public class EntityRequestServlet extends HttpServlet {
 		response.getWriter().write(ret);
 	}
 
-	private Map<BranchProduct, List<DatePrice>> updateBranchProduct(HttpServletRequest request) {
+	private Iterable<Branch> addBranch(HttpServletRequest request) {
+		String name = request.getParameter("name");
+		String store = request.getParameter("store");
+		String city = request.getParameter("city");
+		String province = request.getParameter("province");
+		String country = request.getParameter("country");
+		String slatitude = request.getParameter("latitude");
+		String slongitude = request.getParameter("longitude");
+		if (name != null && store != null && city != null && province != null
+				&& country != null && slatitude != null && slongitude != null) {
+			double latitude = Double.parseDouble(slatitude);
+			double longitude = Double.parseDouble(slongitude);
+			return EntityUtils.addBranch(name, store, city, province, country,
+					latitude, longitude);
+		}
+		return null;
+	}
+
+	private Map<BranchProduct, List<DatePrice>> updateBranchProduct(
+			HttpServletRequest request) {
 		String sid = request.getParameter("id");
 		String sprice = request.getParameter("price");
 		if (sid != null && sprice != null) {
@@ -113,27 +135,24 @@ public class EntityRequestServlet extends HttpServlet {
 		return null;
 	}
 
-	private Map<BranchProduct, List<DatePrice>> addBranchProduct(HttpServletRequest request) {
-		String param = request.getParameter("entity_type");
-		if (param != null && param.equals("branchproduct")) {
-			String product = request.getParameter("product");
-			String brand = request.getParameter("brand");
-			String sprice = request.getParameter("price");
-			String ssize = request.getParameter("size");
-			String sbarCode = request.getParameter("barcode");
-			String sbranchCode = request.getParameter("branchcode");
-			String measure = request.getParameter("measure");
-			if (product != null && brand != null && sprice != null
-					&& ssize != null && sbarCode != null && sbranchCode != null
-					&& measure != null) {
-				double price = Double.parseDouble(sprice);
-				double size = Double.parseDouble(ssize);
-				long barCode = Long.parseLong(sbarCode);
-				long branchCode = Long.parseLong(sbranchCode);
-				return EntityUtils
-						.addBranchProduct(product, brand, (int) (price * 100),
-								size, measure, barCode, branchCode);
-			}
+	private Map<BranchProduct, List<DatePrice>> addBranchProduct(
+			HttpServletRequest request) {
+
+		String product = request.getParameter("product");
+		String brand = request.getParameter("brand");
+		String sprice = request.getParameter("price");
+		String ssize = request.getParameter("size");
+		String sbarCode = request.getParameter("barcode");
+		String sbranchCode = request.getParameter("branchcode");
+		String measure = request.getParameter("measure");
+		if (product != null && brand != null && sprice != null && ssize != null
+				&& sbarCode != null && sbranchCode != null && measure != null) {
+			double price = Double.parseDouble(sprice);
+			double size = Double.parseDouble(ssize);
+			long barCode = Long.parseLong(sbarCode);
+			long branchCode = Long.parseLong(sbranchCode);
+			return EntityUtils.addBranchProduct(product, brand,
+					(int) (price * 100), size, measure, barCode, branchCode);
 		}
 		return null;
 	}
@@ -157,7 +176,7 @@ public class EntityRequestServlet extends HttpServlet {
 		if (param != null) {
 			String[] sIds = request.getParameter(entityType).split(",");
 			for (String s : sIds) {
-				log.log(new LogRecord(Level.INFO,s));
+				log.log(new LogRecord(Level.INFO, s));
 				if (s != null && s.matches("([1-9][0-9]*)")) {
 					ids.add(Long.parseLong(s));
 				}

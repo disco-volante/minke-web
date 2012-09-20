@@ -1,7 +1,7 @@
 package za.ac.sun.cs.hons.minke.client.gui.map;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
@@ -40,7 +40,7 @@ public class BranchLocation extends ResizeComposite  {
 	private boolean loaded;
 
 	protected LatLng center;
-	protected GPSArea origin, destination;
+	protected GPSCoords origin, destination;
 	private DirectionsMap map;
 	private WebPage webPage;
 	private Runnable mapBuilder = new Runnable() {
@@ -113,8 +113,8 @@ public class BranchLocation extends ResizeComposite  {
 	 * Initialises coordinates to default values.
 	 */
 	protected void initCoords() {
-		setMapCenter(new GPSArea(-33.9200, 18.8600));
-		setDirectionCoords(new GPSArea(-33.9200, 18.8600), new GPSArea(
+		setMapCenter(new GPSCoords(-33.9200, 18.8600));
+		setDirectionCoords(new GPSCoords(-33.9200, 18.8600), new GPSCoords(
 				-33.9447319, 18.8500055));
 	}
 
@@ -124,7 +124,7 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param origin
 	 * @param destination
 	 */
-	public void setDirectionCoords(GPSArea origin, GPSArea destination) {
+	public void setDirectionCoords(GPSCoords origin, GPSCoords destination) {
 		this.origin = origin;
 		this.destination = destination;
 	}
@@ -144,7 +144,7 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param gpsCoords
 	 *            the new map center.
 	 */
-	public void setMapCenter(GPSArea gpsCoords) {
+	public void setMapCenter(GPSCoords gpsCoords) {
 		if (isLoaded()) {
 			this.center = Utils.coordsConvert(gpsCoords);
 		}

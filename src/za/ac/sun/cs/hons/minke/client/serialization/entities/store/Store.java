@@ -1,5 +1,6 @@
 package za.ac.sun.cs.hons.minke.client.serialization.entities.store;
 
+
 import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 
 import com.googlecode.objectify.annotation.Subclass;

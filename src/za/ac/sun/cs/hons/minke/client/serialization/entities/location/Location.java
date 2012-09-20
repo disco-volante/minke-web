@@ -2,7 +2,7 @@ package za.ac.sun.cs.hons.minke.client.serialization.entities.location;
 
 import javax.persistence.Embedded;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 
 import com.googlecode.objectify.annotation.Subclass;
@@ -10,13 +10,13 @@ import com.googlecode.objectify.annotation.Subclass;
 @Subclass
 public class Location extends IsEntity {
 	@Embedded
-	private GPSArea coords;
+	private GPSCoords coords;
 	private String name;
 
 	public Location() {
 	};
 
-	public Location(String name, GPSArea coords) {
+	public Location(String name, GPSCoords coords) {
 		super();
 		this.setName(name);
 		this.setCoords(coords);
@@ -30,11 +30,11 @@ public class Location extends IsEntity {
 		this.name = name;
 	}
 
-	public GPSArea getCoords() {
+	public GPSCoords getCoords() {
 		return coords;
 	}
 
-	public void setCoords(GPSArea coords) {
+	public void setCoords(GPSCoords coords) {
 		this.coords = coords;
 	}
 

@@ -2,8 +2,6 @@ package za.ac.sun.cs.hons.minke.client.serialization.entities.location;
 
 import javax.persistence.Embedded;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
-
 import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass
@@ -15,8 +13,8 @@ public class Province extends Location {
 	public Province() {
 	}
 
-	public Province(String name, Country country, GPSArea coords) {
-		super(name, coords);
+	public Province(String name, Country country) {
+		super(name,null);
 		setCountry(country);
 	}
 

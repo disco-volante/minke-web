@@ -15,13 +15,11 @@ import za.ac.sun.cs.hons.minke.client.rpc.LocationService;
 import za.ac.sun.cs.hons.minke.client.rpc.LocationServiceAsync;
 import za.ac.sun.cs.hons.minke.client.rpc.ProductService;
 import za.ac.sun.cs.hons.minke.client.rpc.ProductServiceAsync;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Category;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.ProductCategory;
@@ -106,7 +104,7 @@ public class RPC {
 
 		@Override
 		public void onSuccess(Position result) {
-			system.setUserCoords(new GPSArea(result.getCoordinates().getLatitude(),
+			system.setUserCoords(new GPSCoords(result.getCoordinates().getLatitude(),
 					result.getCoordinates().getLongitude()));
 		}
 	};

@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
@@ -33,7 +32,7 @@ public class WebSystem implements EntryPoint {
 	public SystemData data;
 	private RPC rpcs;
 	private WebPage webPage;
-	private GPSArea userCoords, destCoords;
+	private GPSCoords userCoords, destCoords;
 
 	/**
 	 * Loads and initialises project.
@@ -247,15 +246,15 @@ public class WebSystem implements EntryPoint {
 		this.webPage = webPage;
 	}
 
-	public GPSArea getUserCoords() {
+	public GPSCoords getUserCoords() {
 		return userCoords;
 	}
 
-	public void setDestCoords(GPSArea gpsCoords) {
+	public void setDestCoords(GPSCoords gpsCoords) {
 		destCoords = gpsCoords;
 	}
 
-	public void setUserCoords(GPSArea gpsCoords) {
+	public void setUserCoords(GPSCoords gpsCoords) {
 		userCoords = gpsCoords;
 		
 	}

@@ -26,9 +26,9 @@ public class EntityToXMLConverter {
 		content.append(addTag("name", c.getName().replaceAll("&", "and")));
 		content.append(addTag("id", String.valueOf(c.getID())));
 		content.append(addTag("latitude",
-				String.valueOf(c.getCoords().getMinLatitude())));
+				String.valueOf(c.getCoords().getLatitude())));
 		content.append(addTag("longitude",
-				String.valueOf(c.getCoords().getMinLongitude())));
+				String.valueOf(c.getCoords().getLongitude())));
 		content.append(addTag("provinceName",
 				String.valueOf(c.getProvince().getName())));
 		content.append(addTag("countryName",
@@ -50,10 +50,6 @@ public class EntityToXMLConverter {
 		StringBuilder content = new StringBuilder();
 		content.append(addTag("name", p.getName().replaceAll("&", "and")));
 		content.append(addTag("id", String.valueOf(p.getID())));
-		content.append(addTag("latitude",
-				String.valueOf(p.getCoords().getMinLatitude())));
-		content.append(addTag("longitude",
-				String.valueOf(p.getCoords().getMinLongitude())));
 		content.append(addTag("countryName",
 				String.valueOf(p.getCountry().getName())));
 		String ret = addTag("province", content.toString());
@@ -73,10 +69,6 @@ public class EntityToXMLConverter {
 		StringBuilder content = new StringBuilder();
 		content.append(addTag("name", c.getName().replaceAll("&", "and")));
 		content.append(addTag("id", String.valueOf(c.getID())));
-		content.append(addTag("latitude",
-				String.valueOf(c.getCoords().getMinLatitude())));
-		content.append(addTag("longitude",
-				String.valueOf(c.getCoords().getMinLongitude())));
 		String ret = addTag("country", content.toString());
 		return ret;
 	}
@@ -199,11 +191,11 @@ public class EntityToXMLConverter {
 		content.append(addTag("name", b.getName()));
 		content.append(addTag("id", String.valueOf(b.getID())));
 		content.append(addTag("storeName", b.getStore().toString()));
-		content.append(addTag("cityName", b.getLocation().getCity().getName()));
+		content.append(addTag("cityName", b.getLocation().getCity().toString()));
 		content.append(addTag("latitude",
-				String.valueOf(b.getLocation().getCoords().getMinLatitude())));
+				String.valueOf(b.getLocation().getCoords().getLatitude())));
 		content.append(addTag("longitude",
-				String.valueOf(b.getLocation().getCoords().getMinLongitude())));
+				String.valueOf(b.getLocation().getCoords().getLongitude())));
 		if(products != null){
 			content.append(convertBranchProducts(products));
 		}

@@ -1,5 +1,6 @@
 package za.ac.sun.cs.hons.minke.server.util;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
@@ -273,12 +274,10 @@ public class EntityUtils {
 		List<Branch> all = DAOService.branchDAO.listAll();
 		TreeMap<Double, Branch> sorted = new TreeMap<Double, Branch>();
 		for (Branch b : all) {
-			double dist = Math
-					.sqrt(Math.pow(latitude
-							- b.getLocation().getCoords().getMinLatitude(), 2)
-							+ Math.pow(longitude
-									- b.getLocation().getCoords()
-											.getMinLongitude(), 2));
+			double dist = Math.sqrt(Math.pow(latitude
+					- b.getLocation().getCoords().getLatitude(), 2)
+					+ Math.pow(longitude
+							- b.getLocation().getCoords().getLongitude(), 2));
 			while (sorted.containsKey(dist)) {
 				dist += 0.000000001;
 			}
@@ -374,6 +373,47 @@ public class EntityUtils {
 		return bp;
 	}
 
+	public static Iterable<Branch> addBranch(String branchName,
+			String storeName, String cityName, String provinceName,
+			String countryName, double latitude, double longitude) {
+		City city;
+		Store store;
+		Country country;
+		Province province;
+		CityLocation loc;
+		GPSCoords coords = new GPSCoords(latitude, longitude);
+		city = DAOService.cityDAO.getByProperties(new String[] { "name" },
+				new Object[] { cityName });
+		if (city == null) {
+			province = DAOService.provinceDAO.getByProperties(
+					new String[] { "name" }, new Object[] { provinceName });
+			if (province == null) {
+				country = DAOService.countryDAO.getByProperties(
+						new String[] { "name" }, new Object[] { countryName });
+				if (country == null) {
+					country = new Country(countryName);
+					DAOService.countryDAO.add(country);
+				}
+				province = new Province(provinceName, country);
+				DAOService.provinceDAO.add(province);
+			}
+			city = new City(cityName, province, coords);
+			DAOService.cityDAO.add(city);
+
+		}
+		loc = new CityLocation(branchName, city, coords);
+		DAOService.cityLocationDAO.add(loc);
+		store = DAOService.storeDAO.getByProperties(new String[] { "name" },
+				new Object[] { storeName });
+		if (store == null) {
+			store = new Store(storeName);
+			DAOService.storeDAO.add(store);
+		}
+		Branch branch = new Branch(branchName, store, loc);
+		DAOService.branchDAO.add(branch);
+		return Arrays.asList(branch);
+	}
+
 	public static Map<BranchProduct, List<DatePrice>> addBranchProduct(
 			String productName, String brandName, int price, double size,
 			String measure, long barCode, long branchCode) {
@@ -444,7 +484,7 @@ public class EntityUtils {
      * 
      */
 	public static void addData() {
-		if(DAOService.categoryDAO.listAll().size() > 0){
+		if (DAOService.categoryDAO.listAll().size() > 0) {
 			return;
 		}
 		Category decafTea = new Category("Decaf Tea");
@@ -495,44 +535,49 @@ public class EntityUtils {
 				classicIC, ricoffyIC, ricoffyC, regularC, regularCB, arabicaC,
 				arabicaCB, classicoC, classicoCB);
 
-		Country sa = new Country("South Africa", new GPSArea(-33.9200, 18.8600));
-		DAOService.countryDAO.add(sa);
+		Country sa = new Country("South Africa");
+		Country nam = new Country("Namibia");
+		DAOService.countryDAO.add(sa, nam);
 		EntityNameMap countryIDMap = new EntityNameMap(EntityID.COUNTRY);
-		countryIDMap.add(sa);
-		Province wc = new Province("Western Cape", sa, new GPSArea(-33.9200,
-				18.8600));
-		Province gau = new Province("Gauteng", sa, new GPSArea(-33.9200,
-				18.8600));
-		DAOService.provinceDAO.add(wc, gau);
+		countryIDMap.add(sa, nam);
+		Province wc = new Province("Western Cape", sa);
+		Province gau = new Province("Gauteng", sa);
+		Province ec = new Province("Eastern Cape", sa);
+		Province nc = new Province("Northern Cape", sa);
+		Province lim = new Province("Limpopo Province", sa);
+		Province mp = new Province("Mpumalanga", sa);
+		Province nw = new Province("North-West", sa);
+		Province fs = new Province("Free State", sa);
+		Province nat = new Province("Kwa-Zulu Natal", sa);
+		DAOService.provinceDAO.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
 		EntityNameMap provinceIDMap = new EntityNameMap(EntityID.PROVINCE);
-		provinceIDMap.add(wc, gau);
-		City stellenbosch = new City("Stellenbosch", wc, new GPSArea(-33.9200,
-				18.8600));
-		City capeTown = new City("Cape Town", wc,
-				new GPSArea(-33.9767, 18.4244));
-		City somersetWest = new City("Somerset West", wc, new GPSArea(-34.0833,
-				18.8500));
-		City paarl = new City("Paarl", wc, new GPSArea(-33.7242, 18.9558));
-		City joburg = new City("Johannesburg", gau, new GPSArea(-26.2000,
+		provinceIDMap.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
+		City stellenbosch = new City("Stellenbosch", wc, new GPSCoords(
+				-33.9200, 18.8600));
+		City capeTown = new City("Cape Town", wc, new GPSCoords(-33.9767,
+				18.4244));
+		City somersetWest = new City("Somerset West", wc, new GPSCoords(
+				-34.0833, 18.8500));
+		City paarl = new City("Paarl", wc, new GPSCoords(-33.7242, 18.9558));
+		City joburg = new City("Johannesburg", gau, new GPSCoords(-26.2000,
 				28.0667));
-		City pretoria = new City("Pretoria", gau,
-				new GPSArea(-25.7256, 28.2439));
-
+		City pretoria = new City("Pretoria", gau, new GPSCoords(-25.7256,
+				28.2439));
 		DAOService.cityDAO.add(stellenbosch, capeTown, somersetWest, paarl,
 				joburg, pretoria);
 		EntityNameMap cityIDMap = new EntityNameMap(EntityID.CITY);
 		cityIDMap.add(stellenbosch, capeTown, somersetWest, paarl, joburg,
 				pretoria);
 		CityLocation dieBoord = new CityLocation("Die Boord", stellenbosch,
-				new GPSArea(-33.9447319, 18.8500055));
+				new GPSCoords(-33.9447319, 18.8500055));
 		CityLocation simonsrust = new CityLocation("Simonsrust", stellenbosch,
-				new GPSArea(-33.926617, 18.878612));
+				new GPSCoords(-33.926617, 18.878612));
 		CityLocation stellmark = new CityLocation("Stellmark", stellenbosch,
-				new GPSArea(-33.9319048, 18.8593215));
+				new GPSCoords(-33.9319048, 18.8593215));
 		CityLocation eikestad = new CityLocation("Eikestad", stellenbosch,
-				new GPSArea(-33.9359105, 18.860566));
+				new GPSCoords(-33.9359105, 18.860566));
 		CityLocation millstreet = new CityLocation("Mill Street", stellenbosch,
-				new GPSArea(-33.9383672, 18.8592785));
+				new GPSCoords(-33.9383672, 18.8592785));
 		DAOService.cityLocationDAO.add(dieBoord, simonsrust, stellmark,
 				eikestad, millstreet);
 		EntityNameMap cityLocIDMap = new EntityNameMap(EntityID.CITYLOCATION);

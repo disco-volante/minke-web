@@ -2,7 +2,7 @@ package za.ac.sun.cs.hons.minke.client.serialization.entities.location;
 
 import javax.persistence.Embedded;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 
 import com.googlecode.objectify.annotation.Subclass;
 
@@ -15,7 +15,7 @@ public class City extends Location {
 	public City() {
 	}
 
-	public City(String name, Province province, GPSArea coords) {
+	public City(String name, Province province, GPSCoords coords) {
 		super(name, coords);
 		setProvince(province);
 	}

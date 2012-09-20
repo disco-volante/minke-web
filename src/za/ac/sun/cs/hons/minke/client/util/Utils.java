@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSArea;
+import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
@@ -34,11 +34,11 @@ public class Utils {
 	 * @return a String containing the coordinates in a format the Maps API can
 	 *         use.
 	 */
-	public static String toDirections(GPSArea origin, GPSArea destination) {
-		return "from: " + origin.getMinLatitude() + ", "
-				+ origin.getMinLongitude() + " to: "
-				+ destination.getMinLatitude() + ", "
-				+ destination.getMinLongitude();
+	public static String toDirections(GPSCoords origin, GPSCoords destination) {
+		return "from: " + origin.getLatitude() + ", "
+				+ origin.getLongitude() + " to: "
+				+ destination.getLatitude() + ", "
+				+ destination.getLongitude();
 	}
 
 	/**
@@ -67,16 +67,16 @@ public class Utils {
 	 *            th
 	 * @return
 	 */
-	public static LatLng coordsConvert(GPSArea coords) {
-		return coordsConvert(coords.getMinLatitude(), coords.getMinLongitude());
+	public static LatLng coordsConvert(GPSCoords coords) {
+		return coordsConvert(coords.getLatitude(), coords.getLongitude());
 	}
 
 	public static LatLng coordsConvert(double latitude, double longitude) {
 		return LatLng.newInstance(latitude, longitude);
 	}
 
-	public static GPSArea coordsConvert(LatLng coords) {
-		return new GPSArea(coords.getLatitude(), coords.getLongitude());
+	public static GPSCoords coordsConvert(LatLng coords) {
+		return new GPSCoords(coords.getLatitude(), coords.getLongitude());
 	}
 
 	public static DataTable toDataTable(
