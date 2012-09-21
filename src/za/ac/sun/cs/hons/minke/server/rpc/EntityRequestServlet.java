@@ -29,12 +29,14 @@ import za.ac.sun.cs.hons.minke.server.util.EntityUtils;
 
 public class EntityRequestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static boolean initialised = false;
 	Logger log = Logger.getLogger("SERVER");
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.log(Level.INFO, request.toString());
+		initEntities();
 		String auth = request.getParameter("authority");
 		if (auth == null || !auth.equals("c5f4486abc034369842fc16a7b744085")) {
 			return;
@@ -98,10 +100,17 @@ public class EntityRequestServlet extends HttpServlet {
 			ret = EntityToXMLConverter.convertBranches(addBranch(request));
 		}
 		log.log(new LogRecord(Level.INFO, ret));
-		System.out.println(ret);
 		response.setContentType("text/xml");
 		response.setHeader("Cache-Control", "no-cache");
 		response.getWriter().write(ret);
+	}
+
+	private void initEntities() {
+		if (!initialised) {
+			DAOService.init();
+			EntityUtils.addData();
+			initialised = true;
+		}
 	}
 
 	private Iterable<Branch> addBranch(HttpServletRequest request) {
