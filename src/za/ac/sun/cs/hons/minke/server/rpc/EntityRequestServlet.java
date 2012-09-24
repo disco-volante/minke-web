@@ -93,8 +93,10 @@ public class EntityRequestServlet extends HttpServlet {
 		} else if (requestType.equals("_brands")) {
 			ret = EntityToXMLConverter.convertBrands(EntityUtils.getBrands());
 		} else if (requestType.equals("price_branchproduct")) {
-			ret = EntityToXMLConverter
-					.convertBranchProducts(updateBranchProduct(request));
+			Map<BranchProduct, List<DatePrice>> bps = updateBranchProduct(request);
+			if (bps != null) {
+				ret = EntityToXMLConverter.convertBranchProducts(bps);
+			}
 
 		} else if (requestType.equals("branch_branch")) {
 			ret = EntityToXMLConverter.convertBranches(addBranch(request));
@@ -138,8 +140,7 @@ public class EntityRequestServlet extends HttpServlet {
 		if (sid != null && sprice != null) {
 			long id = Long.parseLong(sid);
 			double price = Double.parseDouble(sprice);
-			EntityUtils.updateBranchProduct(id, (int) (price * 100));
-			return EntityUtils.getBranchProduct(id);
+			return EntityUtils.updateBranchProduct(id, (int) (price * 100));
 		}
 		return null;
 	}

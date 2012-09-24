@@ -1,16 +1,13 @@
 package za.ac.sun.cs.hons.minke.server.util;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
@@ -88,6 +85,12 @@ public class EntityUtils {
 
 			}
 		}
+		return getMatches(products, branchProducts);
+	}
+
+	private static HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> getMatches(
+			HashSet<Long> products,
+			HashMap<Branch, HashSet<BranchProduct>> branchProducts) {
 		HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> matches = new HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>>();
 		for (Entry<Branch, HashSet<BranchProduct>> b : branchProducts
 				.entrySet()) {
@@ -283,27 +286,7 @@ public class EntityUtils {
 			}
 			sorted.put(dist, b);
 		}
-		/*
-		 * SortedSet<Map.Entry<Branch, Double>> sortedEntries =
-		 * entriesSortedByValues(sorted); ArrayList<Branch> ordered = new
-		 * ArrayList<Branch>(sortedEntries.size()); for(Map.Entry<Branch,
-		 * Double> b : sortedEntries){ branches.add(b.getKey());
-		 * System.out.println(b); } System.out.println(ordered.size());
-		 */
 		return sorted.values();
-	}
-
-	static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(
-			Map<K, V> map) {
-		SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
-				new Comparator<Map.Entry<K, V>>() {
-					@Override
-					public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2) {
-						return e1.getValue().compareTo(e2.getValue());
-					}
-				});
-		sortedEntries.addAll(map.entrySet());
-		return sortedEntries;
 	}
 
 	public static HashSet<Branch> getCityLocationBranches(
@@ -452,7 +435,8 @@ public class EntityUtils {
 				new String[] { "branchProductID" }, new Object[] { bpID });
 	}
 
-	public static boolean updateBranchProduct(long id, int price) {
+	public static HashMap<BranchProduct, List<DatePrice>> updateBranchProduct(
+			long id, int price) {
 		BranchProduct bp;
 		try {
 			bp = DAOService.branchProductDAO.get(id);
@@ -460,12 +444,23 @@ public class EntityUtils {
 			DAOService.datePriceDAO.add(dp);
 			bp.setDatePrice(dp);
 			DAOService.branchProductDAO.add(bp);
-			return true;
+			return EntityUtils.getBranchProducts(bp.getProductID());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 
+	}
+
+	private static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+			long productID) {
+		List<BranchProduct> bps = DAOService.branchProductDAO.listByProperties(
+				new String[] { "productID" }, new Object[] { productID });
+		HashMap<BranchProduct, List<DatePrice>> bpMap = new HashMap<BranchProduct, List<DatePrice>>();
+		for (BranchProduct bp : bps) {
+			bpMap.put(bp, getDatePrices(bp.getID()));
+		}
+		return bpMap;
 	}
 
 	public static Map<BranchProduct, List<DatePrice>> getBranchProduct(long id) {
