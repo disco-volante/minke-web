@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
@@ -34,11 +33,11 @@ public class Utils {
 	 * @return a String containing the coordinates in a format the Maps API can
 	 *         use.
 	 */
-	public static String toDirections(GPSCoords origin, GPSCoords destination) {
-		return "from: " + origin.getLatitude() + ", "
-				+ origin.getLongitude() + " to: "
-				+ destination.getLatitude() + ", "
-				+ destination.getLongitude();
+	public static String toDirections(int lat_o, int lon_o, int lat_d, int lon_d) {
+		return "from: " + lat_o + ", "
+				+ lon_o + " to: "
+				+ lat_d + ", "
+				+ lon_d;
 	}
 
 	/**
@@ -60,24 +59,13 @@ public class Utils {
 		return total;
 	}
 
-	/**
-	 * Converts {@link GPSCoords} to a {@link LatLng}.
-	 * 
-	 * @param coords
-	 *            th
-	 * @return
-	 */
-	public static LatLng coordsConvert(GPSCoords coords) {
-		return coordsConvert(coords.getLatitude(), coords.getLongitude());
-	}
+	
 
 	public static LatLng coordsConvert(double latitude, double longitude) {
 		return LatLng.newInstance(latitude, longitude);
 	}
 
-	public static GPSCoords coordsConvert(LatLng coords) {
-		return new GPSCoords(coords.getLatitude(), coords.getLongitude());
-	}
+	
 
 	public static DataTable toDataTable(
 			HashMap<BranchProduct, List<DatePrice>> priceHistories) {

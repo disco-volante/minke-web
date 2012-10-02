@@ -1,7 +1,6 @@
 package za.ac.sun.cs.hons.minke.client.gui.map;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
@@ -40,14 +39,14 @@ public class BranchLocation extends ResizeComposite  {
 	private boolean loaded;
 
 	protected LatLng center;
-	protected GPSCoords origin, destination;
+	int lat_o,  lon_o,  lat_d,  lon_d;
 	private DirectionsMap map;
 	private WebPage webPage;
 	private Runnable mapBuilder = new Runnable() {
 		@Override
 		public void run() {
 			drawMap();
-			loadDirections(Utils.toDirections(origin, destination));
+			loadDirections(Utils.toDirections(lat_o,  lon_o,  lat_d,  lon_d));
 			centerMap(center);
 		}
 
@@ -113,9 +112,9 @@ public class BranchLocation extends ResizeComposite  {
 	 * Initialises coordinates to default values.
 	 */
 	protected void initCoords() {
-		setMapCenter(new GPSCoords(-33.9200, 18.8600));
-		setDirectionCoords(new GPSCoords(-33.9200, 18.8600), new GPSCoords(
-				-33.9447319, 18.8500055));
+		setMapCenter((int)(-33.9200*1E6), (int)(8.8600*1E6));
+		setDirectionCoords((int)(-33.9200*1E6), (int)(18.8600*1E6), 
+				 (int)(-33.9447319*1E6),  (int)(18.8500055*1E6));
 	}
 
 	/**
@@ -124,9 +123,12 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param origin
 	 * @param destination
 	 */
-	public void setDirectionCoords(GPSCoords origin, GPSCoords destination) {
-		this.origin = origin;
-		this.destination = destination;
+	public void setDirectionCoords(int lat_o, int lon_o, int lat_d, int lon_d) {
+		this.lat_o = lat_o;
+		this.lon_o = lon_o;
+		this.lat_d = lat_d;
+		this.lon_d = lon_d;
+
 	}
 
 	/**
@@ -144,17 +146,17 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param gpsCoords
 	 *            the new map center.
 	 */
-	public void setMapCenter(GPSCoords gpsCoords) {
+	public void setMapCenter(int lat, int lon) {
 		if (isLoaded()) {
-			this.center = Utils.coordsConvert(gpsCoords);
+			this.center = Utils.coordsConvert(lat, lon);
 		}
 
 	}
 
 	@UiHandler("correctionButton")
 	void correction(ClickEvent event) {
-		webPage.system.setUserCoords(null);
-		webPage.showMap(destination);
+		webPage.system.setUserCoords(0,0);
+		webPage.showMap(lat_d,  lon_d);
 	}
 
 	public boolean isLoaded() {

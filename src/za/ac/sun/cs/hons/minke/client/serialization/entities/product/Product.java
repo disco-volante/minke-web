@@ -76,4 +76,9 @@ public class Product extends IsEntity {
 	public String toString() {
 		return brand.getName() + " : " + name;
 	}
+
+	public void setBrandID(long id) {
+		this.brandID = id;
+
+	}
 }

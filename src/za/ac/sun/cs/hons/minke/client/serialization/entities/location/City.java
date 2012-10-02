@@ -2,8 +2,6 @@ package za.ac.sun.cs.hons.minke.client.serialization.entities.location;
 
 import javax.persistence.Embedded;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
-
 import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass
@@ -15,8 +13,8 @@ public class City extends Location {
 	public City() {
 	}
 
-	public City(String name, Province province, GPSCoords coords) {
-		super(name, coords);
+	public City(String name, Province province, int lat, int lon) {
+		super(name, lat, lon);
 		setProvince(province);
 	}
 
@@ -34,10 +32,14 @@ public class City extends Location {
 	public long getProvinceID() {
 		return provinceID;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName() + ", " + getProvince().toString();
+	}
+
+	public void setProvinceID(long provinceID) {
+		this.provinceID = provinceID;
 	}
 
 }

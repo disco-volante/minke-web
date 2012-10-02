@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
@@ -32,7 +31,7 @@ public class WebSystem implements EntryPoint {
 	public SystemData data;
 	private RPC rpcs;
 	private WebPage webPage;
-	private GPSCoords userCoords, destCoords;
+	private int lat_u, lon_u, lat_d, lon_d;
 
 	/**
 	 * Loads and initialises project.
@@ -127,7 +126,8 @@ public class WebSystem implements EntryPoint {
 	 * @param result
 	 *            the objects to be displayed
 	 */
-	public void displayBranchProducts(HashMap<BranchProduct, List<DatePrice>> result) {
+	public void displayBranchProducts(
+			HashMap<BranchProduct, List<DatePrice>> result) {
 		if (result != null) {
 			data.setBranchProducts(result);
 		}
@@ -141,7 +141,8 @@ public class WebSystem implements EntryPoint {
 	 * @param result
 	 *            the objects to be displayed
 	 */
-	public void displayBranches(HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> result) {
+	public void displayBranches(
+			HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> result) {
 		if (result != null) {
 			data.setBranches(result);
 		}
@@ -177,12 +178,12 @@ public class WebSystem implements EntryPoint {
 	}
 
 	public void displayLocation(Location result) {
-		userCoords = result.getCoords();
-		webPage.showMap(destCoords);
+		lat_u = result.getLat();
+		lon_u = result.getLon();
+		webPage.showMap(lat_d, lon_d);
 	}
 
-	public void displayHistories(
-			HashMap<BranchProduct, List<DatePrice>> result) {
+	public void displayHistories(HashMap<BranchProduct, List<DatePrice>> result) {
 		webPage.addHistories(result);
 	}
 
@@ -246,17 +247,23 @@ public class WebSystem implements EntryPoint {
 		this.webPage = webPage;
 	}
 
-	public GPSCoords getUserCoords() {
-		return userCoords;
+	public int getUserLat() {
+		return lat_u;
 	}
 
-	public void setDestCoords(GPSCoords gpsCoords) {
-		destCoords = gpsCoords;
+	public int getUserLon() {
+		return lon_u;
 	}
 
-	public void setUserCoords(GPSCoords gpsCoords) {
-		userCoords = gpsCoords;
-		
+	public void setDestCoords(int lat, int lon) {
+		lat_d = lat;
+		lon_d = lon;
+	}
+
+	public void setUserCoords(int lat, int lon) {
+		lat_u = lat;
+		lon_u = lon;
+
 	}
 
 }

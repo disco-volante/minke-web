@@ -1,10 +1,9 @@
 package za.ac.sun.cs.hons.minke.server.rpc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -14,18 +13,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Province;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Brand;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Category;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.product.ProductCategory;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
-import za.ac.sun.cs.hons.minke.server.util.EntityToXMLConverter;
-import za.ac.sun.cs.hons.minke.server.util.EntityUtils;
+import za.ac.sun.cs.hons.minke.server.utils.EntityUtils;
+import za.ac.sun.cs.hons.minke.server.utils.json.JSONBuilder;
+import za.ac.sun.cs.hons.minke.server.utils.json.JSONParser;
+
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public class EntityRequestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -37,74 +42,236 @@ public class EntityRequestServlet extends HttpServlet {
 			throws IOException, ServletException {
 		log.log(Level.INFO, request.toString());
 		initEntities();
-		String auth = request.getParameter("authority");
-		if (auth == null || !auth.equals("c5f4486abc034369842fc16a7b744085")) {
-			return;
-		}
 		String requestType = request.getParameter("type");
 		if (requestType == null) {
 			return;
 		}
-		String ret = "";
-		if (requestType.equals("_locations")) {
-			List<City> cities = DAOService.cityDAO.listAll();
-			List<Country> countries = DAOService.countryDAO.listAll();
-			List<Province> provinces = DAOService.provinceDAO.listAll();
-			ret = EntityToXMLConverter.convertLocations(cities, provinces,
-					countries);
-		} else if (requestType.equals("_products")) {
-			List<Product> products = DAOService.productDAO.listAll();
-			ret = EntityToXMLConverter.convertProducts(products);
-		} else if (requestType.equals("_categories")) {
-			List<Category> categories = DAOService.categoryDAO.listAll();
-			ret = EntityToXMLConverter.convertCategories(categories);
-		} else if (requestType.equals("locationcategory_branchproducts")) {
-			HashSet<Branch> branches = getBranches(request);
-			HashSet<Product> products = getProducts(request);
-			ret = EntityToXMLConverter.convertBranchProducts(EntityUtils
-					.getBranchProducts(products, branches));
-		} else if (requestType.equals("locationproduct_branchproducts")) {
-			HashSet<Branch> branches = getBranches(request);
-			HashSet<Long> products = getIDs(request, "product");
-			ret = EntityToXMLConverter.convertBranchProducts(EntityUtils
-					.getBranchProductsByID(products, branches));
-		} else if (requestType.equals("product_branches")) {
-			HashSet<Long> products = getIDs(request, "product");
-			HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> result = EntityUtils
-					.getProductBranches(products);
-			ret = EntityToXMLConverter.convertBranchShopping(result);
-
-		} else if (requestType.equals("coords_branches")) {
-			double latitude = getParams(request, "latitude");
-			double longitude = getParams(request, "longitude");
-			ret = EntityToXMLConverter.convertBranches(EntityUtils
-					.getCoordsBranches(latitude, longitude));
-		} else if (requestType.equals("branch_branchproduct")) {
-			Long branchCode = (long) getParams(request, "branch");
-			Long barCode = (long) getParams(request, "barcode");
-			BranchProduct bp = EntityUtils
-					.getBranchProduct(branchCode, barCode);
-			if (bp != null) {
-				ret = EntityToXMLConverter.convert(bp, null);
-			}
-		} else if (requestType.equals("branchproduct_branchproduct")) {
-			ret = EntityToXMLConverter
-					.convertBranchProducts(addBranchProduct(request));
-		} else if (requestType.equals("_brands")) {
-			ret = EntityToXMLConverter.convertBrands(EntityUtils.getBrands());
-		} else if (requestType.equals("price_branchproduct")) {
-			Map<BranchProduct, List<DatePrice>> bps = updateBranchProduct(request);
-			if (bps != null) {
-				ret = EntityToXMLConverter.convertBranchProducts(bps);
+		JSONObject obj = null;
+		if (requestType.equals("get_all")) {
+			try {
+				JSONObject cities = JSONBuilder.CitiestoJSON(DAOService.cityDAO
+						.listAll());
+				JSONObject countries = JSONBuilder
+						.CountriestoJSON(DAOService.countryDAO.listAll());
+				JSONObject provinces = JSONBuilder
+						.ProvincestoJSON(DAOService.provinceDAO.listAll());
+				JSONObject products = JSONBuilder
+						.ProductstoJSON(DAOService.productDAO.listAll());
+				JSONObject categories = JSONBuilder
+						.CategoriestoJSON(DAOService.categoryDAO.listAll());
+				JSONObject branches = JSONBuilder
+						.BranchestoJSON(DAOService.branchDAO.listAll());
+				JSONObject brands = JSONBuilder
+						.BrandstoJSON(DAOService.brandDAO.listAll());
+				JSONObject stores = JSONBuilder
+						.StorestoJSON(DAOService.storeDAO.listAll());
+				JSONObject cityLocations = JSONBuilder
+						.CityLocationstoJSON(DAOService.cityLocationDAO
+								.listAll());
+				JSONObject datePrices = JSONBuilder
+						.DatePricestoJSON(DAOService.datePriceDAO.listAll());
+				JSONObject branchProducts = JSONBuilder
+						.BranchProductstoJSON(DAOService.branchProductDAO
+								.listAll());
+				JSONObject productCategories = JSONBuilder
+						.ProductCategoriestoJSON(DAOService.productCategoryDAO
+								.listAll());
+				obj = JSONBuilder.toJSON(cities, countries, provinces,
+						products, categories, branches, stores, cityLocations,
+						branchProducts, datePrices, productCategories, brands);
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
 
-		} else if (requestType.equals("branch_branch")) {
-			ret = EntityToXMLConverter.convertBranches(addBranch(request));
+		} else if (requestType.equals("update_branchproduct")) {
+			try {
+				obj = JSONBuilder.toJSON(updateBranchProduct(request));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		log.log(new LogRecord(Level.INFO, ret));
-		response.setContentType("text/xml");
+		response.setContentType("application/json;charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
-		response.getWriter().write(ret);
+		log.log(new LogRecord(Level.INFO, obj.toString()));
+		try {
+			obj.write(response.getWriter());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		log.log(Level.INFO, request.toString());
+		initEntities();
+		String requestType = request.getParameter("type");
+		if (requestType == null) {
+			return;
+		}
+		log.log(new LogRecord(Level.INFO, requestType + " "
+				+ requestType.charAt(requestType.length() - 1)));
+		JSONObject obj = null;
+		JSONObject params;
+		try {
+			params = getJSON(request);
+			if (requestType.startsWith("create_branchproduct")) {
+				obj = createBranchProduct(Integer.parseInt(requestType
+						.substring(requestType.length() - 1)), params);
+			} else if (requestType.startsWith("create_branch")) {
+				obj = createBranch(Integer.parseInt(requestType
+						.substring(requestType.length() - 1)), params);
+			} else if (requestType.startsWith("get_product")) {
+				obj = getProduct(params);
+			} else if (requestType.startsWith("get_branchproduct")) {
+				obj = getBranchProduct(params);
+			}
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		response.setContentType("application/json;charset=UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		if (obj != null) {
+			log.log(new LogRecord(Level.INFO, obj.toString()));
+			try {
+				obj.write(response.getWriter());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log.log(new LogRecord(Level.INFO, "ERROR"));
+			response.getWriter().write("ERROR");
+		}
+
+	}
+
+	private JSONObject getBranchProduct(JSONObject params) throws JSONException {
+		long productId = JSONParser.parseLong(params, "productId");
+		long branchId = JSONParser.parseLong(params, "branchId");
+		BranchProduct bp = EntityUtils.getBranchProduct(productId, branchId);
+		if (bp == null) {
+			return null;
+		}
+		return JSONBuilder.toJSON(bp);
+	}
+
+	private JSONObject getProduct(JSONObject params) throws JSONException {
+		long productId = JSONParser.parseLong(params, "productId");
+		Product p = EntityUtils.getProduct(productId);
+		if (p == null) {
+			return null;
+		}
+		return JSONBuilder.toJSON(p);
+	}
+
+	private JSONObject createBranchProduct(int type, JSONObject params)
+			throws JSONException {
+		Branch branch = JSONParser.parseBranch(params.getJSONObject("branch"));
+		Category category = null;
+		Brand brand = null;
+		if (type == 0 || type == 1) {
+			brand = JSONParser.parseBrand(params.getJSONObject("brand"));
+		}
+		if (type == 0 || type == 2) {
+			category = JSONParser.parseCategory(params
+					.getJSONObject("category"));
+		} else {
+			category = new Category(params.getJSONObject("branchProductProto")
+					.getString("categoryName"));
+			category.setID(0L);
+		}
+		Object[] ret = EntityUtils.addBranchProduct(JSONParser
+				.parseBranchProductProto(
+						params.getJSONObject("branchProductProto"), branch,
+						brand), category);
+
+		BranchProduct branchProduct = (BranchProduct) ret[0];
+		Product product = branchProduct.getProduct();
+		brand = product.getBrand();
+		ProductCategory pc = (ProductCategory) ret[1];
+		category = pc.getCategory();
+		DatePrice dp = branchProduct.getDatePrice();
+		if (type == 0) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branchProduct),
+					JSONBuilder.toJSON(dp), JSONBuilder.toJSON(product),
+					JSONBuilder.toJSON(pc));
+		} else if (type == 1) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branchProduct),
+					JSONBuilder.toJSON(dp), JSONBuilder.toJSON(product),
+					JSONBuilder.toJSON(pc), JSONBuilder.toJSON(category));
+		} else if (type == 2) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branchProduct),
+					JSONBuilder.toJSON(dp), JSONBuilder.toJSON(product),
+					JSONBuilder.toJSON(pc), JSONBuilder.toJSON(brand));
+		} else {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branchProduct),
+					JSONBuilder.toJSON(dp), JSONBuilder.toJSON(product),
+					JSONBuilder.toJSON(pc), JSONBuilder.toJSON(category),
+					JSONBuilder.toJSON(brand));
+		}
+	}
+
+	private JSONObject createBranch(int type, JSONObject params)
+			throws JSONException {
+		log.log(new LogRecord(Level.INFO, String.valueOf(type)));
+		System.out.println(params.toString());
+		System.out.println(type);
+		Store store = null;
+		City city = null;
+		Province province = null;
+		if (type == 0 || type == 2) {
+			store = JSONParser.parseStore(params.getJSONObject("store"));
+		}
+		if (type == 0 || type == 1) {
+			city = JSONParser.parseCity(params.getJSONObject("city"));
+		}
+		if (type == 2 || type == 3) {
+			province = JSONParser.parseProvince(params
+					.getJSONObject("province"));
+		}
+		Branch branch = EntityUtils.addBranch(JSONParser.parseBranchProto(
+				params.getJSONObject("branchProto"), city, province, store));
+		CityLocation loc = branch.getLocation();
+		store = branch.getStore();
+		city = loc.getCity();
+		if (type == 0) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branch),
+					JSONBuilder.toJSON(loc));
+		} else if (type == 1) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branch),
+					JSONBuilder.toJSON(loc), JSONBuilder.toJSON(store));
+		} else if (type == 2) {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branch),
+					JSONBuilder.toJSON(loc), JSONBuilder.toJSON(city));
+		} else {
+			return JSONBuilder.toJSON(JSONBuilder.toJSON(branch),
+					JSONBuilder.toJSON(loc), JSONBuilder.toJSON(store),
+					JSONBuilder.toJSON(city));
+		}
+
+	}
+
+	private JSONObject getJSON(HttpServletRequest request) throws IOException,
+			JSONException {
+		InputStream inputstream = request.getInputStream();
+		String resultstring = convertStreamToString(inputstream);
+		inputstream.close();
+		return new JSONObject(resultstring);
+	}
+
+	private static String convertStreamToString(InputStream is) {
+		String line = "";
+		StringBuilder total = new StringBuilder();
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		try {
+			while ((line = rd.readLine()) != null) {
+				total.append(line);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return total.toString();
 	}
 
 	private void initEntities() {
@@ -115,96 +282,15 @@ public class EntityRequestServlet extends HttpServlet {
 		}
 	}
 
-	private Iterable<Branch> addBranch(HttpServletRequest request) {
-		String name = request.getParameter("name");
-		String store = request.getParameter("store");
-		String city = request.getParameter("city");
-		String province = request.getParameter("province");
-		String country = request.getParameter("country");
-		String slatitude = request.getParameter("latitude");
-		String slongitude = request.getParameter("longitude");
-		if (name != null && store != null && city != null && province != null
-				&& country != null && slatitude != null && slongitude != null) {
-			double latitude = Double.parseDouble(slatitude);
-			double longitude = Double.parseDouble(slongitude);
-			return EntityUtils.addBranch(name, store, city, province, country,
-					latitude, longitude);
-		}
-		return null;
-	}
-
-	private Map<BranchProduct, List<DatePrice>> updateBranchProduct(
-			HttpServletRequest request) {
+	private BranchProduct updateBranchProduct(HttpServletRequest request) {
 		String sid = request.getParameter("id");
 		String sprice = request.getParameter("price");
 		if (sid != null && sprice != null) {
 			long id = Long.parseLong(sid);
-			double price = Double.parseDouble(sprice);
-			return EntityUtils.updateBranchProduct(id, (int) (price * 100));
+			int price = Integer.parseInt(sprice);
+			return EntityUtils.updateBranchProduct(id, price);
 		}
 		return null;
-	}
-
-	private Map<BranchProduct, List<DatePrice>> addBranchProduct(
-			HttpServletRequest request) {
-
-		String product = request.getParameter("product");
-		String brand = request.getParameter("brand");
-		String sprice = request.getParameter("price");
-		String ssize = request.getParameter("size");
-		String sbarCode = request.getParameter("barcode");
-		String sbranchCode = request.getParameter("branchcode");
-		String measure = request.getParameter("measure");
-		if (product != null && brand != null && sprice != null && ssize != null
-				&& sbarCode != null && sbranchCode != null && measure != null) {
-			double price = Double.parseDouble(sprice);
-			double size = Double.parseDouble(ssize);
-			long barCode = Long.parseLong(sbarCode);
-			long branchCode = Long.parseLong(sbranchCode);
-			return EntityUtils.addBranchProduct(product, brand,
-					(int) (price * 100), size, measure, barCode, branchCode);
-		}
-		return null;
-	}
-
-	private HashSet<Product> getProducts(HttpServletRequest request) {
-		HashSet<Long> categoryIds = getIDs(request, "category");
-		return EntityUtils.getProducts(categoryIds);
-	}
-
-	private HashSet<Branch> getBranches(HttpServletRequest request) {
-		HashMap<EntityID, HashSet<Long>> locIds = new HashMap<EntityID, HashSet<Long>>();
-		locIds.put(EntityID.CITY, getIDs(request, "city"));
-		locIds.put(EntityID.PROVINCE, getIDs(request, "province"));
-		locIds.put(EntityID.COUNTRY, getIDs(request, "country"));
-		return EntityUtils.getLocationBranches(locIds);
-	}
-
-	private HashSet<Long> getIDs(HttpServletRequest request, String entityType) {
-		String param = request.getParameter(entityType);
-		HashSet<Long> ids = new HashSet<Long>();
-		if (param != null) {
-			String[] sIds = request.getParameter(entityType).split(",");
-			for (String s : sIds) {
-				log.log(new LogRecord(Level.INFO, s));
-				if (s != null && s.matches("([1-9][0-9]*)")) {
-					ids.add(Long.parseLong(s));
-				}
-			}
-		}
-		return ids;
-	}
-
-	private double getParams(HttpServletRequest request, String entityType) {
-		String param = request.getParameter(entityType);
-		if (param != null) {
-			for (String s : request.getParameter(entityType).split(",")) {
-				if (s.matches("([1-9][0-9]*)+(\\.[0-9]+)?")) {
-					return Double.parseDouble(s);
-				}
-			}
-		}
-		return 0;
 	}
 
 }

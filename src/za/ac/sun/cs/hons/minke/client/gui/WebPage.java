@@ -18,7 +18,6 @@ import za.ac.sun.cs.hons.minke.client.gui.table.BranchList;
 import za.ac.sun.cs.hons.minke.client.gui.table.ProductList;
 import za.ac.sun.cs.hons.minke.client.gui.table.TableView;
 import za.ac.sun.cs.hons.minke.client.gui.table.TableView.TABLE;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
@@ -226,13 +225,13 @@ public class WebPage {
 	 * @param gpsCoords
 	 *            the {@link Location} the user wants to get directions to.
 	 */
-	public void showMap(GPSCoords gpsCoords) {
-		system.setDestCoords(gpsCoords);
-		if (system.getUserCoords() == null) {
+	public void showMap(int lat, int lon) {
+		system.setDestCoords(lat, lon);
+		if (system.getUserLat() == 0 && system.getUserLon() == 0) {
 			locationPopup.center();
 		} else {
-			storeLocation.setMapCenter(gpsCoords);
-			storeLocation.setDirectionCoords(system.getUserCoords(), gpsCoords);
+			storeLocation.setMapCenter(lat, lon);
+			storeLocation.setDirectionCoords(system.getUserLat(),system.getUserLon(), lat, lon);
 			storeLocation.draw();
 			showMap();
 		}

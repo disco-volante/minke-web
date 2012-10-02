@@ -14,7 +14,7 @@ public class Province extends Location {
 	}
 
 	public Province(String name, Country country) {
-		super(name,null);
+		super(name, 0, 0);
 		setCountry(country);
 	}
 
@@ -36,6 +36,10 @@ public class Province extends Location {
 	@Override
 	public String toString() {
 		return getName() + ", " + getCountry().toString();
+	}
+
+	public void setCountryID(long countryID) {
+		this.countryID = countryID;
 	}
 
 }

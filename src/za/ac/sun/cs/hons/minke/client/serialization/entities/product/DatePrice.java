@@ -26,6 +26,10 @@ public class DatePrice extends IsEntity implements Comparable<DatePrice> {
 		this.date = (Date) date.clone();
 	}
 
+	public void setDate(long time) {
+		this.date = new Date(time);
+	}
+
 	public void setPrice(int price) {
 		this.price = price;
 	}
@@ -33,9 +37,11 @@ public class DatePrice extends IsEntity implements Comparable<DatePrice> {
 	public Date getDate() {
 		return (Date) date.clone();
 	}
+
 	public double getActualPrice() {
-		return (double)price/100;
+		return (double) price / 100;
 	}
+
 	public int getPrice() {
 		return price;
 	}

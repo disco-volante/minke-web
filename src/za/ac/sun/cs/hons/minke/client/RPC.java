@@ -15,7 +15,6 @@ import za.ac.sun.cs.hons.minke.client.rpc.LocationService;
 import za.ac.sun.cs.hons.minke.client.rpc.LocationServiceAsync;
 import za.ac.sun.cs.hons.minke.client.rpc.ProductService;
 import za.ac.sun.cs.hons.minke.client.rpc.ProductServiceAsync;
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
@@ -99,16 +98,16 @@ public class RPC {
 	protected class GeoCallback implements Callback<Position, PositionError> {
 		@Override
 		public void onFailure(PositionError caught) {
-			system.setUserCoords(null);
+			system.setUserCoords(0, 0);
 		}
 
 		@Override
 		public void onSuccess(Position result) {
-			system.setUserCoords(new GPSCoords(result.getCoordinates().getLatitude(),
-					result.getCoordinates().getLongitude()));
+			system.setUserCoords(
+					(int) (result.getCoordinates().getLatitude() * 1E6),
+					(int) (result.getCoordinates().getLongitude() * 1E6));
 		}
 	};
-
 
 	/**
 	 * {@link AsyncCallback} implementation for registering classes with
@@ -121,7 +120,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Startup Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Startup Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -143,7 +143,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -165,7 +166,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -174,7 +176,7 @@ public class RPC {
 			system.displayLocations(result);
 		}
 	};
-	
+
 	/**
 	 * {@link AsyncCallback} implementation for getting {@link City} objects
 	 * from the db.
@@ -182,12 +184,12 @@ public class RPC {
 	 * @author godfried
 	 * 
 	 */
-	protected class LocationAsyncCallback implements
-			AsyncCallback<Location> {
+	protected class LocationAsyncCallback implements AsyncCallback<Location> {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -197,8 +199,6 @@ public class RPC {
 			system.displayLocation(result);
 		}
 	};
-	
-
 
 	/**
 	 * {@link AsyncCallback} implementation for getting {@link Product} objects
@@ -212,7 +212,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -234,7 +235,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Something went wrong, please reopen this page.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
 		}
 
@@ -251,17 +253,20 @@ public class RPC {
 	 * @author godfried
 	 * 
 	 */
-	protected class BranchProductAsyncCallback2 implements
+	protected class BranchProductAsyncCallback2
+			implements
 			AsyncCallback<HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>>> {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Your request was unsuccessful, please try again.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Your request was unsuccessful, please try again.");
 			caught.printStackTrace();
 		}
 
 		@Override
-		public void onSuccess(HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> result) {
+		public void onSuccess(
+				HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> result) {
 			system.displayBranches(result);
 		}
 	}
@@ -278,7 +283,8 @@ public class RPC {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
-			GuiUtils.showError("Data Retrieval Error", "Your request was unsuccessful, please try again.");
+			GuiUtils.showError("Data Retrieval Error",
+					"Your request was unsuccessful, please try again.");
 			caught.printStackTrace();
 		}
 
@@ -318,14 +324,14 @@ public class RPC {
 		prodSvc.getProducts(new ProductAsyncCallback());
 	}
 
-	public void getBranchProductsP(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> p) {
-		brProdSvc.getBranchProductsP(l, p,
-				new BranchProductAsyncCallback1());
+	public void getBranchProductsP(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> p) {
+		brProdSvc.getBranchProductsP(l, p, new BranchProductAsyncCallback1());
 	}
 
-	public void getBranchProductsC(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> c) {
-		brProdSvc.getBranchProductsC(l, c,
-				new BranchProductAsyncCallback1());
+	public void getBranchProductsC(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> c) {
+		brProdSvc.getBranchProductsC(l, c, new BranchProductAsyncCallback1());
 	}
 
 	/**
@@ -355,8 +361,7 @@ public class RPC {
 	}
 
 	public void getLocation(Long locID) {
-		locSvc.getLocation(locID,
-				new LocationAsyncCallback());		
+		locSvc.getLocation(locID, new LocationAsyncCallback());
 	}
 
 }

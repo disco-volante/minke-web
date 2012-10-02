@@ -5,18 +5,19 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.util.ImageUtils;
 
 public class MapButton extends ImageButton {
-    private WebPage webPage;
-    private Object item;
-    public MapButton(final Object item, WebPage webPage) {
-	super(ImageUtils.getImages().map());
-	this.item = item;
-	this.webPage = webPage;
-    }
+	private WebPage webPage;
+	private Object item;
 
-    @Override
-    protected void clickAction() {
-	Branch branch = (Branch) item;
-	webPage.showMap(branch.getLocation().getCoords());
-    }
+	public MapButton(final Object item, WebPage webPage) {
+		super(ImageUtils.getImages().map());
+		this.item = item;
+		this.webPage = webPage;
+	}
+
+	@Override
+	protected void clickAction() {
+		Branch branch = (Branch) item;
+		webPage.showMap(branch.getLocation().getLat(), branch.getLocation().getLon());
+	}
 
 }

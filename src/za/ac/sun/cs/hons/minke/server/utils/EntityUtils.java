@@ -1,6 +1,5 @@
-package za.ac.sun.cs.hons.minke.server.util;
+package za.ac.sun.cs.hons.minke.server.utils;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import za.ac.sun.cs.hons.minke.client.serialization.GPSCoords;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
@@ -28,6 +26,7 @@ import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.NotFoundException;
 
 public class EntityUtils {
 
@@ -123,11 +122,36 @@ public class EntityUtils {
 		return branches;
 	}
 
+	public static HashSet<Branch> getCountryBranches(Iterable<Country> countries) {
+		HashSet<Branch> branches = new HashSet<Branch>();
+		if (countries != null) {
+			for (Country c : countries) {
+				String[] propNames = new String[] { "countryID" };
+				Object[] propValues = new Object[] { c.getID() };
+				List<Key<Province>> provinces = DAOService.provinceDAO
+						.listKeysByProperties(propNames, propValues);
+				branches.addAll(getProvinceBranches(provinces));
+			}
+		}
+		return branches;
+	}
+
 	public static HashSet<Branch> getProvinceBranches(List<Key<Province>> locs) {
 		HashSet<Branch> branches = new HashSet<Branch>();
 		if (locs != null) {
 			for (Key<Province> key : locs) {
 				branches.addAll(getProvinceBranches(key.getId()));
+			}
+		}
+		return branches;
+	}
+
+	public static HashSet<Branch> getProvinceBranches(
+			Iterable<Province> provinces) {
+		HashSet<Branch> branches = new HashSet<Branch>();
+		if (provinces != null) {
+			for (Province p : provinces) {
+				branches.addAll(getProvinceBranches(p.getID()));
 			}
 		}
 		return branches;
@@ -150,6 +174,16 @@ public class EntityUtils {
 		List<Key<City>> cities = DAOService.cityDAO.listKeysByProperties(
 				propNames, propValues);
 		branches.addAll(getCityBranches(cities));
+		return branches;
+	}
+
+	public static HashSet<Branch> getCityBranches(Iterable<City> cities) {
+		HashSet<Branch> branches = new HashSet<Branch>();
+		if (cities != null) {
+			for (City c : cities) {
+				branches.addAll(getCityBranches(c.getID()));
+			}
+		}
 		return branches;
 	}
 
@@ -178,13 +212,38 @@ public class EntityUtils {
 	 * @param categories
 	 * @return
 	 */
-	public static HashSet<Product> getProducts(HashSet<Long> categories) {
+	public static HashSet<Product> getProductsByID(Iterable<Long> categories) {
 		List<ProductCategory> productCategories = null;
 		HashSet<Product> products = new HashSet<Product>();
 		if (categories != null) {
 			for (long id : categories) {
 				String[] propNames = new String[] { "categoryID" };
 				Object[] propValues = new Object[] { id };
+				productCategories = DAOService.productCategoryDAO
+						.listByProperties(propNames, propValues);
+				for (ProductCategory pc : productCategories) {
+					try {
+						Product p = DAOService.productDAO
+								.get(pc.getProductID());
+						if (p != null) {
+							products.add(p);
+						}
+					} catch (EntityNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return products;
+	}
+
+	public static HashSet<Product> getProducts(Iterable<Category> categories) {
+		List<ProductCategory> productCategories = null;
+		HashSet<Product> products = new HashSet<Product>();
+		if (categories != null) {
+			for (Category c : categories) {
+				String[] propNames = new String[] { "categoryID" };
+				Object[] propValues = new Object[] { c.getID() };
 				productCategories = DAOService.productCategoryDAO
 						.listByProperties(propNames, propValues);
 				for (ProductCategory pc : productCategories) {
@@ -278,9 +337,8 @@ public class EntityUtils {
 		TreeMap<Double, Branch> sorted = new TreeMap<Double, Branch>();
 		for (Branch b : all) {
 			double dist = Math.sqrt(Math.pow(latitude
-					- b.getLocation().getCoords().getLatitude(), 2)
-					+ Math.pow(longitude
-							- b.getLocation().getCoords().getLongitude(), 2));
+					- b.getLocation().getLat(), 2)
+					+ Math.pow(longitude - b.getLocation().getLon(), 2));
 			while (sorted.containsKey(dist)) {
 				dist += 0.000000001;
 			}
@@ -326,19 +384,20 @@ public class EntityUtils {
 		return DAOService.brandDAO.listAll();
 	}
 
-	public static BranchProduct getBranchProduct(Long branchCode, Long barCode) {
-		if (barCode.equals(0)) {
+	public static BranchProduct getBranchProduct(long productId, long branchId) {
+		if (productId == 0L || productId == 0 || branchId == 0L
+				|| branchId == 0) {
 			return null;
 		}
-		Object[] propValues = new Object[] { barCode, branchCode };
+		Object[] propValues = new Object[] { productId, branchId };
 		String[] propNames = new String[] { "productID", "branchID" };
 		BranchProduct bp = DAOService.branchProductDAO.getByProperties(
 				propNames, propValues);
 		if (bp == null) {
 			Product product;
 			try {
-				product = DAOService.productDAO.get(barCode);
-				Branch branch = DAOService.branchDAO.get(branchCode);
+				product = DAOService.productDAO.get(productId);
+				Branch branch = DAOService.branchDAO.get(branchId);
 				if (product != null && branch != null) {
 					DatePrice dp = new DatePrice(new Date(), 0, 0);
 					bp = new BranchProduct(product, branch, null);
@@ -350,84 +409,62 @@ public class EntityUtils {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				return null;
 			}
 
 		}
 		return bp;
 	}
 
-	public static Iterable<Branch> addBranch(String branchName,
-			String storeName, String cityName, String provinceName,
-			String countryName, double latitude, double longitude) {
-		City city;
-		Store store;
-		Country country;
-		Province province;
-		CityLocation loc;
-		GPSCoords coords = new GPSCoords(latitude, longitude);
-		city = DAOService.cityDAO.getByProperties(new String[] { "name" },
-				new Object[] { cityName });
-		if (city == null) {
-			province = DAOService.provinceDAO.getByProperties(
-					new String[] { "name" }, new Object[] { provinceName });
-			if (province == null) {
-				country = DAOService.countryDAO.getByProperties(
-						new String[] { "name" }, new Object[] { countryName });
-				if (country == null) {
-					country = new Country(countryName);
-					DAOService.countryDAO.add(country);
-				}
-				province = new Province(provinceName, country);
-				DAOService.provinceDAO.add(province);
-			}
-			city = new City(cityName, province, coords);
-			DAOService.cityDAO.add(city);
-
+	public static Branch addBranch(Branch branch) {
+		if (branch.getStore().getID() == 0L) {
+			branch.setStore(DAOService.storeDAO.get(DAOService.storeDAO
+					.add(new Store(branch.getStore().getName()))));
 		}
-		loc = new CityLocation(branchName, city, coords);
-		DAOService.cityLocationDAO.add(loc);
-		store = DAOService.storeDAO.getByProperties(new String[] { "name" },
-				new Object[] { storeName });
-		if (store == null) {
-			store = new Store(storeName);
-			DAOService.storeDAO.add(store);
+		if (branch.getLocation().getCity().getID() == 0L) {
+			branch.getLocation().setCity(
+					DAOService.cityDAO.get(DAOService.cityDAO.add(new City(
+							branch.getLocation().getCity().getName(), branch
+									.getLocation().getCity().getProvince(),
+							branch.getLocation().getCity().getLat(), branch
+									.getLocation().getCity().getLon()))));
 		}
-		Branch branch = new Branch(branchName, store, loc);
-		DAOService.branchDAO.add(branch);
-		return Arrays.asList(branch);
+		branch.setLocation(DAOService.cityLocationDAO
+				.get(DAOService.cityLocationDAO.add(new CityLocation(branch
+						.getLocation().getName(), branch.getLocation()
+						.getCity(), branch.getLocation().getLat(), branch
+						.getLocation().getLon()))));
+		return DAOService.branchDAO.get(DAOService.branchDAO.add(new Branch(
+				branch.getName(), branch.getStore(), branch.getLocation())));
 	}
 
-	public static Map<BranchProduct, List<DatePrice>> addBranchProduct(
-			String productName, String brandName, int price, double size,
-			String measure, long barCode, long branchCode) {
-		Product product;
-		Branch branch;
-		try {
-			product = DAOService.productDAO.get(barCode);
-		} catch (Exception e) {
-			Brand brand = DAOService.brandDAO.getByProperties(
-					new String[] { "name" }, new Object[] { brandName });
-			if (brand == null) {
-				brand = new Brand(brandName);
-				DAOService.brandDAO.add(brand);
-			}
-			product = new Product(productName, brand, size, measure);
-			product.setID(barCode);
-			DAOService.productDAO.add(product);
+	public static Object[] addBranchProduct(BranchProduct bp, Category category) {
+		if (category.getID() == 0L) {
+			category = DAOService.categoryDAO.get(DAOService.categoryDAO
+					.add(new Category(category.getName())));
 		}
-		try {
-			branch = DAOService.branchDAO.get(branchCode);
-		} catch (Exception e) {
-			return null;
+		if (bp.getProduct().getBrand().getID() == 0L) {
+			bp.getProduct().setBrand(
+					DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(
+							bp.getProduct().getBrand().getName()))));
 		}
-		DatePrice dp = new DatePrice(new Date(), price, 0);
-		BranchProduct bp = new BranchProduct(product, branch, null);
-		DAOService.branchProductDAO.add(bp);
-		dp.setBranchProductID(bp.getID());
-		DAOService.datePriceDAO.add(dp);
+		Product p = bp.getProduct();
+		bp.setProduct(DAOService.productDAO.get(DAOService.productDAO
+				.add(new Product(p.getName(), p.getBrand(), p.getSize(), p
+						.getMeasurement()))));
+		ProductCategory pc = DAOService.productCategoryDAO
+				.get(DAOService.productCategoryDAO.add(new ProductCategory(
+						category, bp.getProduct())));
+		bp = DAOService.branchProductDAO.get(DAOService.branchProductDAO
+				.add(new BranchProduct(bp.getProduct(), bp.getBranch(), bp
+						.getDatePrice())));
+		DatePrice dp = DAOService.datePriceDAO.get(DAOService.datePriceDAO
+				.add(new DatePrice(bp.getDatePrice().getDate(), bp
+						.getDatePrice().getPrice(), bp.getID())));
 		bp.setDatePrice(dp);
-		DAOService.branchProductDAO.add(bp);
-		return getBranchProduct(bp.getID());
+		return new Object[] {
+				DAOService.branchProductDAO.get(DAOService.branchProductDAO
+						.add(bp)), pc };
 	}
 
 	public static List<DatePrice> getDatePrices(long bpID) {
@@ -435,32 +472,20 @@ public class EntityUtils {
 				new String[] { "branchProductID" }, new Object[] { bpID });
 	}
 
-	public static HashMap<BranchProduct, List<DatePrice>> updateBranchProduct(
-			long id, int price) {
+	public static BranchProduct updateBranchProduct(long id, int price) {
 		BranchProduct bp;
 		try {
 			bp = DAOService.branchProductDAO.get(id);
 			DatePrice dp = new DatePrice(new Date(), price, bp.getID());
 			DAOService.datePriceDAO.add(dp);
 			bp.setDatePrice(dp);
-			DAOService.branchProductDAO.add(bp);
-			return EntityUtils.getBranchProducts(bp.getProductID());
+			return DAOService.branchProductDAO.get(DAOService.branchProductDAO
+					.add(bp));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 
-	}
-
-	private static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
-			long productID) {
-		List<BranchProduct> bps = DAOService.branchProductDAO.listByProperties(
-				new String[] { "productID" }, new Object[] { productID });
-		HashMap<BranchProduct, List<DatePrice>> bpMap = new HashMap<BranchProduct, List<DatePrice>>();
-		for (BranchProduct bp : bps) {
-			bpMap.put(bp, getDatePrices(bp.getID()));
-		}
-		return bpMap;
 	}
 
 	public static Map<BranchProduct, List<DatePrice>> getBranchProduct(long id) {
@@ -473,6 +498,33 @@ public class EntityUtils {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static Product getProduct(long productId) {
+		if (productId == 0L) {
+			return null;
+		}
+		try {
+			return DAOService.productDAO.get(productId);
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} catch (EntityNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Category getCategory(String name) {
+		return DAOService.categoryDAO.getByProperties(new String[] { "name" },
+				new Object[] { name });
+	}
+
+	public static ProductCategory getProductCategory(long productID,
+			long categoryID) {
+		return DAOService.productCategoryDAO.getByProperties(new String[] {
+				"productID", "categoryID" }, new Object[] { productID,
+				categoryID });
 	}
 
 	/**
@@ -547,32 +599,27 @@ public class EntityUtils {
 		DAOService.provinceDAO.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
 		EntityNameMap provinceIDMap = new EntityNameMap(EntityID.PROVINCE);
 		provinceIDMap.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
-		City stellenbosch = new City("Stellenbosch", wc, new GPSCoords(
-				-33.9200, 18.8600));
-		City capeTown = new City("Cape Town", wc, new GPSCoords(-33.9767,
-				18.4244));
-		City somersetWest = new City("Somerset West", wc, new GPSCoords(
-				-34.0833, 18.8500));
-		City paarl = new City("Paarl", wc, new GPSCoords(-33.7242, 18.9558));
-		City joburg = new City("Johannesburg", gau, new GPSCoords(-26.2000,
-				28.0667));
-		City pretoria = new City("Pretoria", gau, new GPSCoords(-25.7256,
-				28.2439));
+		City stellenbosch = new City("Stellenbosch", wc, -33920000, 18860000);
+		City capeTown = new City("Cape Town", wc, -33976700, 18424400);
+		City somersetWest = new City("Somerset West", wc, -34083300, 18850000);
+		City paarl = new City("Paarl", wc, -33724200, 18955800);
+		City joburg = new City("Johannesburg", gau, -26200000, 28066700);
+		City pretoria = new City("Pretoria", gau, -25725600, 28243900);
 		DAOService.cityDAO.add(stellenbosch, capeTown, somersetWest, paarl,
 				joburg, pretoria);
 		EntityNameMap cityIDMap = new EntityNameMap(EntityID.CITY);
 		cityIDMap.add(stellenbosch, capeTown, somersetWest, paarl, joburg,
 				pretoria);
 		CityLocation dieBoord = new CityLocation("Die Boord", stellenbosch,
-				new GPSCoords(-33.9447319, 18.8500055));
+				-33944732, 18850006);
 		CityLocation simonsrust = new CityLocation("Simonsrust", stellenbosch,
-				new GPSCoords(-33.926617, 18.878612));
+				-33926617, 18878612);
 		CityLocation stellmark = new CityLocation("Stellmark", stellenbosch,
-				new GPSCoords(-33.9319048, 18.8593215));
+				-33931904, 18859321);
 		CityLocation eikestad = new CityLocation("Eikestad", stellenbosch,
-				new GPSCoords(-33.9359105, 18.860566));
+				-33935910, 18860566);
 		CityLocation millstreet = new CityLocation("Mill Street", stellenbosch,
-				new GPSCoords(-33.9383672, 18.8592785));
+				-33938367, 18859278);
 		DAOService.cityLocationDAO.add(dieBoord, simonsrust, stellmark,
 				eikestad, millstreet);
 		EntityNameMap cityLocIDMap = new EntityNameMap(EntityID.CITYLOCATION);

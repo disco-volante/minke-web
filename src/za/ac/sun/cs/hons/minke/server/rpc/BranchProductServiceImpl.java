@@ -12,7 +12,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
-import za.ac.sun.cs.hons.minke.server.util.EntityUtils;
+import za.ac.sun.cs.hons.minke.server.utils.EntityUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -41,7 +41,7 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
 			HashSet<Long> categories) {
 		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
 		HashSet<Product> products = new HashSet<Product>();
-		products.addAll(EntityUtils.getProducts(categories));
+		products.addAll(EntityUtils.getProductsByID(categories));
 		HashMap<BranchProduct, List<DatePrice>> branchProducts = EntityUtils.getBranchProducts(products,
 				branches);
 		return branchProducts;

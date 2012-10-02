@@ -95,4 +95,16 @@ public class BranchProduct extends IsEntity implements
 		}
 		return datePrice.compareTo(o.getDatePrice());
 	}
+
+	public void setBranchID(long branchID) {
+		this.branchID = branchID;
+	}
+
+	public void setDatePriceID(long datePriceID) {
+		this.datePriceID = datePriceID;
+	}
+
+	public void setProductID(long productID) {
+		this.productID = productID;
+	}
 }
