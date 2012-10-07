@@ -225,13 +225,13 @@ public class WebPage {
 	 * @param gpsCoords
 	 *            the {@link Location} the user wants to get directions to.
 	 */
-	public void showMap(int lat, int lon) {
-		system.setDestCoords(lat, lon);
+	public void showMap(double lat_d, double lon_d) {
+		system.setDestCoords(lat_d, lon_d);
 		if (system.getUserLat() == 0 && system.getUserLon() == 0) {
 			locationPopup.center();
 		} else {
-			storeLocation.setMapCenter(lat, lon);
-			storeLocation.setDirectionCoords(system.getUserLat(),system.getUserLon(), lat, lon);
+			storeLocation.setMapCenter(lat_d, lon_d);
+			storeLocation.setDirectionCoords(system.getUserLat(),system.getUserLon(), lat_d, lon_d);
 			storeLocation.draw();
 			showMap();
 		}

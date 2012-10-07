@@ -39,7 +39,7 @@ public class BranchLocation extends ResizeComposite  {
 	private boolean loaded;
 
 	protected LatLng center;
-	int lat_o,  lon_o,  lat_d,  lon_d;
+	double lat_o, lon_o,  lat_d,  lon_d;
 	private DirectionsMap map;
 	private WebPage webPage;
 	private Runnable mapBuilder = new Runnable() {
@@ -112,9 +112,9 @@ public class BranchLocation extends ResizeComposite  {
 	 * Initialises coordinates to default values.
 	 */
 	protected void initCoords() {
-		setMapCenter((int)(-33.9200*1E6), (int)(8.8600*1E6));
-		setDirectionCoords((int)(-33.9200*1E6), (int)(18.8600*1E6), 
-				 (int)(-33.9447319*1E6),  (int)(18.8500055*1E6));
+		setMapCenter(-33.9200, 8.8600);
+		setDirectionCoords(-33.9200, 18.8600, 
+				 -33.9447319,  18.8500055);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param origin
 	 * @param destination
 	 */
-	public void setDirectionCoords(int lat_o, int lon_o, int lat_d, int lon_d) {
+	public void setDirectionCoords(double lat_o, double lon_o, double lat_d, double lon_d) {
 		this.lat_o = lat_o;
 		this.lon_o = lon_o;
 		this.lat_d = lat_d;
@@ -146,9 +146,9 @@ public class BranchLocation extends ResizeComposite  {
 	 * @param gpsCoords
 	 *            the new map center.
 	 */
-	public void setMapCenter(int lat, int lon) {
+	public void setMapCenter(double lat_d, double lon_d) {
 		if (isLoaded()) {
-			this.center = Utils.coordsConvert(lat, lon);
+			this.center = Utils.coordsConvert(lat_d, lon_d);
 		}
 
 	}

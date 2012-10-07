@@ -13,7 +13,7 @@ public class City extends Location {
 	public City() {
 	}
 
-	public City(String name, Province province, int lat, int lon) {
+	public City(String name, Province province, double lat, double lon) {
 		super(name, lat, lon);
 		setProvince(province);
 	}

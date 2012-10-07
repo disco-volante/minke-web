@@ -104,8 +104,8 @@ public class RPC {
 		@Override
 		public void onSuccess(Position result) {
 			system.setUserCoords(
-					(int) (result.getCoordinates().getLatitude() * 1E6),
-					(int) (result.getCoordinates().getLongitude() * 1E6));
+					(long) (result.getCoordinates().getLatitude() * 1E6),
+					(long) (result.getCoordinates().getLongitude() * 1E6));
 		}
 	};
 

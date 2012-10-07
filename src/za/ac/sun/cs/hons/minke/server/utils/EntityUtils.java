@@ -599,27 +599,27 @@ public class EntityUtils {
 		DAOService.provinceDAO.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
 		EntityNameMap provinceIDMap = new EntityNameMap(EntityID.PROVINCE);
 		provinceIDMap.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
-		City stellenbosch = new City("Stellenbosch", wc, -33920000, 18860000);
-		City capeTown = new City("Cape Town", wc, -33976700, 18424400);
-		City somersetWest = new City("Somerset West", wc, -34083300, 18850000);
-		City paarl = new City("Paarl", wc, -33724200, 18955800);
-		City joburg = new City("Johannesburg", gau, -26200000, 28066700);
-		City pretoria = new City("Pretoria", gau, -25725600, 28243900);
+		City stellenbosch = new City("Stellenbosch", wc, -33.920000, 18.860000);
+		City capeTown = new City("Cape Town", wc, -33.976700, 18.424400);
+		City somersetWest = new City("Somerset West", wc, -34.083300, 18.850000);
+		City paarl = new City("Paarl", wc, -33.724200, 18.955800);
+		City joburg = new City("Johannesburg", gau, -26.200000, 28.066700);
+		City pretoria = new City("Pretoria", gau, -25.725600, 28.243900);
 		DAOService.cityDAO.add(stellenbosch, capeTown, somersetWest, paarl,
 				joburg, pretoria);
 		EntityNameMap cityIDMap = new EntityNameMap(EntityID.CITY);
 		cityIDMap.add(stellenbosch, capeTown, somersetWest, paarl, joburg,
 				pretoria);
 		CityLocation dieBoord = new CityLocation("Die Boord", stellenbosch,
-				-33944732, 18850006);
+				-33.944732, 18.850006);
 		CityLocation simonsrust = new CityLocation("Simonsrust", stellenbosch,
-				-33926617, 18878612);
+				-33.926617, 18.878612);
 		CityLocation stellmark = new CityLocation("Stellmark", stellenbosch,
-				-33931904, 18859321);
+				-33.931904, 18.859321);
 		CityLocation eikestad = new CityLocation("Eikestad", stellenbosch,
-				-33935910, 18860566);
+				-33.935910, 18.860566);
 		CityLocation millstreet = new CityLocation("Mill Street", stellenbosch,
-				-33938367, 18859278);
+				-33.938367, 18.859278);
 		DAOService.cityLocationDAO.add(dieBoord, simonsrust, stellmark,
 				eikestad, millstreet);
 		EntityNameMap cityLocIDMap = new EntityNameMap(EntityID.CITYLOCATION);

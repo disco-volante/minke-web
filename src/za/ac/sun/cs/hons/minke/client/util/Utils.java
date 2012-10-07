@@ -33,7 +33,7 @@ public class Utils {
 	 * @return a String containing the coordinates in a format the Maps API can
 	 *         use.
 	 */
-	public static String toDirections(int lat_o, int lon_o, int lat_d, int lon_d) {
+	public static String toDirections(double lat_o, double lon_o, double lat_d, double lon_d) {
 		return "from: " + lat_o + ", "
 				+ lon_o + " to: "
 				+ lat_d + ", "

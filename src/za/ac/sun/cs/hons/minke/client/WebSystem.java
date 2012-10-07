@@ -31,7 +31,7 @@ public class WebSystem implements EntryPoint {
 	public SystemData data;
 	private RPC rpcs;
 	private WebPage webPage;
-	private int lat_u, lon_u, lat_d, lon_d;
+	private double lat_u, lon_u, lat_d, lon_d;
 
 	/**
 	 * Loads and initialises project.
@@ -247,20 +247,20 @@ public class WebSystem implements EntryPoint {
 		this.webPage = webPage;
 	}
 
-	public int getUserLat() {
+	public double getUserLat() {
 		return lat_u;
 	}
 
-	public int getUserLon() {
+	public double getUserLon() {
 		return lon_u;
 	}
 
-	public void setDestCoords(int lat, int lon) {
+	public void setDestCoords(double lat, double lon) {
 		lat_d = lat;
 		lon_d = lon;
 	}
 
-	public void setUserCoords(int lat, int lon) {
+	public void setUserCoords(double lat, double lon) {
 		lat_u = lat;
 		lon_u = lon;
 

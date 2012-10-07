@@ -73,8 +73,8 @@ public class JSONParser {
 		city.setProvinceID(obj.getLong("provinceId"));
 		city.setID(obj.getLong("id"));
 		city.setName(obj.getString("name"));
-		city.setLat(obj.getInt("lat"));
-		city.setLon(obj.getInt("lon"));
+		city.setLat(obj.getDouble("lat"));
+		city.setLon(obj.getDouble("lon"));
 		return city;
 	}
 
@@ -221,8 +221,8 @@ public class JSONParser {
 		cityLocation.setCityID(obj.getLong("cityId"));
 		cityLocation.setID(obj.getLong("id"));
 		cityLocation.setName(obj.getString("name"));
-		cityLocation.setLat(obj.getInt("lat"));
-		cityLocation.setLon(obj.getInt("lon"));
+		cityLocation.setLat(obj.getDouble("lat"));
+		cityLocation.setLon(obj.getDouble("lon"));
 		return cityLocation;
 	}
 
@@ -238,8 +238,8 @@ public class JSONParser {
 		}else{
 			branch.setStore(store);
 		}
-		int lat = obj.getInt("lat");
-		int lon = obj.getInt("lon");
+		double lat = obj.getDouble("lat");
+		double lon = obj.getDouble("lon");
 		if (city == null) {
 			city = new City(obj.getString("cityName"), province, lat, lon);
 			city.setID(0L);

@@ -7,13 +7,13 @@ import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass
 public class Location extends IsEntity {
-	private int lat, lon;
+	private double lat, lon;
 	private String name;
 
 	public Location() {
 	};
 
-	public Location(String name, int lat, int lon) {
+	public Location(String name, double lat, double lon) {
 		super();
 		this.setName(name);
 		this.setLat(lat);
@@ -29,19 +29,19 @@ public class Location extends IsEntity {
 	}
 
 	
-	public int getLon() {
+	public double getLon() {
 		return lon;
 	}
 
-	public void setLon(int lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
 
-	public int getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public void setLat(int lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
 
