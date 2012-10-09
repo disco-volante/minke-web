@@ -234,7 +234,6 @@ public class JSONParser {
 		if(store == null){
 			store = new Store(obj.getString("storeName"));
 			store.setID(0L);
-			branch.setStoreID(obj.getLong("storeId"));
 		}else{
 			branch.setStore(store);
 		}

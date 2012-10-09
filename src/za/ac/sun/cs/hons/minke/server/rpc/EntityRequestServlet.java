@@ -215,8 +215,7 @@ public class EntityRequestServlet extends HttpServlet {
 	private JSONObject createBranch(int type, JSONObject params)
 			throws JSONException {
 		log.log(new LogRecord(Level.INFO, String.valueOf(type)));
-		System.out.println(params.toString());
-		System.out.println(type);
+		log.log(new LogRecord(Level.INFO, params.toString()));
 		Store store = null;
 		City city = null;
 		Province province = null;
@@ -232,6 +231,7 @@ public class EntityRequestServlet extends HttpServlet {
 		}
 		Branch branch = EntityUtils.addBranch(JSONParser.parseBranchProto(
 				params.getJSONObject("branchProto"), city, province, store));
+		log.info(branch.toString());
 		CityLocation loc = branch.getLocation();
 		store = branch.getStore();
 		city = loc.getCity();
