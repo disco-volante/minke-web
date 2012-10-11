@@ -448,10 +448,8 @@ public class EntityUtils {
 					DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(
 							bp.getProduct().getBrand().getName()))));
 		}
-		Product p = bp.getProduct();
-		bp.setProduct(DAOService.productDAO.get(DAOService.productDAO
-				.add(new Product(p.getName(), p.getBrand(), p.getSize(), p
-						.getMeasurement()))));
+		bp.setProduct(DAOService.productDAO.get(DAOService.productDAO.add(bp
+				.getProduct())));
 		ProductCategory pc = DAOService.productCategoryDAO
 				.get(DAOService.productCategoryDAO.add(new ProductCategory(
 						category, bp.getProduct())));
@@ -472,15 +470,29 @@ public class EntityUtils {
 				new String[] { "branchProductID" }, new Object[] { bpID });
 	}
 
-	public static BranchProduct updateBranchProduct(long id, int price) {
-		BranchProduct bp;
+	public static BranchProduct updateBranchProduct(
+			BranchProduct branchProduct, int price) {
 		try {
-			bp = DAOService.branchProductDAO.get(id);
-			DatePrice dp = new DatePrice(new Date(), price, bp.getID());
+			System.out.println(branchProduct);
+			Product p = DAOService.productDAO.get(branchProduct.getProductID());
+			Branch b  = DAOService.branchDAO.get(branchProduct.getBranchID());
+			DatePrice dp = new DatePrice(new Date(), price,
+					branchProduct.getID());
+			System.out.println(dp);
 			DAOService.datePriceDAO.add(dp);
-			bp.setDatePrice(dp);
+			if (branchProduct.getID() == 0L || branchProduct.getID() == 0) {
+				branchProduct = DAOService.branchProductDAO
+						.get(DAOService.branchProductDAO.add(new BranchProduct(p,b,dp)));
+			} else {
+				branchProduct = DAOService.branchProductDAO.get(branchProduct
+						.getID());
+			}
+			dp.setBranchProductID(branchProduct.getID());
+			DAOService.datePriceDAO.add(dp);
+			System.out.println(dp);
+			branchProduct.setDatePrice(dp);
 			return DAOService.branchProductDAO.get(DAOService.branchProductDAO
-					.add(bp));
+					.add(branchProduct));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -669,13 +681,14 @@ public class EntityUtils {
 		int lastprice = 10000 + i;
 
 		int j = 100;
-		int inc = 5;
-		for (i = 0; i < 10; i++) {
+		int inc = 1;
+		for (BranchProduct bp : bps) {
 			int c = 0;
-			for (BranchProduct bp : bps) {
+			for (i = 0; i < 10; i++) {
 				DatePrice dp = new DatePrice(new Date(lastdate + i * month),
 						lastprice, bp.getID());
 				DAOService.datePriceDAO.add(dp);
+				bp.setDatePrice(dp);
 				j += inc * c;
 				if (j != 0) {
 					inc -= inc / Math.abs(j);

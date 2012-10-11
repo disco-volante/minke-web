@@ -83,13 +83,6 @@ public class EntityRequestServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 
-		} else if (requestType.equals("update_branchproduct")) {
-			try {
-				obj = JSONBuilder.toJSON(updateBranchProduct(request));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		response.setContentType("application/json;charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -116,6 +109,7 @@ public class EntityRequestServlet extends HttpServlet {
 		JSONObject params;
 		try {
 			params = getJSON(request);
+			log.info("Parameters "+params);
 			if (requestType.startsWith("create_branchproduct")) {
 				obj = createBranchProduct(Integer.parseInt(requestType
 						.substring(requestType.length() - 1)), params);
@@ -126,6 +120,8 @@ public class EntityRequestServlet extends HttpServlet {
 				obj = getProduct(params);
 			} else if (requestType.startsWith("get_branchproduct")) {
 				obj = getBranchProduct(params);
+			} else if (requestType.equals("update_branchproduct")) {
+				obj = updateBranchProduct(params);
 			}
 		} catch (JSONException e1) {
 			e1.printStackTrace();
@@ -282,15 +278,13 @@ public class EntityRequestServlet extends HttpServlet {
 		}
 	}
 
-	private BranchProduct updateBranchProduct(HttpServletRequest request) {
-		String sid = request.getParameter("id");
-		String sprice = request.getParameter("price");
-		if (sid != null && sprice != null) {
-			long id = Long.parseLong(sid);
-			int price = Integer.parseInt(sprice);
-			return EntityUtils.updateBranchProduct(id, price);
-		}
-		return null;
+	private JSONObject updateBranchProduct(JSONObject params)
+			throws JSONException {
+		BranchProduct bp = EntityUtils.updateBranchProduct(JSONParser
+				.parseBranchProduct(params.getJSONObject("branchProduct")),
+				params.getJSONObject("price").getInt("price"));
+		DatePrice dp = bp.getDatePrice();
+		return JSONBuilder.toJSON(JSONBuilder.toJSON(bp),JSONBuilder.toJSON(dp));
 	}
 
 }

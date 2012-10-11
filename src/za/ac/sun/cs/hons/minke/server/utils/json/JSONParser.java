@@ -259,7 +259,7 @@ public class JSONParser {
 		}
 		Product product = new Product(obj.getString("name"), brand,
 				obj.getDouble("size"), obj.getString("measure"));
-		product.setID(0L);
+		product.setID(obj.getLong("barCode"));
 		branchProduct.setProduct(product);
 		DatePrice dp = new DatePrice();
 		dp.setDate(new Date());

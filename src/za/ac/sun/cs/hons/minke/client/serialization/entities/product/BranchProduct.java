@@ -78,7 +78,10 @@ public class BranchProduct extends IsEntity implements
 
 	@Override
 	public String toString() {
-		return product.toString();
+		if (product != null) {
+			return product.toString();
+		}
+		return super.toString();
 	}
 
 	@Override
