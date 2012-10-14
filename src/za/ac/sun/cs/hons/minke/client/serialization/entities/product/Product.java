@@ -74,6 +74,9 @@ public class Product extends IsEntity {
 
 	@Override
 	public String toString() {
+		if(brand == null){
+			return name;
+		}
 		return brand.getName() + " : " + name;
 	}
 

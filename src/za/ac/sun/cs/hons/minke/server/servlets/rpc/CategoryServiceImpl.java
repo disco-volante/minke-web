@@ -1,11 +1,10 @@
-package za.ac.sun.cs.hons.minke.server.rpc;
+package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
 import za.ac.sun.cs.hons.minke.client.rpc.CategoryService;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -19,13 +18,7 @@ public class CategoryServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getCategories() {
-		try {
 			return DAOService.entityMapDAO.get((long) EntityID.CATEGORY.getID());
-		} catch (EntityNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-
 	}
 
 }

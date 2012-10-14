@@ -1,4 +1,4 @@
-package za.ac.sun.cs.hons.minke.server.rpc;
+package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
 import java.util.HashMap;
 import java.util.HashSet;

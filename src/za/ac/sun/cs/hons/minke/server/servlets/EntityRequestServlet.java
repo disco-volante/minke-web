@@ -1,4 +1,4 @@
-package za.ac.sun.cs.hons.minke.server.rpc;
+package za.ac.sun.cs.hons.minke.server.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,11 +86,19 @@ public class EntityRequestServlet extends HttpServlet {
 		}
 		response.setContentType("application/json;charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
-		log.log(new LogRecord(Level.INFO, obj.toString()));
-		try {
-			obj.write(response.getWriter());
-		} catch (JSONException e) {
-			e.printStackTrace();
+		if (obj != null) {
+			log.log(new LogRecord(Level.INFO, obj.toString()));
+			try {
+				obj.write(response.getWriter());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else if(requestType.equals("start")){
+			log.log(new LogRecord(Level.INFO, "STARTED"));
+			response.getWriter().write("STARTED");
+		}else{
+			log.log(new LogRecord(Level.INFO, "ERROR"));
+			response.getWriter().write("ERROR");
 		}
 	}
 
@@ -109,7 +117,7 @@ public class EntityRequestServlet extends HttpServlet {
 		JSONObject params;
 		try {
 			params = getJSON(request);
-			log.info("Parameters "+params);
+			log.info("Parameters " + params);
 			if (requestType.startsWith("create_branchproduct")) {
 				obj = createBranchProduct(Integer.parseInt(requestType
 						.substring(requestType.length() - 1)), params);
@@ -284,7 +292,8 @@ public class EntityRequestServlet extends HttpServlet {
 				.parseBranchProduct(params.getJSONObject("branchProduct")),
 				params.getJSONObject("price").getInt("price"));
 		DatePrice dp = bp.getDatePrice();
-		return JSONBuilder.toJSON(JSONBuilder.toJSON(bp),JSONBuilder.toJSON(dp));
+		return JSONBuilder.toJSON(JSONBuilder.toJSON(bp),
+				JSONBuilder.toJSON(dp));
 	}
 
 }

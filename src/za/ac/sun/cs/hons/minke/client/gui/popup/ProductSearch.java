@@ -223,17 +223,15 @@ public class ProductSearch extends FocusedPopupPanel {
 	public void removeItem(SearchItem searchItem) {
 		String name = searchItem.getName();
 		if (products.contains(name)) {
-			addedProducts.remove(products.getID(name));
+			addedProducts.remove(name);
 		} else if (categories.contains(name)) {
-			addedCategories.remove(categories.getID(name));
+			addedCategories.remove(name);
 		} else if (cities.contains(name)) {
-			addedCities.remove(cities.getID(name));
-
+			addedCities.remove(name);
 		} else if (provinces.contains(name)) {
-			addedProvinces.remove(provinces.getID(name));
-
+			addedProvinces.remove(name);
 		} else if (countries.contains(name)) {
-			addedCountries.remove(countries.getID(name));
+			addedCountries.remove(name);
 
 		}
 	}

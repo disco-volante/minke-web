@@ -71,8 +71,13 @@ public class ObjectifyDAO<T> extends DAOBase {
 	 * @return
 	 * @throws EntityNotFoundException
 	 */
-	public T get(Long id) throws EntityNotFoundException, NotFoundException {
-		T obj = ofy().get(this.clazz, id);
+	public T get(Long id) {
+		T obj;
+		try {
+			obj = ofy().get(this.clazz, id);
+		} catch (NotFoundException nfe) {
+			return null;
+		}
 		return obj;
 	}
 
@@ -129,14 +134,15 @@ public class ObjectifyDAO<T> extends DAOBase {
 		List<T> list = q.list();
 		return list;
 	}
-	
+
 	/**
 	 * 
 	 * @param propNames
 	 * @param propValues
 	 * @return
 	 */
-	public List<Key<T>> listKeysByProperties(String[] propNames, Object[] propValues) {
+	public List<Key<T>> listKeysByProperties(String[] propNames,
+			Object[] propValues) {
 		if (propNames.length != propValues.length) {
 			return null;
 		}

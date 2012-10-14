@@ -1,4 +1,4 @@
-package za.ac.sun.cs.hons.minke.server.rpc;
+package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
 import za.ac.sun.cs.hons.minke.client.rpc.ProductService;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
@@ -7,7 +7,6 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProdu
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -21,23 +20,14 @@ public class ProductServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getProducts() {
-		try {
-			return DAOService.entityMapDAO.get(EntityID.PRODUCT);
-		} catch (EntityNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return DAOService.entityMapDAO.get(EntityID.PRODUCT);
+
 	}
 
 	@Override
 	public Product getProduct(BranchProduct bp) {
-		try {
-			return DAOService.productDAO.get(bp.getProductID());
-		} catch (EntityNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return DAOService.productDAO.get(bp.getProductID());
+
 	}
-	
-	
+
 }

@@ -1,4 +1,4 @@
-package za.ac.sun.cs.hons.minke.server.rpc;
+package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
 import za.ac.sun.cs.hons.minke.client.rpc.ClassService;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;

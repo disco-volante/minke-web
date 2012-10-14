@@ -24,9 +24,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.NotFoundException;
 
 public class EntityUtils {
 
@@ -222,14 +220,9 @@ public class EntityUtils {
 				productCategories = DAOService.productCategoryDAO
 						.listByProperties(propNames, propValues);
 				for (ProductCategory pc : productCategories) {
-					try {
-						Product p = DAOService.productDAO
-								.get(pc.getProductID());
-						if (p != null) {
-							products.add(p);
-						}
-					} catch (EntityNotFoundException e) {
-						e.printStackTrace();
+					Product p = DAOService.productDAO.get(pc.getProductID());
+					if (p != null) {
+						products.add(p);
 					}
 				}
 			}
@@ -247,14 +240,9 @@ public class EntityUtils {
 				productCategories = DAOService.productCategoryDAO
 						.listByProperties(propNames, propValues);
 				for (ProductCategory pc : productCategories) {
-					try {
-						Product p = DAOService.productDAO
-								.get(pc.getProductID());
-						if (p != null) {
-							products.add(p);
-						}
-					} catch (EntityNotFoundException e) {
-						e.printStackTrace();
+					Product p = DAOService.productDAO.get(pc.getProductID());
+					if (p != null) {
+						products.add(p);
 					}
 				}
 			}
@@ -385,8 +373,7 @@ public class EntityUtils {
 	}
 
 	public static BranchProduct getBranchProduct(long productId, long branchId) {
-		if (productId == 0L || productId == 0 || branchId == 0L
-				|| branchId == 0) {
+		if (productId == 0L || branchId == 0L) {
 			return null;
 		}
 		Object[] propValues = new Object[] { productId, branchId };
@@ -475,14 +462,15 @@ public class EntityUtils {
 		try {
 			System.out.println(branchProduct);
 			Product p = DAOService.productDAO.get(branchProduct.getProductID());
-			Branch b  = DAOService.branchDAO.get(branchProduct.getBranchID());
+			Branch b = DAOService.branchDAO.get(branchProduct.getBranchID());
 			DatePrice dp = new DatePrice(new Date(), price,
 					branchProduct.getID());
 			System.out.println(dp);
 			DAOService.datePriceDAO.add(dp);
 			if (branchProduct.getID() == 0L || branchProduct.getID() == 0) {
 				branchProduct = DAOService.branchProductDAO
-						.get(DAOService.branchProductDAO.add(new BranchProduct(p,b,dp)));
+						.get(DAOService.branchProductDAO.add(new BranchProduct(
+								p, b, dp)));
 			} else {
 				branchProduct = DAOService.branchProductDAO.get(branchProduct
 						.getID());
@@ -516,15 +504,7 @@ public class EntityUtils {
 		if (productId == 0L) {
 			return null;
 		}
-		try {
-			return DAOService.productDAO.get(productId);
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-			return null;
-		} catch (EntityNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return DAOService.productDAO.get(productId);
 	}
 
 	public static Category getCategory(String name) {
@@ -538,7 +518,29 @@ public class EntityUtils {
 				"productID", "categoryID" }, new Object[] { productID,
 				categoryID });
 	}
+	public static Brand addBrand(String name) {
+		Brand brand = DAOService.brandDAO.getByProperties(new String[]{"name"}, new Object[]{name});
+		if(brand == null){
+			brand = DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(name)));
+		}
+		return brand;
+	}
 
+	public static Store addStore(String name) {
+		Store store = DAOService.storeDAO.getByProperties(new String[]{"name"}, new Object[]{name});
+		if(store == null){
+			store = DAOService.storeDAO.get(DAOService.storeDAO.add(new Store(name)));
+		}
+		return store;
+	}
+
+	public static Branch addHolderBranch(Store store) {
+		Branch branch = DAOService.branchDAO.getByProperties(new String[]{"name", "storeID"}, new Object[]{"holder", store.getID()});
+		if(branch == null){
+			branch = DAOService.branchDAO.get(DAOService.branchDAO.add(new Branch("holder", store, null)));
+		}
+		return branch;
+	}
 	/**
      * 
      */
@@ -706,5 +708,38 @@ public class EntityUtils {
 				countryIDMap, cityLocIDMap);
 
 	}
+
+	public static void addBranchProducts(
+			HashMap<Category, HashSet<BranchProduct>> map) {
+		for (Entry<Category, HashSet<BranchProduct>> entry : map.entrySet()) {
+			Category cat = DAOService.categoryDAO.getByProperties(
+					new String[] { "name" }, new Object[] { entry.getKey()
+							.getName() });
+			if (cat == null) {
+				cat = DAOService.categoryDAO.get(DAOService.categoryDAO
+						.add(entry.getKey()));
+			}
+			for (BranchProduct online : entry.getValue()) {
+				if (DAOService.productDAO.get(online.getProductID()) == null) {
+					Product product = DAOService.productDAO
+							.get(DAOService.productDAO.add(online.getProduct()));
+					ProductCategory pc = new ProductCategory(cat, product);
+					DAOService.productCategoryDAO.add(pc);
+				}
+				List<BranchProduct> bps = DAOService.branchProductDAO
+						.listByProperties(new String[] { "productID" },
+								new Object[] { online.getProductID() });
+				for (BranchProduct bp : bps) {
+					if (bp.getBranch().getStore()
+							.equals(online.getBranch().getStore())) {
+						bp.setDatePrice(online.getDatePrice());
+						DAOService.branchProductDAO.add(bp);
+					}
+				}
+			}
+		}
+	}
+
+
 
 }
