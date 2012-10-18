@@ -20,6 +20,7 @@ import com.google.gwt.visualization.client.DataTable;
 
 public class Utils {
 
+	public static final String PASSWORD = "1brandwag";
 	private static int loaded = 0;
 
 	/**

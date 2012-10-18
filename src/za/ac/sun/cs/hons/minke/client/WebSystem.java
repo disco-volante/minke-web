@@ -8,6 +8,7 @@ import java.util.Set;
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
@@ -187,6 +188,10 @@ public class WebSystem implements EntryPoint {
 		webPage.addHistories(result);
 	}
 
+	public void displayEntities(List<?> result) {
+		webPage.showEntities(result);		
+	}
+	
 	/**
 	 * Requests {@link BranchProduct}'s from the db.
 	 * 
@@ -227,6 +232,11 @@ public class WebSystem implements EntryPoint {
 		rpcs.getLocation(locID);
 
 	}
+	
+	public void requestEntities(String entity) {
+		rpcs.getEntites(entity);
+	}
+
 
 	/**
 	 * Getter for this {@link Argyle's} {@link WebPage}.
@@ -265,5 +275,8 @@ public class WebSystem implements EntryPoint {
 		lon_u = lon;
 
 	}
+
+
+
 
 }

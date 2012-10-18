@@ -13,7 +13,7 @@ public class ImageUtils {
 		@Source("images/info.png")
 		ImageResource info();
 
-		@Source("images/browse.png")
+		@Source("images/filter.png")
 		ImageResource browsing();
 
 		@Source("images/shop.png")
@@ -25,10 +25,10 @@ public class ImageUtils {
 		@Source("images/loader.gif")
 		ImageResource loader();
 
-		@Source("images/graph.png")
+		@Source("images/chart.png")
 		ImageResource graph();
 
-		@Source("images/minke.png")
+		@Source("images/ic_launcher.png")
 		ImageResource minke();
 
 		@Source("images/remove.png")
@@ -39,6 +39,9 @@ public class ImageUtils {
 
 		@Source("images/down.png")
 		ImageResource down();
+
+		@Source("images/settings.png")
+		ImageResource admin();
 	}
 
 	public static String imageItemHTML(ImageResource imageProto) {
@@ -46,7 +49,7 @@ public class ImageUtils {
 	}
 
 	public static String imageItemHTML(ImageResource imageProto, String title) {
-		return AbstractImagePrototype.create(imageProto).getHTML() + " "
+		return AbstractImagePrototype.create(imageProto).getHTML() + "<br>"
 				+ title;
 	}
 

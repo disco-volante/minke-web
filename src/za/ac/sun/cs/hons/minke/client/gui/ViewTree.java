@@ -1,5 +1,6 @@
 package za.ac.sun.cs.hons.minke.client.gui;
 
+import za.ac.sun.cs.hons.minke.client.gui.popup.PasswordPopup;
 import za.ac.sun.cs.hons.minke.client.util.CSSUtils.SelectionStyle;
 import za.ac.sun.cs.hons.minke.client.util.ImageUtils;
 import za.ac.sun.cs.hons.minke.client.util.ImageUtils.Images;
@@ -24,7 +25,7 @@ public class ViewTree extends ResizeComposite {
 	@UiField
 	SelectionStyle selectionStyle;
 	private WebPage webPage;
-	private TreeItem browsing, shopping, map, graph;
+	private TreeItem browsing, shopping, map, graph, admin;
 
 	public ViewTree(WebPage webPage) {
 		Images images = ImageUtils.getImages();
@@ -43,10 +44,12 @@ public class ViewTree extends ResizeComposite {
 		map = new TreeItem(ImageUtils.imageItemHTML(images.map(), "Location"));
 		graph = new TreeItem(ImageUtils.imageItemHTML(images.graph(),
 				"Product Timelines"));
+		admin = new TreeItem(ImageUtils.imageItemHTML(images.admin(), "Admin"));
 		tree.addItem(browsing);
 		tree.addItem(shopping);
 		tree.addItem(map);
 		tree.addItem(graph);
+		tree.addItem(admin);
 		tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
 			@Override
 			public void onSelection(SelectionEvent<TreeItem> event) {
@@ -65,7 +68,14 @@ public class ViewTree extends ResizeComposite {
 			webPage.showMap();
 		} else if (selected.equals(graph)) {
 			webPage.showGraph();
+		} else if (selected.equals(admin)) {
+			verify();
 		}
+	}
+
+	private void verify() {
+		PasswordPopup password = new PasswordPopup(this);
+		password.center();
 	}
 
 	public void setSelected(String name) {
@@ -87,6 +97,14 @@ public class ViewTree extends ResizeComposite {
 		map.removeStyleName(style);
 		graph.removeStyleName(style);
 		selected.addStyleName(style);
+	}
+
+	public void showAdmin() {
+		webPage.showAdmin();
+	}
+
+	public void setHome() {
+		tree.setSelectedItem(browsing);
 	}
 
 }

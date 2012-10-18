@@ -9,7 +9,6 @@
 		
 		@sprite .minke {
 			gwt-image: 'minke';
-			background-color: #c0f9a7;
 			padding: .7em .5em 0 .6em;
 		}
     </ui:style>
@@ -19,7 +18,7 @@
         type="za.ac.sun.cs.hons.minke.client.util.CSSUtils.SelectionStyle" >
 			.selectedRow {
 				background: #ffffff;
-	opacity: 0.6;
+	opacity: 0.8;
 
 			}
     </ui:style>

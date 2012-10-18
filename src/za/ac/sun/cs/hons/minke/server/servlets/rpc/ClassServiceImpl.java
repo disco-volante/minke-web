@@ -1,5 +1,7 @@
 package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
+import java.util.List;
+
 import za.ac.sun.cs.hons.minke.client.rpc.ClassService;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 import za.ac.sun.cs.hons.minke.server.utils.EntityUtils;
@@ -18,8 +20,12 @@ public class ClassServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public boolean registerClasses() {
 		DAOService.init();
-		EntityUtils.addData();
 		return true;
+	}
+
+	@Override
+	public List<?> getEntities(String entity) {
+		return EntityUtils.getAll(entity);
 	}
 
 	

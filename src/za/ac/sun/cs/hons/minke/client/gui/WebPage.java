@@ -15,11 +15,13 @@ import za.ac.sun.cs.hons.minke.client.gui.popup.ProductSearch;
 import za.ac.sun.cs.hons.minke.client.gui.popup.ShoppingListDetailPopup;
 import za.ac.sun.cs.hons.minke.client.gui.popup.shoppinglist.ShoppingList;
 import za.ac.sun.cs.hons.minke.client.gui.table.BranchList;
+import za.ac.sun.cs.hons.minke.client.gui.table.DataViewer;
 import za.ac.sun.cs.hons.minke.client.gui.table.ProductList;
 import za.ac.sun.cs.hons.minke.client.gui.table.TableView;
 import za.ac.sun.cs.hons.minke.client.gui.table.TableView.TABLE;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
@@ -59,6 +61,8 @@ public class WebPage {
 	BranchList storeList;
 	@UiField(provided = true)
 	BranchLocation storeLocation;
+	@UiField(provided = true)
+	DataViewer dataViewer;
 	@UiField
 	HistoryGraph historyGraph;
 	@UiField(provided = true)
@@ -111,6 +115,7 @@ public class WebPage {
 		storeList = new BranchList(this);
 		storeLocation = new BranchLocation(this);
 		views = new ViewTree(this);
+		dataViewer = new DataViewer(this);
 		outer = binder.createAndBindUi(this);
 		details = new ProductDetail();
 		listDetails = new ShoppingListDetailPopup(this);
@@ -118,7 +123,7 @@ public class WebPage {
 		locationPopup = new LocationPopup(this);
 		shopping = new ShoppingList(this);
 		deck.showWidget(0);
-		Window.setMargin("0px"); 
+		Window.setMargin("0px");
 		RootLayoutPanel.get().add(outer);
 	}
 
@@ -182,19 +187,28 @@ public class WebPage {
 	 *            the {@link ProductCategory} which the {@link BranchProduct}s
 	 *            must have.
 	 */
-	public void requestBrowsingP(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> p) {
+	public void requestBrowsingP(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> p) {
 		system.requestBranchProductsP(l, p);
 		GuiUtils.showLoader();
 	}
 
-	public void requestBrowsingC(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> c) {
+	public void requestBrowsingC(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> c) {
 		system.requestBranchProductsC(l, c);
 		GuiUtils.showLoader();
 	}
+
 	public void requestMap(Long locID) {
 		system.requestLocation(locID);
-		GuiUtils.showLoader();		
+		GuiUtils.showLoader();
 	}
+
+	public void requestEntities(String entity) {
+		system.requestEntities(entity);
+		GuiUtils.showLoader();
+	}
+
 	public void showBrowsing() {
 		views.setSelected("browsing");
 		deck.showWidget(0);
@@ -219,6 +233,11 @@ public class WebPage {
 		deck.showWidget(3);
 	}
 
+	public void showAdmin() {
+		views.setSelected("admin");
+		deck.showWidget(4);
+	}
+
 	/**
 	 * Shows the {@link BranchLocation} interface with directions.
 	 * 
@@ -231,7 +250,8 @@ public class WebPage {
 			locationPopup.center();
 		} else {
 			storeLocation.setMapCenter(lat_d, lon_d);
-			storeLocation.setDirectionCoords(system.getUserLat(),system.getUserLon(), lat_d, lon_d);
+			storeLocation.setDirectionCoords(system.getUserLat(),
+					system.getUserLon(), lat_d, lon_d);
 			storeLocation.draw();
 			showMap();
 		}
@@ -276,8 +296,9 @@ public class WebPage {
 
 	/**
 	 * Adds {@link City} objects to the {@link #search} interface.
-	 * @param entityNameMap3 
-	 * @param entityNameMap2 
+	 * 
+	 * @param entityNameMap3
+	 * @param entityNameMap2
 	 * 
 	 * @param cities
 	 */
@@ -285,22 +306,24 @@ public class WebPage {
 		search.addCities(cities);
 		locationPopup.addLocations(cities);
 	}
-	
+
 	/**
 	 * Adds {@link City} objects to the {@link #search} interface.
-	 * @param entityNameMap3 
-	 * @param entityNameMap2 
+	 * 
+	 * @param entityNameMap3
+	 * @param entityNameMap2
 	 * 
 	 * @param cities
 	 */
 	public void addProvinces(EntityNameMap provinces) {
 		search.addProvinces(provinces);
 	}
-	
+
 	/**
 	 * Adds {@link City} objects to the {@link #search} interface.
-	 * @param entityNameMap3 
-	 * @param entityNameMap2 
+	 * 
+	 * @param entityNameMap3
+	 * @param entityNameMap2
 	 * 
 	 * @param cities
 	 */
@@ -323,7 +346,8 @@ public class WebPage {
 	 * 
 	 * @param hashMap
 	 */
-	public void addBranchProducts(HashMap<BranchProduct, List<DatePrice>> hashMap) {
+	public void addBranchProducts(
+			HashMap<BranchProduct, List<DatePrice>> hashMap) {
 		TreeSet<BranchProduct> sorted = new TreeSet<BranchProduct>();
 		sorted.addAll(hashMap.keySet());
 		productList.setItemSet(sorted);
@@ -338,7 +362,8 @@ public class WebPage {
 	 * @param hashMap
 	 * @param products
 	 */
-	public void addBranches(HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> hashMap,
+	public void addBranches(
+			HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> hashMap,
 			HashMap<Long, Integer> products) {
 		storeList.addProducts(products);
 		storeList.setItemSet(hashMap.entrySet());
@@ -357,6 +382,8 @@ public class WebPage {
 		GuiUtils.hideLoader();
 	}
 
-
+	public void showEntities(List<?> result) {
+		dataViewer.setEntities(result);
+	}
 
 }

@@ -93,10 +93,10 @@ public class EntityRequestServlet extends HttpServlet {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		} else if(requestType.equals("start")){
+		} else if (requestType.equals("start")) {
 			log.log(new LogRecord(Level.INFO, "STARTED"));
 			response.getWriter().write("STARTED");
-		}else{
+		} else {
 			log.log(new LogRecord(Level.INFO, "ERROR"));
 			response.getWriter().write("ERROR");
 		}
@@ -116,20 +116,53 @@ public class EntityRequestServlet extends HttpServlet {
 		JSONObject obj = null;
 		JSONObject params;
 		try {
-			params = getJSON(request);
-			log.info("Parameters " + params);
-			if (requestType.startsWith("create_branchproduct")) {
-				obj = createBranchProduct(Integer.parseInt(requestType
-						.substring(requestType.length() - 1)), params);
-			} else if (requestType.startsWith("create_branch")) {
-				obj = createBranch(Integer.parseInt(requestType
-						.substring(requestType.length() - 1)), params);
-			} else if (requestType.startsWith("get_product")) {
-				obj = getProduct(params);
-			} else if (requestType.startsWith("get_branchproduct")) {
-				obj = getBranchProduct(params);
-			} else if (requestType.equals("update_branchproduct")) {
-				obj = updateBranchProduct(params);
+			if (requestType.equals("get_all")) {
+				JSONObject cities = JSONBuilder.CitiestoJSON(DAOService.cityDAO
+						.listAll());
+				JSONObject countries = JSONBuilder
+						.CountriestoJSON(DAOService.countryDAO.listAll());
+				JSONObject provinces = JSONBuilder
+						.ProvincestoJSON(DAOService.provinceDAO.listAll());
+				JSONObject products = JSONBuilder
+						.ProductstoJSON(DAOService.productDAO.listAll());
+				JSONObject categories = JSONBuilder
+						.CategoriestoJSON(DAOService.categoryDAO.listAll());
+				JSONObject branches = JSONBuilder
+						.BranchestoJSON(DAOService.branchDAO.listAll());
+				JSONObject brands = JSONBuilder
+						.BrandstoJSON(DAOService.brandDAO.listAll());
+				JSONObject stores = JSONBuilder
+						.StorestoJSON(DAOService.storeDAO.listAll());
+				JSONObject cityLocations = JSONBuilder
+						.CityLocationstoJSON(DAOService.cityLocationDAO
+								.listAll());
+				JSONObject datePrices = JSONBuilder
+						.DatePricestoJSON(DAOService.datePriceDAO.listAll());
+				JSONObject branchProducts = JSONBuilder
+						.BranchProductstoJSON(DAOService.branchProductDAO
+								.listAll());
+				JSONObject productCategories = JSONBuilder
+						.ProductCategoriestoJSON(DAOService.productCategoryDAO
+								.listAll());
+				obj = JSONBuilder.toJSON(cities, countries, provinces,
+						products, categories, branches, stores, cityLocations,
+						branchProducts, datePrices, productCategories, brands);
+			} else if(!requestType.equals("start")){
+				params = getJSON(request);
+				log.info("Parameters " + params);
+				if (requestType.startsWith("create_branchproduct")) {
+					obj = createBranchProduct(Integer.parseInt(requestType
+							.substring(requestType.length() - 1)), params);
+				} else if (requestType.startsWith("create_branch")) {
+					obj = createBranch(Integer.parseInt(requestType
+							.substring(requestType.length() - 1)), params);
+				} else if (requestType.startsWith("get_product")) {
+					obj = getProduct(params);
+				} else if (requestType.startsWith("get_branchproduct")) {
+					obj = getBranchProduct(params);
+				} else if (requestType.equals("update_branchproduct")) {
+					obj = updateBranchProduct(params);
+				}
 			}
 		} catch (JSONException e1) {
 			e1.printStackTrace();
@@ -143,6 +176,9 @@ public class EntityRequestServlet extends HttpServlet {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+		} else if (requestType.equals("start")) {
+			log.log(new LogRecord(Level.INFO, "STARTED"));
+			response.getWriter().write("STARTED");
 		} else {
 			log.log(new LogRecord(Level.INFO, "ERROR"));
 			response.getWriter().write("ERROR");
@@ -281,7 +317,6 @@ public class EntityRequestServlet extends HttpServlet {
 	private void initEntities() {
 		if (!initialised) {
 			DAOService.init();
-			EntityUtils.addData();
 			initialised = true;
 		}
 	}

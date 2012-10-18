@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
@@ -22,6 +21,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.ProductCategory;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
+import za.ac.sun.cs.hons.minke.client.util.Constants;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
 import com.googlecode.objectify.Key;
@@ -518,195 +518,35 @@ public class EntityUtils {
 				"productID", "categoryID" }, new Object[] { productID,
 				categoryID });
 	}
+
 	public static Brand addBrand(String name) {
-		Brand brand = DAOService.brandDAO.getByProperties(new String[]{"name"}, new Object[]{name});
-		if(brand == null){
-			brand = DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(name)));
+		Brand brand = DAOService.brandDAO.getByProperties(
+				new String[] { "name" }, new Object[] { name });
+		if (brand == null) {
+			brand = DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(
+					name)));
 		}
 		return brand;
 	}
 
 	public static Store addStore(String name) {
-		Store store = DAOService.storeDAO.getByProperties(new String[]{"name"}, new Object[]{name});
-		if(store == null){
-			store = DAOService.storeDAO.get(DAOService.storeDAO.add(new Store(name)));
+		Store store = DAOService.storeDAO.getByProperties(
+				new String[] { "name" }, new Object[] { name });
+		if (store == null) {
+			store = DAOService.storeDAO.get(DAOService.storeDAO.add(new Store(
+					name)));
 		}
 		return store;
 	}
 
 	public static Branch addHolderBranch(Store store) {
-		Branch branch = DAOService.branchDAO.getByProperties(new String[]{"name", "storeID"}, new Object[]{"holder", store.getID()});
-		if(branch == null){
-			branch = DAOService.branchDAO.get(DAOService.branchDAO.add(new Branch("holder", store, null)));
+		Branch branch = DAOService.branchDAO.getByProperties(new String[] {
+				"name", "storeID" }, new Object[] { "holder", store.getID() });
+		if (branch == null) {
+			branch = DAOService.branchDAO.get(DAOService.branchDAO
+					.add(new Branch("holder", store, null)));
 		}
 		return branch;
-	}
-	/**
-     * 
-     */
-	public static void addData() {
-		if (DAOService.categoryDAO.listAll().size() > 0) {
-			return;
-		}
-		Category decafTea = new Category("Decaf Tea");
-		Category tea = new Category("Tea");
-		Category instantCoffee = new Category("Instant Coffee");
-		Category coffee = new Category("Coffee");
-		Category coffeeBeans = new Category("Coffee Beans");
-
-		DAOService.categoryDAO.add(decafTea, instantCoffee, coffeeBeans, tea,
-				coffee);
-		EntityNameMap catIDMap = new EntityNameMap(EntityID.CATEGORY);
-		catIDMap.add(decafTea, instantCoffee, coffeeBeans, tea, coffee);
-		Brand twinings = new Brand("Twinings");
-		Brand nestle = new Brand("Nestle");
-		Brand illy = new Brand("Illy");
-		Brand clipper = new Brand("Clipper");
-		Brand caturra = new Brand("Caturra");
-		DAOService.brandDAO.add(twinings, nestle, illy, clipper, caturra);
-		EntityNameMap brandIDMap = new EntityNameMap(EntityID.BRAND);
-		brandIDMap.add(twinings, nestle, illy, clipper, caturra);
-		Product earlgray = new Product("Earl Grey", twinings, 25, "ea");
-		Product ricoffy = new Product("Ricoffy", nestle, 1.5, "kg");
-		Product classic = new Product("Classic", nestle, 1, "kg");
-		Product regular = new Product("Regular", illy, 250, "g");
-		Product arabica = new Product("Arabica", clipper, 100, "g");
-		Product classico = new Product("Classico Connoisseur", caturra, 500,
-				"g");
-
-		Map<Key<Product>, Product> productMap = DAOService.productDAO.add(
-				earlgray, ricoffy, classic, regular, arabica, classico);
-		EntityNameMap productIDMap = new EntityNameMap(EntityID.PRODUCT);
-		productIDMap
-				.add(earlgray, ricoffy, classic, regular, arabica, classico);
-		ProductCategory earlgrayD = new ProductCategory(decafTea, earlgray);
-		ProductCategory earlgrayT = new ProductCategory(tea, earlgray);
-		ProductCategory classicC = new ProductCategory(coffee, classic);
-		ProductCategory classicIC = new ProductCategory(instantCoffee, classic);
-		ProductCategory ricoffyIC = new ProductCategory(instantCoffee, ricoffy);
-		ProductCategory ricoffyC = new ProductCategory(coffee, ricoffy);
-		ProductCategory regularC = new ProductCategory(coffee, regular);
-		ProductCategory regularCB = new ProductCategory(coffeeBeans, regular);
-		ProductCategory arabicaC = new ProductCategory(coffee, arabica);
-		ProductCategory arabicaCB = new ProductCategory(coffeeBeans, arabica);
-		ProductCategory classicoC = new ProductCategory(coffee, classico);
-		ProductCategory classicoCB = new ProductCategory(coffeeBeans, classico);
-
-		DAOService.productCategoryDAO.add(earlgrayD, earlgrayT, classicC,
-				classicIC, ricoffyIC, ricoffyC, regularC, regularCB, arabicaC,
-				arabicaCB, classicoC, classicoCB);
-
-		Country sa = new Country("South Africa");
-		Country nam = new Country("Namibia");
-		DAOService.countryDAO.add(sa, nam);
-		EntityNameMap countryIDMap = new EntityNameMap(EntityID.COUNTRY);
-		countryIDMap.add(sa, nam);
-		Province wc = new Province("Western Cape", sa);
-		Province gau = new Province("Gauteng", sa);
-		Province ec = new Province("Eastern Cape", sa);
-		Province nc = new Province("Northern Cape", sa);
-		Province lim = new Province("Limpopo Province", sa);
-		Province mp = new Province("Mpumalanga", sa);
-		Province nw = new Province("North-West", sa);
-		Province fs = new Province("Free State", sa);
-		Province nat = new Province("Kwa-Zulu Natal", sa);
-		DAOService.provinceDAO.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
-		EntityNameMap provinceIDMap = new EntityNameMap(EntityID.PROVINCE);
-		provinceIDMap.add(wc, gau, ec, nc, lim, mp, nw, fs, nat);
-		City stellenbosch = new City("Stellenbosch", wc, -33.920000, 18.860000);
-		City capeTown = new City("Cape Town", wc, -33.976700, 18.424400);
-		City somersetWest = new City("Somerset West", wc, -34.083300, 18.850000);
-		City paarl = new City("Paarl", wc, -33.724200, 18.955800);
-		City joburg = new City("Johannesburg", gau, -26.200000, 28.066700);
-		City pretoria = new City("Pretoria", gau, -25.725600, 28.243900);
-		DAOService.cityDAO.add(stellenbosch, capeTown, somersetWest, paarl,
-				joburg, pretoria);
-		EntityNameMap cityIDMap = new EntityNameMap(EntityID.CITY);
-		cityIDMap.add(stellenbosch, capeTown, somersetWest, paarl, joburg,
-				pretoria);
-		CityLocation dieBoord = new CityLocation("Die Boord", stellenbosch,
-				-33.944732, 18.850006);
-		CityLocation simonsrust = new CityLocation("Simonsrust", stellenbosch,
-				-33.926617, 18.878612);
-		CityLocation stellmark = new CityLocation("Stellmark", stellenbosch,
-				-33.931904, 18.859321);
-		CityLocation eikestad = new CityLocation("Eikestad", stellenbosch,
-				-33.935910, 18.860566);
-		CityLocation millstreet = new CityLocation("Mill Street", stellenbosch,
-				-33.938367, 18.859278);
-		DAOService.cityLocationDAO.add(dieBoord, simonsrust, stellmark,
-				eikestad, millstreet);
-		EntityNameMap cityLocIDMap = new EntityNameMap(EntityID.CITYLOCATION);
-		cityLocIDMap.add(dieBoord, simonsrust, stellmark, eikestad, millstreet);
-		Store spar = new Store("Spar");
-		Store picknPay = new Store("Pick 'n Pay");
-		Store checkers = new Store("Checkers");
-		Store shoprite = new Store("Shoprite");
-		Store oK = new Store("OK");
-		Store woolies = new Store("Woolworths");
-		DAOService.storeDAO
-				.add(spar, picknPay, checkers, shoprite, oK, woolies);
-		EntityNameMap storeIDMap = new EntityNameMap(EntityID.STORE);
-		storeIDMap.add(spar, picknPay, checkers, shoprite, oK, woolies);
-		Branch sparDieBoord = new Branch("Die Boord", spar, dieBoord);
-		Branch picknPayStellmark = new Branch("Stellmark", picknPay, stellmark);
-		Branch sparSimonsrust = new Branch("Simonsrust", spar, dieBoord);
-		Branch checkersMillstreet = new Branch("Mill Street", checkers,
-				millstreet);
-		Branch wooliesEikestad = new Branch("Eikestad", woolies, eikestad);
-		Branch shopriteEikestad = new Branch("Eikestad", shoprite, eikestad);
-		DAOService.branchDAO.add(sparDieBoord, picknPayStellmark,
-				sparSimonsrust, checkersMillstreet, wooliesEikestad,
-				shopriteEikestad);
-		EntityNameMap branchIDMap = new EntityNameMap(EntityID.BRANCH);
-		branchIDMap.add(sparDieBoord, picknPayStellmark, sparSimonsrust,
-				checkersMillstreet, wooliesEikestad, shopriteEikestad);
-		long year2010 = 1182304000000L;
-		long month = 2592000000L;
-		int i = 0;
-		HashSet<BranchProduct> bps = new HashSet<BranchProduct>();
-		EntityNameMap bpIDMap = new EntityNameMap(EntityID.BRANCHPRODUCT);
-		for (Entry<Key<Product>, Product> entry : productMap.entrySet()) {
-			BranchProduct bp = new BranchProduct(entry.getValue(),
-					sparDieBoord, null);
-			bp.setID(100000 + i);
-			DatePrice dp = new DatePrice(new Date(year2010 + i * month),
-					10000 + i, bp.getID());
-			DAOService.datePriceDAO.add(dp);
-			bp.setDatePrice(dp);
-			DAOService.branchProductDAO.add(bp);
-			bps.add(bp);
-			bpIDMap.add(bp);
-			i++;
-		}
-		long lastdate = year2010 + i * month;
-		int lastprice = 10000 + i;
-
-		int j = 100;
-		int inc = 1;
-		for (BranchProduct bp : bps) {
-			int c = 0;
-			for (i = 0; i < 10; i++) {
-				DatePrice dp = new DatePrice(new Date(lastdate + i * month),
-						lastprice, bp.getID());
-				DAOService.datePriceDAO.add(dp);
-				bp.setDatePrice(dp);
-				j += inc * c;
-				if (j != 0) {
-					inc -= inc / Math.abs(j);
-				}
-				if (inc <= 0) {
-					inc = Math.abs(j) / 2;
-					j = -j;
-				}
-				lastprice = lastprice + j;
-				c++;
-			}
-		}
-		DAOService.entityMapDAO.add(catIDMap, bpIDMap, productIDMap,
-				storeIDMap, branchIDMap, brandIDMap, cityIDMap, provinceIDMap,
-				countryIDMap, cityLocIDMap);
-
 	}
 
 	public static void addBranchProducts(
@@ -740,6 +580,40 @@ public class EntityUtils {
 		}
 	}
 
-
+	public static List<?> getAll(String entity) {
+		if (entity.equals(Constants.CATEGORY)) {
+			return DAOService.categoryDAO.listAll();
+		} else if (entity.equals(Constants.PRODUCT)) {
+			return DAOService.productDAO.listAll();
+		}
+		if (entity.equals(Constants.BRAND)) {
+			return DAOService.brandDAO.listAll();
+		}
+		if (entity.equals(Constants.BRANCHPRODUCT)) {
+			return DAOService.branchProductDAO.listAll();
+		}
+		if (entity.equals(Constants.BRANCH)) {
+			return DAOService.branchDAO.listAll();
+		}
+		if (entity.equals(Constants.STORE)) {
+			return DAOService.storeDAO.listAll();
+		}
+		if (entity.equals(Constants.CITYLOCATION)) {
+			return DAOService.cityLocationDAO.listAll();
+		}
+		if (entity.equals(Constants.CITY)) {
+			return DAOService.cityDAO.listAll();
+		}
+		if (entity.equals(Constants.PROVINCE)) {
+			return DAOService.provinceDAO.listAll();
+		}
+		if (entity.equals(Constants.COUNTRY)) {
+			return DAOService.countryDAO.listAll();
+		}
+		if (entity.equals(Constants.DATEPRICE)) {
+			return DAOService.datePriceDAO.listAll();
+		}
+		return null;
+	}
 
 }

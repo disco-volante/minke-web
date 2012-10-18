@@ -25,6 +25,7 @@
 				<table:BranchList ui:field="storeList" />
 				<map:BranchLocation ui:field="storeLocation" />
 				<graph:HistoryGraph ui:field="historyGraph" />
+				<table:DataViewer ui:field="dataViewer" />
 			</g:DeckPanel>
 		</g:center>
 	</g:DockLayoutPanel>

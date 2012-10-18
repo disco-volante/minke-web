@@ -14,7 +14,8 @@
 
             <g:VerticalPanel>
 
-                <b:UpButton ui:field="upButton" />
+                <b:UpButton ui:field="upButton" 
+                    />
 
                 <b:DownButton ui:field="downButton" />
             </g:VerticalPanel>

@@ -36,7 +36,7 @@ public abstract class TableView extends ResizeComposite {
 	 * 
 	 */
 	public enum TABLE {
-		DEFAULT, BROWSE, STORE, SHOPPING
+		DEFAULT, BROWSE, STORE, SHOPPING, ADMIN
 	};
 
 	/**
@@ -335,6 +335,9 @@ public abstract class TableView extends ResizeComposite {
 			break;
 		case SHOPPING:
 			tableHeader.setHTML("<h2>Shopping List Browser</h2>");
+			break;
+		case ADMIN:
+			tableHeader.setHTML("<h2>Admin View</h2>");
 			break;
 		}
 		;
