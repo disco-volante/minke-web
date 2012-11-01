@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
@@ -404,52 +405,89 @@ public class EntityUtils {
 	}
 
 	public static Branch addBranch(Branch branch) {
-		if (branch.getStore().getID() == 0L) {
-			branch.setStore(DAOService.storeDAO.get(DAOService.storeDAO
-					.add(new Store(branch.getStore().getName()))));
+		Branch holder = null;
+		if (branch.getStoreID() != 0L && branch.getLocation() != null
+				&& branch.getLocation().getCity().getID() != 0L) {
+			CityLocation cl = DAOService.cityLocationDAO.getByProperties(
+					new String[] { "cityID", "lat", "lon" }, new Object[] {
+							branch.getLocation().getCityID(),
+							branch.getLocation().getLat(),
+							branch.getLocation().getLon() });
+			if (cl != null) {
+				branch.setLocation(cl);
+				holder = DAOService.branchDAO.getByProperties(
+						new String[] { "storeID", "locationID" },
+						new Object[] { branch.getStoreID(),
+								branch.getLocationID() });
+			}
+
 		}
-		if (branch.getLocation().getCity().getID() == 0L) {
-			branch.getLocation().setCity(
-					DAOService.cityDAO.get(DAOService.cityDAO.add(new City(
-							branch.getLocation().getCity().getName(), branch
-									.getLocation().getCity().getProvince(),
-							branch.getLocation().getCity().getLat(), branch
-									.getLocation().getCity().getLon()))));
+		if (holder != null) {
+			return holder;
+		} else {
+			if (branch.getStore().getID() == 0L) {
+				branch.setStore(DAOService.storeDAO.get(DAOService.storeDAO
+						.add(new Store(branch.getStore().getName()))));
+			}
+			if (branch.getLocation().getCity().getID() == 0L) {
+				branch.getLocation().setCity(
+						DAOService.cityDAO.get(DAOService.cityDAO.add(new City(
+								branch.getLocation().getCity().getName(),
+								branch.getLocation().getCity().getProvince(),
+								branch.getLocation().getCity().getLat(), branch
+										.getLocation().getCity().getLon()))));
+			}
+			branch.setLocation(DAOService.cityLocationDAO
+					.get(DAOService.cityLocationDAO.add(new CityLocation(branch
+							.getLocation().getName(), branch.getLocation()
+							.getCity(), branch.getLocation().getLat(), branch
+							.getLocation().getLon()))));
 		}
-		branch.setLocation(DAOService.cityLocationDAO
-				.get(DAOService.cityLocationDAO.add(new CityLocation(branch
-						.getLocation().getName(), branch.getLocation()
-						.getCity(), branch.getLocation().getLat(), branch
-						.getLocation().getLon()))));
 		return DAOService.branchDAO.get(DAOService.branchDAO.add(new Branch(
 				branch.getName(), branch.getStore(), branch.getLocation())));
 	}
 
 	public static Object[] addBranchProduct(BranchProduct bp, Category category) {
-		if (category.getID() == 0L) {
-			category = DAOService.categoryDAO.get(DAOService.categoryDAO
-					.add(new Category(category.getName())));
+		BranchProduct holder = null;
+		ProductCategory pc;
+		if (bp.getProductID() != 0L && bp.getBranchID() != 0L) {
+			holder = DAOService.branchProductDAO.getByProperties(new String[] {
+					"productID", "branchID" }, new Object[] {
+					bp.getProductID(), bp.getBranchID() });
 		}
-		if (bp.getProduct().getBrand().getID() == 0L) {
-			bp.getProduct().setBrand(
-					DAOService.brandDAO.get(DAOService.brandDAO.add(new Brand(
-							bp.getProduct().getBrand().getName()))));
+		if (holder != null) {
+			bp = holder;
+			pc = DAOService.productCategoryDAO.getByProperties(
+					new String[] { "productID" },
+					new Object[] { bp.getProductID() });
+			category = DAOService.categoryDAO.get(pc.getCategoryID());
+		} else {
+			if (category.getID() == 0L) {
+				category = DAOService.categoryDAO.get(DAOService.categoryDAO
+						.add(new Category(category.getName())));
+			}
+			if (bp.getProduct().getBrand().getID() == 0L) {
+				bp.getProduct().setBrand(
+						DAOService.brandDAO.get(DAOService.brandDAO
+								.add(new Brand(bp.getProduct().getBrand()
+										.getName()))));
+			}
+			bp.setProduct(DAOService.productDAO.get(DAOService.productDAO
+					.add(bp.getProduct())));
+			pc = DAOService.productCategoryDAO
+					.get(DAOService.productCategoryDAO.add(new ProductCategory(
+							category, bp.getProduct())));
+			bp = DAOService.branchProductDAO.get(DAOService.branchProductDAO
+					.add(new BranchProduct(bp.getProduct(), bp.getBranch(), bp
+							.getDatePrice())));
+			DatePrice dp = DAOService.datePriceDAO.get(DAOService.datePriceDAO
+					.add(new DatePrice(bp.getDatePrice().getDate(), bp
+							.getDatePrice().getPrice(), bp.getID())));
+			bp.setDatePrice(dp);
+			bp = DAOService.branchProductDAO.get(DAOService.branchProductDAO
+					.add(bp));
 		}
-		bp.setProduct(DAOService.productDAO.get(DAOService.productDAO.add(bp
-				.getProduct())));
-		ProductCategory pc = DAOService.productCategoryDAO
-				.get(DAOService.productCategoryDAO.add(new ProductCategory(
-						category, bp.getProduct())));
-		bp = DAOService.branchProductDAO.get(DAOService.branchProductDAO
-				.add(new BranchProduct(bp.getProduct(), bp.getBranch(), bp
-						.getDatePrice())));
-		DatePrice dp = DAOService.datePriceDAO.get(DAOService.datePriceDAO
-				.add(new DatePrice(bp.getDatePrice().getDate(), bp
-						.getDatePrice().getPrice(), bp.getID())));
-		bp.setDatePrice(dp);
-		return new Object[] {
-				DAOService.branchProductDAO.get(DAOService.branchProductDAO
-						.add(bp)), pc };
+		return new Object[] { bp, pc };
 	}
 
 	public static List<DatePrice> getDatePrices(long bpID) {
@@ -460,14 +498,14 @@ public class EntityUtils {
 	public static BranchProduct updateBranchProduct(
 			BranchProduct branchProduct, int price) {
 		try {
-			System.out.println(branchProduct);
-			Product p = DAOService.productDAO.get(branchProduct.getProductID());
-			Branch b = DAOService.branchDAO.get(branchProduct.getBranchID());
 			DatePrice dp = new DatePrice(new Date(), price,
 					branchProduct.getID());
-			System.out.println(dp);
 			DAOService.datePriceDAO.add(dp);
-			if (branchProduct.getID() == 0L || branchProduct.getID() == 0) {
+			if (branchProduct.getID() == 0L) {
+				Product p = DAOService.productDAO.get(branchProduct
+						.getProductID());
+				Branch b = DAOService.branchDAO
+						.get(branchProduct.getBranchID());
 				branchProduct = DAOService.branchProductDAO
 						.get(DAOService.branchProductDAO.add(new BranchProduct(
 								p, b, dp)));
@@ -477,7 +515,6 @@ public class EntityUtils {
 			}
 			dp.setBranchProductID(branchProduct.getID());
 			DAOService.datePriceDAO.add(dp);
-			System.out.println(dp);
 			branchProduct.setDatePrice(dp);
 			return DAOService.branchProductDAO.get(DAOService.branchProductDAO
 					.add(branchProduct));
@@ -580,7 +617,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static List<?> getAll(String entity) {
+	public static List<? extends IsEntity> getAll(String entity) {
 		if (entity.equals(Constants.CATEGORY)) {
 			return DAOService.categoryDAO.listAll();
 		} else if (entity.equals(Constants.PRODUCT)) {
@@ -614,6 +651,66 @@ public class EntityUtils {
 			return DAOService.datePriceDAO.listAll();
 		}
 		return null;
+	}
+
+	public static void delete(Object entity) {
+		if (entity instanceof Category) {
+
+			DAOService.categoryDAO.delete((Category) entity);
+		} else if (entity instanceof Product) {
+			List<ProductCategory> pcs = DAOService.productCategoryDAO
+					.listByProperties(new String[] { "productID" },
+							new Object[] { ((Category) entity).getID() });
+			for (ProductCategory pc : pcs) {
+				DAOService.productCategoryDAO.delete(pc);
+			}
+			DAOService.productDAO.delete((Product) entity);
+		} else if (entity instanceof BranchProduct) {
+			DAOService.branchProductDAO.delete((BranchProduct) entity);
+		} else if (entity instanceof Branch) {
+			DAOService.branchDAO.delete((Branch) entity);
+		} else if (entity instanceof CityLocation) {
+			DAOService.cityLocationDAO.delete((CityLocation) entity);
+		} else if (entity instanceof City) {
+			DAOService.cityDAO.delete((City) entity);
+		} else if (entity instanceof Province) {
+			DAOService.provinceDAO.delete((Province) entity);
+		} else if (entity instanceof Country) {
+			DAOService.countryDAO.delete((Country) entity);
+		} else if (entity instanceof Store) {
+			DAOService.storeDAO.delete((Store) entity);
+		} else if (entity instanceof Brand) {
+			DAOService.brandDAO.delete((Brand) entity);
+		} else if (entity instanceof DatePrice) {
+			DAOService.datePriceDAO.delete((DatePrice) entity);
+		}
+	}
+
+	public static void update(IsEntity entity) {
+		if (entity instanceof Category) {
+
+			DAOService.categoryDAO.add((Category) entity);
+		} else if (entity instanceof Product) {
+			DAOService.productDAO.add((Product) entity);
+		} else if (entity instanceof BranchProduct) {
+			DAOService.branchProductDAO.add((BranchProduct) entity);
+		} else if (entity instanceof Branch) {
+			DAOService.branchDAO.add((Branch) entity);
+		} else if (entity instanceof CityLocation) {
+			DAOService.cityLocationDAO.add((CityLocation) entity);
+		} else if (entity instanceof City) {
+			DAOService.cityDAO.add((City) entity);
+		} else if (entity instanceof Province) {
+			DAOService.provinceDAO.add((Province) entity);
+		} else if (entity instanceof Country) {
+			DAOService.countryDAO.add((Country) entity);
+		} else if (entity instanceof Store) {
+			DAOService.storeDAO.add((Store) entity);
+		} else if (entity instanceof Brand) {
+			DAOService.brandDAO.add((Brand) entity);
+		} else if (entity instanceof DatePrice) {
+			DAOService.datePriceDAO.add((DatePrice) entity);
+		}		
 	}
 
 }

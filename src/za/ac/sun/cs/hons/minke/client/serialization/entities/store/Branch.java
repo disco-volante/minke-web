@@ -74,6 +74,9 @@ public class Branch extends IsEntity {
 
 	@Override
 	public String toString() {
+		if( store == null){
+			return name;
+		}
 		return store.toString() + " @ " + name;
 	}
 

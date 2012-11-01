@@ -17,6 +17,7 @@ import za.ac.sun.cs.hons.minke.client.rpc.ProductService;
 import za.ac.sun.cs.hons.minke.client.rpc.ProductServiceAsync;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
@@ -130,7 +131,7 @@ public class RPC {
 			system.getDisplayData();
 		}
 	};
-	
+
 	/**
 	 * {@link AsyncCallback} implementation for registering classes with
 	 * Objectify.
@@ -138,7 +139,8 @@ public class RPC {
 	 * @author godfried
 	 * 
 	 */
-	protected class EntityAsyncCallback implements AsyncCallback<List<?>> {
+	protected class EntityAsyncCallback implements
+			AsyncCallback<List<? extends IsEntity>> {
 		@Override
 		public void onFailure(Throwable caught) {
 			GuiUtils.hideLoader();
@@ -148,7 +150,7 @@ public class RPC {
 		}
 
 		@Override
-		public void onSuccess(List<?> result) {
+		public void onSuccess(List<? extends IsEntity> result) {
 			system.displayEntities(result);
 		}
 	};
@@ -387,7 +389,39 @@ public class RPC {
 	}
 
 	public void getEntites(String entity) {
-		classSvc.getEntities(entity, new EntityAsyncCallback());		
+		classSvc.getEntities(entity, new EntityAsyncCallback());
+	}
+
+	public void delete(IsEntity item) {
+		classSvc.deleteEntity(item, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				GuiUtils.hideLoader();
+				arg0.printStackTrace();
+			}
+
+			@Override
+			public void onSuccess(Void arg0) {
+				GuiUtils.hideLoader();
+			}
+		});
+	}
+
+	public void update(IsEntity item) {
+		classSvc.updateEntity(item, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				GuiUtils.hideLoader();
+				arg0.printStackTrace();
+			}
+
+			@Override
+			public void onSuccess(Void arg0) {
+				GuiUtils.hideLoader();
+			}
+		});
 	}
 
 }

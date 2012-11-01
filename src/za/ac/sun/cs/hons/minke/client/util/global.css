@@ -79,3 +79,7 @@ a:link,a:visited,a:hover,a:active {
 .loader {
   opacity: 0.3;
 }
+
+.paddedHorizontalPanel .gwt-Widget{
+    margin-left: 20px;
+}

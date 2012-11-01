@@ -36,6 +36,9 @@ public class CityLocation extends Location {
 
 	@Override
 	public String toString() {
+		if( getCity() == null){
+			return getName();
+		}
 		return getName() + ", " + getCity().toString();
 	}
 

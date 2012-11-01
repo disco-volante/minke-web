@@ -1,0 +1,15 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	<g:FlowPanel ui:field = 'holder'>
+	            <g:HTML>
+<h2>Edit Product</h2>
+            <br>
+            </br>
+        </g:HTML>
+        <g:HorizontalPanel width="155px">
+			<g:Button ui:field='editButton' text="Apply Changes" />
+			<g:Button ui:field='deleteButton' text="Delete" />
+		</g:HorizontalPanel>
+	
+	</g:FlowPanel>
+</ui:UiBinder>

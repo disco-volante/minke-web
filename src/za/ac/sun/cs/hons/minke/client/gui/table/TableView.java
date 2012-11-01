@@ -237,20 +237,26 @@ public abstract class TableView extends ResizeComposite {
 	 * @param headings
 	 *            the columns's headings.
 	 */
-	private void initTable(int cols, String[] headings) {
+	protected void initTable(int cols, String[] headings) {
 		String width = "150px";
+		table.clear();
+		header.clear();
 		for (int i = 0; i < cols; i++) {
 			header.getColumnFormatter().setWidth(i, width);
 			table.getColumnFormatter().setWidth(i, width);
 			if (i < headings.length) {
 				header.setText(0, i, headings[i]);
 			}
+			header.getCellFormatter().setHorizontalAlignment(0, cols,
+					HasHorizontalAlignment.ALIGN_LEFT);
 		}
 		header.getColumnFormatter().setWidth(cols, width);
 		table.getColumnFormatter().setWidth(cols, width);
 		header.setWidget(0, cols, navBar);
-		header.getCellFormatter().setHorizontalAlignment(0, cols,
-				HasHorizontalAlignment.ALIGN_RIGHT);
+		if (cols > 0) {
+			header.getCellFormatter().setHorizontalAlignment(0, cols,
+					HasHorizontalAlignment.ALIGN_RIGHT);
+		}
 	}
 
 	/**
@@ -288,7 +294,7 @@ public abstract class TableView extends ResizeComposite {
 	/**
 	 * Updates the data in the table.
 	 */
-	private void update() {
+	protected void update() {
 		if (!available()) {
 			return;
 		}

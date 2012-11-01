@@ -35,6 +35,9 @@ public class Province extends Location {
 
 	@Override
 	public String toString() {
+		if( getCountry() == null){
+			return getName();
+		}
 		return getName() + ", " + getCountry().toString();
 	}
 

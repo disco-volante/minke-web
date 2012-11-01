@@ -188,10 +188,10 @@ public class WebSystem implements EntryPoint {
 		webPage.addHistories(result);
 	}
 
-	public void displayEntities(List<?> result) {
-		webPage.showEntities(result);		
+	public void displayEntities(List<? extends IsEntity> result) {
+		webPage.showEntities(result);
 	}
-	
+
 	/**
 	 * Requests {@link BranchProduct}'s from the db.
 	 * 
@@ -232,11 +232,10 @@ public class WebSystem implements EntryPoint {
 		rpcs.getLocation(locID);
 
 	}
-	
+
 	public void requestEntities(String entity) {
 		rpcs.getEntites(entity);
 	}
-
 
 	/**
 	 * Getter for this {@link Argyle's} {@link WebPage}.
@@ -276,7 +275,13 @@ public class WebSystem implements EntryPoint {
 
 	}
 
+	public void delete(IsEntity item) {
+		rpcs.delete(item);
+	}
 
-
+	public void update(IsEntity item) {
+		rpcs.update(item);
+		
+	}
 
 }

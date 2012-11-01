@@ -1,11 +1,14 @@
 package za.ac.sun.cs.hons.minke.client.gui.table;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.gui.button.ImageButton;
+import za.ac.sun.cs.hons.minke.client.gui.popup.EditPopup;
 import za.ac.sun.cs.hons.minke.client.gui.popup.EntityPopup;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
@@ -28,6 +31,9 @@ public class DataViewer extends TableView {
 
 	private String[] headings;
 
+	private HashSet<String> brands, branches, products, stores, locations,
+			cities, provinces;
+
 	public DataViewer(WebPage webPage) {
 		super(webPage);
 		viewButton.setText("Choose Entity");
@@ -38,7 +44,7 @@ public class DataViewer extends TableView {
 		ImageButton editButton = new ImageButton(ImageUtils.getImages().admin()) {
 			@Override
 			protected void clickAction() {
-				editItem(obj);
+				editItem((IsEntity) obj);
 			}
 
 		};
@@ -54,7 +60,8 @@ public class DataViewer extends TableView {
 		} else if (obj instanceof BranchProduct) {
 			table.setText(pos, 0, ((BranchProduct) obj).getProduct().toString());
 			table.setText(pos, 1, ((BranchProduct) obj).getBranch().toString());
-			table.setText(pos, 2, ((BranchProduct) obj).getDatePrice().toString());
+			table.setText(pos, 2, ((BranchProduct) obj).getDatePrice()
+					.toString());
 		} else if (obj instanceof Branch) {
 			table.setText(pos, 0, ((Branch) obj).getName());
 			table.setText(pos, 1, ((Branch) obj).getStore().toString());
@@ -62,10 +69,11 @@ public class DataViewer extends TableView {
 		} else if (obj instanceof Store) {
 			table.setText(pos, 0, ((Store) obj).getName());
 		} else if (obj instanceof CityLocation) {
-			table.setText(pos, 0, ((CityLocation) obj).getName());
-			table.setText(pos, 1, ((CityLocation) obj).getCity().toString());
-			table.setText(pos, 2, String.valueOf(((CityLocation) obj).getLat()));
-			table.setText(pos, 3, String.valueOf(((CityLocation) obj).getLon()));
+			CityLocation cl = (CityLocation) obj;
+			table.setText(pos, 0, cl.getName());
+			table.setText(pos, 1, cl.getCity().toString());
+			table.setText(pos, 2, String.valueOf(cl.getLat()));
+			table.setText(pos, 3, String.valueOf(cl.getLon()));
 
 		} else if (obj instanceof City) {
 			table.setText(pos, 0, ((City) obj).getName());
@@ -79,14 +87,15 @@ public class DataViewer extends TableView {
 			table.setText(pos, 0, ((Country) obj).getName());
 		} else if (obj instanceof DatePrice) {
 			table.setText(pos, 0, ((DatePrice) obj).getDate().toString());
-			table.setText(pos, 1, String.valueOf(((DatePrice) obj).getActualPrice()));
+			table.setText(pos, 1,
+					String.valueOf(((DatePrice) obj).getActualPrice()));
 		}
 		table.setWidget(pos, getTableCols(), holder);
 	}
 
-	protected void editItem(Object item) {
-		// TODO Auto-generated method stub
-
+	protected void editItem(IsEntity item) {
+		EditPopup edit = new EditPopup(this, item);
+		edit.center();
 	}
 
 	@Override
@@ -119,6 +128,26 @@ public class DataViewer extends TableView {
 		webPage.requestEntities(entity);
 	}
 
+	public Collection<String> getSupportEntities(String entity) {
+		if (entity.equals(Constants.PRODUCT)) {
+			return products;
+		} else if (entity.equals(Constants.BRAND)) {
+			return brands;
+		} else if (entity.equals(Constants.BRANCH)) {
+			return branches;
+		} else if (entity.equals(Constants.STORE)) {
+			return stores;
+		} else if (entity.equals(Constants.CITYLOCATION)
+				|| entity.equals(Constants.LOCATION)) {
+			return locations;
+		} else if (entity.equals(Constants.CITY)) {
+			return cities;
+		} else if (entity.equals(Constants.PROVINCE)) {
+			return provinces;
+		}
+		return null;
+	}
+
 	private void setEntity(String entity) {
 		if (entity.equals(Constants.CATEGORY)) {
 			headings = FIELDS.CATEGORY;
@@ -143,9 +172,86 @@ public class DataViewer extends TableView {
 		} else if (entity.equals(Constants.DATEPRICE)) {
 			headings = FIELDS.DATEPRICE;
 		}
+		initTable(getTableCols(), getHeadings());
 	}
 
-	public void setEntities(List<?> result) {
+	@SuppressWarnings("unchecked")
+	public void setEntities(List<? extends IsEntity> result) {
 		setItemSet(new HashSet<Object>(result));
+		if (result != null && result.size() > 0) {
+			if (result.get(0) instanceof Product) {
+				getBrands((List<Product>) result);
+			} else if (result.get(0) instanceof BranchProduct) {
+				getProducts((List<BranchProduct>) result);
+				getBranches((List<BranchProduct>) result);
+			} else if (result.get(0) instanceof Branch) {
+				getStores((List<Branch>) result);
+				getLocations((List<Branch>) result);
+			} else if (result.get(0) instanceof CityLocation) {
+				getCities((List<CityLocation>) result);
+			} else if (result.get(0) instanceof City) {
+				getProvinces((List<City>) result);
+			}
+		}
+	}
+
+	private void getCities(List<CityLocation> cls) {
+		cities = new HashSet<String>();
+		for (CityLocation cl : cls) {
+			cities.add(cl.getCity().toString());
+		}
+	}
+
+	private void getProvinces(List<City> cities) {
+		provinces = new HashSet<String>();
+		for (City c : cities) {
+			provinces.add(c.getProvince().toString());
+		}
+	}
+
+	private void getLocations(List<Branch> branches) {
+		locations = new HashSet<String>();
+		for (Branch b : branches) {
+			locations.add(b.getLocation().toString());
+		}
+	}
+
+	private void getStores(List<Branch> branches) {
+		stores = new HashSet<String>();
+		for (Branch b : branches) {
+			stores.add(b.getStore().toString());
+		}
+	}
+
+	private void getBranches(List<BranchProduct> bps) {
+		branches = new HashSet<String>();
+		for (BranchProduct bp : bps) {
+			branches.add(bp.getBranch().toString());
+		}
+	}
+
+	private void getProducts(List<BranchProduct> bps) {
+		products = new HashSet<String>();
+		for (BranchProduct bp : bps) {
+			products.add(bp.getProduct().toString());
+		}
+	}
+
+	private void getBrands(List<Product> products) {
+		brands = new HashSet<String>();
+		for (Product p : products) {
+			brands.add(p.getBrand().toString());
+		}
+	}
+
+	public void delete(IsEntity item) {
+		itemSet.remove(item);
+		webPage.delete(item);
+		update();
+	}
+
+	public void change(IsEntity item) {
+		webPage.update(item);
+		update();		
 	}
 }

@@ -18,5 +18,6 @@ public class Constants {
 	public static final String PROVINCE = "Province";
 	public static final String COUNTRY = "Country";
 	public static final String DATEPRICE = "DatePrice";
+	public static final String LOCATION = "Location";
 
 }

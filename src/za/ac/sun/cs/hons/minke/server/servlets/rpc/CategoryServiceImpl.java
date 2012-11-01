@@ -1,8 +1,11 @@
 package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
+import java.util.List;
+
 import za.ac.sun.cs.hons.minke.client.rpc.CategoryService;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Category;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -18,7 +21,12 @@ public class CategoryServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getCategories() {
-			return DAOService.entityMapDAO.get((long) EntityID.CATEGORY.getID());
+		EntityNameMap map = DAOService.entityMapDAO
+				.get((long) EntityID.CATEGORY.getID());
+		List<Category> cats = DAOService.categoryDAO.listAll();
+		map.add(cats.toArray(new Category[cats.size()]));
+		DAOService.entityMapDAO.add(map);
+		return DAOService.entityMapDAO.get((long) EntityID.CATEGORY.getID());
 	}
 
 }

@@ -3,6 +3,7 @@ package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 import java.util.List;
 
 import za.ac.sun.cs.hons.minke.client.rpc.ClassService;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 import za.ac.sun.cs.hons.minke.server.utils.EntityUtils;
 
@@ -24,8 +25,19 @@ public class ClassServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<?> getEntities(String entity) {
+	public List<? extends IsEntity> getEntities(String entity) {
 		return EntityUtils.getAll(entity);
+	}
+
+	@Override
+	public void deleteEntity(IsEntity item) {
+		EntityUtils.delete(item);		
+	}
+
+	@Override
+	public void updateEntity(IsEntity item) {
+		EntityUtils.update(item);		
+		
 	}
 
 	

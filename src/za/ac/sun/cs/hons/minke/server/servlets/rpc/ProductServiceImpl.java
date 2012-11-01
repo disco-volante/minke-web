@@ -1,5 +1,7 @@
 package za.ac.sun.cs.hons.minke.server.servlets.rpc;
 
+import java.util.List;
+
 import za.ac.sun.cs.hons.minke.client.rpc.ProductService;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
@@ -20,6 +22,11 @@ public class ProductServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getProducts() {
+		EntityNameMap map = DAOService.entityMapDAO
+				.get((long) EntityID.PRODUCT.getID());
+		List<Product> products = DAOService.productDAO.listAll();
+		map.add(products.toArray(new Product[products.size()]));
+		DAOService.entityMapDAO.add(map);
 		return DAOService.entityMapDAO.get(EntityID.PRODUCT);
 
 	}

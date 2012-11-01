@@ -382,8 +382,19 @@ public class WebPage {
 		GuiUtils.hideLoader();
 	}
 
-	public void showEntities(List<?> result) {
+	public void showEntities(List<? extends IsEntity> result) {
 		dataViewer.setEntities(result);
+		GuiUtils.hideLoader();
+	}
+
+	public void delete(IsEntity item) {
+		GuiUtils.showLoader();
+		system.delete(item);
+	}
+
+	public void update(IsEntity item) {
+		GuiUtils.showLoader();
+		system.update(item);		
 	}
 
 }
