@@ -1,6 +1,5 @@
 package za.ac.sun.cs.hons.minke.client.gui.popup;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.ac.sun.cs.hons.minke.client.gui.table.DataViewer;

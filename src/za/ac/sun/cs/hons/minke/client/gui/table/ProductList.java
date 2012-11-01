@@ -1,6 +1,7 @@
 package za.ac.sun.cs.hons.minke.client.gui.table;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.gui.popup.GraphTypePopup;
@@ -23,6 +24,7 @@ public class ProductList extends TableView {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (available()) {
+					graphType.setItems();
 					graphType.center();
 				}
 			}
@@ -42,7 +44,7 @@ public class ProductList extends TableView {
 		table.setText(pos, 3, bp.getProduct().getSize()
 				+ bp.getProduct().getMeasurement().toString());
 		table.setText(pos, 4,
-				"R" + Double.toString(bp.getDatePrice().getActualPrice())); 
+				"R" + Double.toString(bp.getDatePrice().getActualPrice()));
 		table.setWidget(pos, 5, createInfoButton(item));
 	}
 
@@ -61,38 +63,17 @@ public class ProductList extends TableView {
 		return new String[] { "Name", "Brand", "Store", "Size", "Price", "Info" };
 	}
 
-	private HashSet<BranchProduct> getSame(Object searchO) {
-		BranchProduct searchBP = (BranchProduct) searchO;
-		HashSet<BranchProduct> holder = new HashSet<BranchProduct>();
-		for (Object o : itemSet) {
-			BranchProduct bp = (BranchProduct) o;
-			if (bp.getProductID() == searchBP.getProductID()) {
-				holder.add(bp);
-			}
-		}
-		return holder;
-	}
-
-	public boolean getGraph(String type) {
-		if (type.equals("all")) {
-			webPage.requestGraph(itemSet, getTableType());
-		} else if (selected != null) {
-			if (type.equals("same")) {
-				webPage.requestGraph(getSame(selected), getTableType());
-			} else if (type.equals("selected")) {
-				HashSet<BranchProduct> holder = new HashSet<BranchProduct>();
-				holder.add((BranchProduct) selected);
-				webPage.requestGraph(holder, getTableType());
-			}
-		} else {
-			return false;
-		}
-		return true;
+	public void getGraph(HashSet<BranchProduct> items) {
+		webPage.requestGraph(items, getTableType());
 	}
 
 	public void setHeader(String name) {
 		tableHeader.setHTML("<h2>Product Browser</h2>");
 
+	}
+
+	public Set<?> getItemSet() {
+		return itemSet;
 	}
 
 }

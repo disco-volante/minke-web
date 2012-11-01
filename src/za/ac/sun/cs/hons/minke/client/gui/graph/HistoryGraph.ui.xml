@@ -23,5 +23,9 @@
 		<g:center>
 			<g:LayoutPanel ui:field="panel" styleName="{style.header}" />
 		</g:center>
+		<g:west size="4">
+		    <g:SimplePanel><g:Button ui:field="redrawButton" text="Redraw"/>
+		     </g:SimplePanel>
+		</g:west>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

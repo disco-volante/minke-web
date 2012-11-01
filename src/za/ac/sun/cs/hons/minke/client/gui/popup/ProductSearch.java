@@ -134,6 +134,7 @@ public class ProductSearch extends FocusedPopupPanel {
 					&& !addedCategories.containsKey(search)) {
 				addedCategories.put(search, categories.getID(search));
 			} else {
+				searchBox.setText("");
 				return;
 			}
 			searchList.addItem(new SearchItem(searchList, searchBox.getText(),
@@ -167,6 +168,7 @@ public class ProductSearch extends FocusedPopupPanel {
 					&& countries.contains(loc)) {
 				addedCountries.put(loc, countries.getID(loc));
 			} else {
+				locationBox.setText("");
 				return;
 			}
 			locationList.addItem(new SearchItem(locationList, locationBox

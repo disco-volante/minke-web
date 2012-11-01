@@ -12,8 +12,8 @@ import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 
-public class ScatterGraph extends ResizeComposite {
-	interface Binder extends UiBinder<DockLayoutPanel, ScatterGraph> {
+public class LineGraph extends ResizeComposite {
+	interface Binder extends UiBinder<DockLayoutPanel, LineGraph> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -21,7 +21,7 @@ public class ScatterGraph extends ResizeComposite {
 	LayoutPanel chartPanel;
 	private LineChart chart;
 
-	public ScatterGraph() {
+	public LineGraph() {
 		chartPanel = new LayoutPanel();
 		initWidget(binder.createAndBindUi(this));
 

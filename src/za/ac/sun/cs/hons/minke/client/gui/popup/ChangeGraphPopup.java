@@ -2,7 +2,7 @@ package za.ac.sun.cs.hons.minke.client.gui.popup;
 
 import java.util.HashSet;
 
-import za.ac.sun.cs.hons.minke.client.gui.table.ProductList;
+import za.ac.sun.cs.hons.minke.client.gui.graph.HistoryGraph;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 
@@ -17,8 +17,8 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GraphTypePopup extends FocusedPopupPanel {
-	interface Binder extends UiBinder<Widget, GraphTypePopup> {
+public class ChangeGraphPopup extends FocusedPopupPanel {
+	interface Binder extends UiBinder<Widget, ChangeGraphPopup> {
 	}
 
 	@UiField
@@ -27,33 +27,32 @@ public class GraphTypePopup extends FocusedPopupPanel {
 	VerticalPanel checkboxList;
 
 	private static final Binder binder = GWT.create(Binder.class);
-	private ProductList productList;
+	private HistoryGraph graph;
 	private HashSet<BranchProduct> items;
 
-	public GraphTypePopup(boolean autohide, ProductList productList) {
+	public ChangeGraphPopup(boolean autohide, HistoryGraph graph) {
 		super(autohide);
 		add(binder.createAndBindUi(this));
-		this.productList = productList;
-		items = new HashSet<BranchProduct>();
+		this.graph = graph;
 	}
 
 	public void setItems() {
 		checkboxList.clear();
-		for (Object item : productList.getItemSet()) {
+		items = new HashSet<BranchProduct>();
+		for (final BranchProduct item : graph.getItems().keySet()) {
 			if (item != null) {
-				final BranchProduct bp = (BranchProduct) item;
-				items.add(bp);
-				final CheckBox checkBox = new CheckBox(bp.toString());
-				checkBox.setValue(true);
+				items.add(item);
+				final CheckBox checkBox = new CheckBox(item.toString());
+				checkBox.setValue(graph.showing(item));
 				checkboxList.add(checkBox);
 				checkBox.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent arg0) {
 						if (checkBox.getValue()) {
-							items.add(bp);
+							items.add(item);
 						}
 						else{
-							items.remove(bp);
+							items.remove(item);
 						}
 					}
 				});
@@ -68,8 +67,7 @@ public class GraphTypePopup extends FocusedPopupPanel {
 			GuiUtils.showError("Selection Error", "No Product Selected");
 		}
 		else{
-			GuiUtils.showLoader();
-			productList.getGraph(items);
+			graph.changeHistories(items);
 		}
 		hide();
 	}

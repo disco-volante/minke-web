@@ -36,7 +36,7 @@ public class BranchLocation extends ResizeComposite  {
 	DockLayoutPanel mapPanel;
 	@UiField
 	Button correctionButton;
-	private boolean loaded;
+	private boolean loaded, visible;
 
 	protected LatLng center;
 	double lat_o, lon_o,  lat_d,  lon_d;
@@ -48,6 +48,8 @@ public class BranchLocation extends ResizeComposite  {
 			drawMap();
 			loadDirections(Utils.toDirections(lat_o,  lon_o,  lat_d,  lon_d));
 			centerMap(center);
+			map.setVisible(visible);
+			visible = true;
 		}
 
 	};
@@ -58,6 +60,7 @@ public class BranchLocation extends ResizeComposite  {
 	public BranchLocation(WebPage webPage) {
 		initWidget(binder.createAndBindUi(this));
 		this.webPage = webPage;
+		visible = false;
 		loadMaps();
 	}
 
