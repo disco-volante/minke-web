@@ -41,9 +41,13 @@ public class ChangeGraphPopup extends FocusedPopupPanel {
 		items = new HashSet<BranchProduct>();
 		for (final BranchProduct item : graph.getItems().keySet()) {
 			if (item != null) {
-				items.add(item);
 				final CheckBox checkBox = new CheckBox(item.toString());
-				checkBox.setValue(graph.showing(item));
+				if(graph.showing(item)){
+					items.add(item);
+					checkBox.setValue(true);
+				}else{
+					checkBox.setValue(false);
+				}
 				checkboxList.add(checkBox);
 				checkBox.addClickHandler(new ClickHandler() {
 					@Override

@@ -13,19 +13,16 @@
 		}
 	</ui:style>
 	<g:DockLayoutPanel unit="EM">
-		<g:north size="4">
-			<g:SimplePanel styleName="{style.header}">
+		<g:north size="6">
+			<g:VerticalPanel styleName="{style.header}">
 				<g:HTML>
 					<h2>Product Timelines</h2>
 				</g:HTML>
-			</g:SimplePanel>
+				<g:Button ui:field="redrawButton" text="Redraw"/>
+			</g:VerticalPanel>
 		</g:north>
 		<g:center>
 			<g:LayoutPanel ui:field="panel" styleName="{style.header}" />
 		</g:center>
-		<g:west size="4">
-		    <g:SimplePanel><g:Button ui:field="redrawButton" text="Redraw"/>
-		     </g:SimplePanel>
-		</g:west>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

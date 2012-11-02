@@ -3,10 +3,10 @@ package za.ac.sun.cs.hons.minke.client.util;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -44,16 +44,16 @@ public class Utils {
 	/**
 	 * Calculates the total cost of a shopping list.
 	 * 
-	 * @param branchProducts
+	 * @param bps
 	 *            The set of {@link BranchProduct}s found in the shopping list.
 	 * @param products
 	 *            The quantities of each {@link Product}.
 	 * @return the total cost of the shopping list.
 	 */
-	public static double calcTotal(HashSet<BranchProduct> branchProducts,
+	public static double calcTotal(Set<BranchProduct> bps,
 			HashMap<Long, Integer> products) {
 		double total = 0;
-		for (BranchProduct bp : branchProducts) {
+		for (BranchProduct bp : bps) {
 			total += bp.getDatePrice().getActualPrice()
 					* products.get(bp.getProductID());
 		}

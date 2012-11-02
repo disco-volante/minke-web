@@ -2,6 +2,7 @@ package za.ac.sun.cs.hons.minke.client.gui.table;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.gui.button.InfoButton;
 import za.ac.sun.cs.hons.minke.client.gui.button.MapButton;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
@@ -23,7 +25,7 @@ public class BranchList extends TableView {
 
 	private HashMap<Long, Integer> products;
 
-	private HashMap<Branch, HashSet<BranchProduct>> branches;
+	private HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> branches;
 
 	public void addProducts(HashMap<Long, Integer> products) {
 		this.products = products;
@@ -33,7 +35,8 @@ public class BranchList extends TableView {
 	@Override
 	protected void addItem(Object item, int pos) {
 		Entry<Branch, Double> entry = (Entry<Branch, Double>) item;
-		final HashSet<BranchProduct> items = branches.get(entry.getKey());
+		final HashSet<BranchProduct> items = new HashSet<BranchProduct>();
+		items.addAll(branches.get(entry.getKey()).keySet());
 		final Branch branch = entry.getKey();
 		InfoButton infoButton = createInfoButton(items);
 		infoButton.setProducts(products);
@@ -66,12 +69,14 @@ public class BranchList extends TableView {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setItemSet(Set<?> itemSet) {
-		branches = new HashMap<Branch, HashSet<BranchProduct>>();
+		branches = new HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>>();
 		HashMap<Branch, Double> pricesMap = new HashMap<Branch, Double>();
 		for (Object item : itemSet) {
-			Entry<Branch, HashSet<BranchProduct>> entry = (Entry<Branch, HashSet<BranchProduct>>) item;
+			System.out.println(item.getClass());
+			Entry<Branch,  HashMap<BranchProduct, List<DatePrice>>> entry = (Entry<Branch,  HashMap<BranchProduct, List<DatePrice>>>) item;
+			System.out.println(entry.getValue().getClass());
 			pricesMap.put(entry.getKey(),
-					Utils.calcTotal(entry.getValue(), products));
+					Utils.calcTotal(entry.getValue().keySet(), products));
 			branches.put(entry.getKey(), entry.getValue());
 		}
 		super.setItemSet(Utils.entriesSortedByValues(pricesMap));
