@@ -80,9 +80,8 @@ public class Branch extends IsEntity {
 		return store.toString() + " @ " + name;
 	}
 
-	public void setCityLocationID(long long1) {
-		// TODO Auto-generated method stub
-
+	public void setCityLocationID(long locationID) {
+		this.locationID = locationID;
 	}
 
 	public void setStoreID(long storeID) {

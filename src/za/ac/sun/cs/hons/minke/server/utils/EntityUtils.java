@@ -74,10 +74,10 @@ public class EntityUtils {
 				HashSet<BranchProduct> bpSet = branchProducts.get(bp
 						.getBranch());
 				if (bpSet == null) {
+					bp.setBranch(ensureBranch(bp.getBranch()));
 					Branch branch = bp.getBranch();
 					branchProducts.put(branch, new HashSet<BranchProduct>());
 					bpSet = branchProducts.get(branch);
-
 				}
 				bpSet.add(bp);
 
@@ -472,6 +472,7 @@ public class EntityUtils {
 								.add(new Brand(bp.getProduct().getBrand()
 										.getName()))));
 			}
+			bp.setBranch(ensureBranch(bp.getBranch()));
 			bp.setProduct(DAOService.productDAO.get(DAOService.productDAO
 					.add(bp.getProduct())));
 			pc = DAOService.productCategoryDAO
@@ -488,6 +489,57 @@ public class EntityUtils {
 					.add(bp));
 		}
 		return new Object[] { bp, pc };
+	}
+
+	private static Branch ensureBranch(Branch branch) {
+		if (branch.getStore() == null && branch.getStoreID() != 0L) {
+			branch.setStore(DAOService.storeDAO.get(branch.getStoreID()));
+			System.out.println(branch.getStore());
+
+		}
+		if (branch.getLocation() == null && branch.getLocationID() != 0L) {
+			CityLocation cl = DAOService.cityLocationDAO.get(branch
+					.getLocationID());
+			branch.setLocation(ensureCityLocation(cl));
+
+		} else if (branch.getLocation() == null && branch.getLocationID() == 0L) {
+			CityLocation cl = DAOService.cityLocationDAO.getByProperties(
+					new String[] { "name" }, new Object[] { branch.getName() });
+			if (cl != null) {
+				branch.setLocation(ensureCityLocation(cl));
+			}
+
+		}
+		return DAOService.branchDAO.get(DAOService.branchDAO.add(branch));
+	}
+
+	private static CityLocation ensureCityLocation(CityLocation cl) {
+		if (cl.getCity() == null && cl.getCityID() != 0L) {
+			City city = DAOService.cityDAO.get(cl.getCityID());
+			cl.setCity(ensureCity(city));
+			cl = DAOService.cityLocationDAO.get(DAOService.cityLocationDAO
+					.add(cl));
+		}
+		return cl;
+	}
+
+	private static City ensureCity(City city) {
+		if (city.getProvince() == null && city.getProvinceID() != 0L) {
+			Province p = DAOService.provinceDAO.get(city.getProvinceID());
+			city.setProvince(ensureProvince(p));
+			city = DAOService.cityDAO.get(DAOService.cityDAO.add(city));
+		}
+		return city;
+	}
+
+	private static Province ensureProvince(Province province) {
+		if (province.getCountry() == null && province.getCountryID() != 0L) {
+			province.setCountry(DAOService.countryDAO.get(province
+					.getCountryID()));
+			province = DAOService.provinceDAO.get(DAOService.provinceDAO
+					.add(province));
+		}
+		return province;
 	}
 
 	public static List<DatePrice> getDatePrices(long bpID) {
@@ -710,7 +762,7 @@ public class EntityUtils {
 			DAOService.brandDAO.add((Brand) entity);
 		} else if (entity instanceof DatePrice) {
 			DAOService.datePriceDAO.add((DatePrice) entity);
-		}		
+		}
 	}
 
 }

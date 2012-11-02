@@ -46,8 +46,11 @@ public class BranchList extends TableView {
 		holder.add(mapButton);
 		table.setText(pos, 0, branch.getName());
 		table.setText(pos, 1, branch.getStore().toString());
-		table.setText(pos, 2, branch.getLocation().getCity().toString());
-		table.setText(pos, 3, "R" + Double.toString(entry.getValue())); 
+		if (branch.getLocation() != null
+				&& branch.getLocation().getCity() != null) {
+			table.setText(pos, 2, branch.getLocation().getCity().toString());
+		}
+		table.setText(pos, 3, "R" + Double.toString(entry.getValue()));
 		table.setWidget(pos, 4, holder);
 	}
 
@@ -73,7 +76,7 @@ public class BranchList extends TableView {
 		HashMap<Branch, Double> pricesMap = new HashMap<Branch, Double>();
 		for (Object item : itemSet) {
 			System.out.println(item.getClass());
-			Entry<Branch,  HashMap<BranchProduct, List<DatePrice>>> entry = (Entry<Branch,  HashMap<BranchProduct, List<DatePrice>>>) item;
+			Entry<Branch, HashMap<BranchProduct, List<DatePrice>>> entry = (Entry<Branch, HashMap<BranchProduct, List<DatePrice>>>) item;
 			System.out.println(entry.getValue().getClass());
 			pricesMap.put(entry.getKey(),
 					Utils.calcTotal(entry.getValue().keySet(), products));
