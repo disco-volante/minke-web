@@ -1,6 +1,7 @@
 package za.ac.sun.cs.hons.minke.client.gui.table;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -31,9 +32,8 @@ public class DataViewer extends TableView {
 
 	private String[] headings;
 
-	private HashSet<String> brands, branches, products, stores, locations,
-			cities, provinces;
-
+	public HashMap<String, IsEntity> brands, branches, products, stores, locations,
+			cities, provinces,countries;
 	public DataViewer(WebPage webPage) {
 		super(webPage);
 		viewButton.setText("Choose Entity");
@@ -130,20 +130,20 @@ public class DataViewer extends TableView {
 
 	public Collection<String> getSupportEntities(String entity) {
 		if (entity.equals(Constants.PRODUCT)) {
-			return products;
+			return products.keySet();
 		} else if (entity.equals(Constants.BRAND)) {
-			return brands;
+			return brands.keySet();
 		} else if (entity.equals(Constants.BRANCH)) {
-			return branches;
+			return branches.keySet();
 		} else if (entity.equals(Constants.STORE)) {
-			return stores;
+			return stores.keySet();
 		} else if (entity.equals(Constants.CITYLOCATION)
 				|| entity.equals(Constants.LOCATION)) {
-			return locations;
+			return locations.keySet();
 		} else if (entity.equals(Constants.CITY)) {
-			return cities;
+			return cities.keySet();
 		} else if (entity.equals(Constants.PROVINCE)) {
-			return provinces;
+			return provinces.keySet();
 		}
 		return null;
 	}
@@ -191,56 +191,64 @@ public class DataViewer extends TableView {
 				getCities((List<CityLocation>) result);
 			} else if (result.get(0) instanceof City) {
 				getProvinces((List<City>) result);
+			}else if(result.get(0) instanceof Province){
+				getCounries((List<Province>) result);
 			}
+		}
+	}
+	private void getCounries(List<Province> provinces) {
+		countries = new HashMap<String, IsEntity>();
+		for (Province p : provinces) {
+			countries.put(p.getCountry().toString(),p.getCountry());
 		}
 	}
 
 	private void getCities(List<CityLocation> cls) {
-		cities = new HashSet<String>();
+		cities = new HashMap<String, IsEntity>();
 		for (CityLocation cl : cls) {
-			cities.add(cl.getCity().toString());
+			cities.put(cl.getCity().toString(),cl.getCity());
 		}
 	}
 
 	private void getProvinces(List<City> cities) {
-		provinces = new HashSet<String>();
+		provinces = new HashMap<String, IsEntity>();
 		for (City c : cities) {
-			provinces.add(c.getProvince().toString());
+			provinces.put(c.getProvince().toString(),c.getProvince());
 		}
 	}
 
 	private void getLocations(List<Branch> branches) {
-		locations = new HashSet<String>();
+		locations = new HashMap<String, IsEntity>();
 		for (Branch b : branches) {
-			locations.add(b.getLocation().toString());
+			locations.put(b.getLocation().toString(),b.getLocation());
 		}
 	}
 
 	private void getStores(List<Branch> branches) {
-		stores = new HashSet<String>();
+		stores = new HashMap<String, IsEntity>();
 		for (Branch b : branches) {
-			stores.add(b.getStore().toString());
+			stores.put(b.getStore().toString(),b.getStore());
 		}
 	}
 
 	private void getBranches(List<BranchProduct> bps) {
-		branches = new HashSet<String>();
+		branches = new HashMap<String, IsEntity>();
 		for (BranchProduct bp : bps) {
-			branches.add(bp.getBranch().toString());
+			branches.put(bp.getBranch().toString(),bp.getBranch());
 		}
 	}
 
 	private void getProducts(List<BranchProduct> bps) {
-		products = new HashSet<String>();
+		products = new HashMap<String, IsEntity>();
 		for (BranchProduct bp : bps) {
-			products.add(bp.getProduct().toString());
+			products.put(bp.getProduct().toString(),bp.getProduct());
 		}
 	}
 
 	private void getBrands(List<Product> products) {
-		brands = new HashSet<String>();
+		brands = new HashMap<String, IsEntity>();
 		for (Product p : products) {
-			brands.add(p.getBrand().toString());
+			brands.put(p.getBrand().toString(),p.getBrand());
 		}
 	}
 

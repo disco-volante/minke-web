@@ -32,9 +32,7 @@ public class DatePriceDAO extends ObjectifyDAO<DatePrice> {
    				curMax = _dp;
    			}
    		}
-   		if(curMax == null){
-			DAOService.branchProductDAO.delete(bp);
-   		}else{
+   		if(curMax != null){
    			bp.setDatePrice(curMax);
 			DAOService.branchProductDAO.add(bp);
    		}

@@ -8,6 +8,8 @@ import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass
 public class DatePrice extends IsEntity implements Comparable<DatePrice> {
+	
+
 	private Date date;
 	private int price;
 	private long branchProductID;
@@ -66,6 +68,11 @@ public class DatePrice extends IsEntity implements Comparable<DatePrice> {
 			return cd;
 		}
 		return ((Integer) price).compareTo(datePrice.getPrice());
+	}
+	
+	@Override
+	public String toString() {
+		return "R " + price+" on "+ date.toString();
 	}
 
 }
