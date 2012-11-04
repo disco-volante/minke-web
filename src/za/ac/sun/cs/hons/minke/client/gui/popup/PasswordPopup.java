@@ -4,12 +4,10 @@ import za.ac.sun.cs.hons.minke.client.gui.ViewTree;
 import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
-import com.google.appengine.api.datastore.Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -32,6 +30,7 @@ public class PasswordPopup extends FocusedPopupPanel {
 		super(true);
 		add(binder.createAndBindUi(this));
 		this.tree = _tree;
+		password.setFocus(true);
 	}
 
 	@UiHandler("password")

@@ -705,17 +705,10 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static void delete(Object entity) {
+	public static void delete(IsEntity entity) {
 		if (entity instanceof Category) {
-
-			DAOService.categoryDAO.delete((Category) entity);
+			DAOService.categoryDAO.delete((Category) entity);		
 		} else if (entity instanceof Product) {
-			List<ProductCategory> pcs = DAOService.productCategoryDAO
-					.listByProperties(new String[] { "productID" },
-							new Object[] { ((Category) entity).getID() });
-			for (ProductCategory pc : pcs) {
-				DAOService.productCategoryDAO.delete(pc);
-			}
 			DAOService.productDAO.delete((Product) entity);
 		} else if (entity instanceof BranchProduct) {
 			DAOService.branchProductDAO.delete((BranchProduct) entity);
@@ -740,7 +733,6 @@ public class EntityUtils {
 
 	public static void update(IsEntity entity) {
 		if (entity instanceof Category) {
-
 			DAOService.categoryDAO.add((Category) entity);
 		} else if (entity instanceof Product) {
 			DAOService.productDAO.add((Product) entity);

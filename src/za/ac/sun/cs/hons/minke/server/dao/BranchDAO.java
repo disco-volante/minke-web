@@ -22,8 +22,10 @@ public class BranchDAO extends ObjectifyDAO<Branch> {
 	public void delete(Branch branch) {
 		List<BranchProduct> bps = DAOService.branchProductDAO.listByProperties(
 				new String[] { "branchID" }, new Object[] { branch.getID() });
-		for (BranchProduct bp : bps) {
-			DAOService.branchProductDAO.delete(bp);
+		if (bps != null) {
+			for (BranchProduct bp : bps) {
+				DAOService.branchProductDAO.delete(bp);
+			}
 		}
 		super.delete(branch);
 	}

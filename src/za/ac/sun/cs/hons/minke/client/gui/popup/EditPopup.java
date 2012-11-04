@@ -16,6 +16,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
+import za.ac.sun.cs.hons.minke.client.util.Constants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -84,53 +85,53 @@ public class EditPopup extends FocusedPopupPanel {
 	}
 
 	private void createDatePriceUi(DatePrice item) {
-		addBasicRow("Date", item.getDate().toString());
-		addBasicRow("Price", String.valueOf(item.getActualPrice()));
+		addBasicRow(Constants.DATE, item.getDate().toString());
+		addBasicRow(Constants.PRICE, String.valueOf(item.getActualPrice()));
 	}
 
 	private void createProvinceUi(Province item) {
-		addBasicRow("Name", item.getName());
-		addSuggestRow("Country", item.getCountry().toString());
+		addBasicRow(Constants.NAME, item.getName());
+		addSuggestRow(Constants.COUNTRY, item.getCountry().toString());
 	}
 
 	private void createCityUi(City item) {
-		addBasicRow("Name", item.getName());
-		addSuggestRow("Province", item.getProvince().toString());
-		addBasicRow("Latitude", String.valueOf(item.getLat()));
-		addBasicRow("Longitude", String.valueOf(item.getLon()));
+		addBasicRow(Constants.NAME, item.getName());
+		addSuggestRow(Constants.PROVINCE, item.getProvince().toString());
+		addBasicRow(Constants.LAT, String.valueOf(item.getLat()));
+		addBasicRow(Constants.LON, String.valueOf(item.getLon()));
 	}
 
 	private void createCityLocationUi(CityLocation item) {
-		addBasicRow("Name", item.getName());
-		addSuggestRow("City", item.getCity().toString());
-		addBasicRow("Latitude", String.valueOf(item.getLat()));
-		addBasicRow("Longitude", String.valueOf(item.getLon()));
+		addBasicRow(Constants.NAME, item.getName());
+		addSuggestRow(Constants.CITY, item.getCity().toString());
+		addBasicRow(Constants.LAT, String.valueOf(item.getLat()));
+		addBasicRow(Constants.LON, String.valueOf(item.getLon()));
 	}
 
 	private void createBranchUi(Branch item) {
-		addBasicRow("Name", item.getName());
-		addSuggestRow("Store", item.getStore().toString());
-		addSuggestRow("Location", item.getLocation().toString());
+		addBasicRow(Constants.NAME, item.getName());
+		addSuggestRow(Constants.STORE, item.getStore().toString());
+		addSuggestRow(Constants.CITYLOCATION, item.getLocation().toString());
 	}
 
 	private void createBranchProductUi(BranchProduct item) {
-		addSuggestRow("Product", item.getProduct().toString());
-		addSuggestRow("Branch", item.getBranch().toString());
+		addSuggestRow(Constants.PRODUCT, item.getProduct().toString());
+		addSuggestRow(Constants.BRANCH, item.getBranch().toString());
 		addDateRow(item.getDatePrice().getDate());
-		addBasicRow("Price",
+		addBasicRow(Constants.PRICE,
 				String.valueOf(item.getDatePrice().getActualPrice()));
 
 	}
 
 	private void createProductUi(Product item) {
-		addBasicRow("Name", item.getName());
-		addSuggestRow("Brand", item.getBrand().toString());
-		addBasicRow("Size", String.valueOf(item.getSize()));
-		addBasicRow("Measure", item.getMeasurement());
+		addBasicRow(Constants.NAME, item.getName());
+		addSuggestRow(Constants.BRAND, item.getBrand().toString());
+		addBasicRow(Constants.SIZE, String.valueOf(item.getSize()));
+		addBasicRow(Constants.MEASURE, item.getMeasurement());
 	}
 
 	private void createSimpleUi(String name) {
-		addBasicRow("Name", name);
+		addBasicRow(Constants.NAME, name);
 	}
 
 	private void addSuggestRow(String ident, String contents) {
@@ -148,6 +149,9 @@ public class EditPopup extends FocusedPopupPanel {
 		autoTexts.put(ident, suggest);
 		row.add(suggest);
 		holder.add(row);
+		if (autoTexts.size() == 1 && texts == null) {
+			suggest.setFocus(true);
+		}
 	}
 
 	private void addBasicRow(String ident, String contents) {
@@ -164,12 +168,15 @@ public class EditPopup extends FocusedPopupPanel {
 		texts.put(ident, text);
 		row.add(text);
 		holder.add(row);
+		if (texts.size() == 1 && autoTexts == null) {
+			text.setFocus(true);
+		}
 	}
 
 	private void addDateRow(Date date) {
 		HorizontalPanel row = new HorizontalPanel();
 		row.addStyleName("paddedHorizontalPanel");
-		Label lbl = new Label("Date");
+		Label lbl = new Label(Constants.DATE);
 		db = new DateBox();
 		db.setValue(date);
 		row.add(lbl);
@@ -206,202 +213,208 @@ public class EditPopup extends FocusedPopupPanel {
 
 	private void editCountry(Country country) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(country.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(country.getName())) {
 			country.setName(name);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(country);
+			viewer.update(country);
 		}
 	}
 
 	private void editProvince(Province province) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(province.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(province.getName())) {
 			province.setName(name);
 			changed = true;
 		}
 		Country country = (Country) viewer.countries.get(autoTexts.get(
-				"Country").toString());
-		if (province.getCountryID() != country.getID()) {
+				Constants.COUNTRY).getText());
+		if (country != null && province.getCountryID() != country.getID()) {
 			province.setCountry(country);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(province);
+			viewer.update(province);
 		}
 	}
 
 	private void editCity(City city) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(city.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(city.getName())) {
 			city.setName(name);
 			changed = true;
 		}
-		double lat = Double.parseDouble(texts.get("Latitude").getText());
+		double lat = Double.parseDouble(texts.get(Constants.LAT).getText());
 		if (city.getLat() != lat) {
 			city.setLat(lat);
 			changed = true;
 		}
-		double lon = Double.parseDouble(texts.get("Longitude").getText());
+		double lon = Double.parseDouble(texts.get(Constants.LON).getText());
 		if (city.getLon() != lon) {
 			city.setLon(lon);
 			changed = true;
 		}
 		Province province = (Province) viewer.provinces.get(autoTexts.get(
-				"Province").toString());
-		if (city.getProvinceID() != province.getID()) {
+				Constants.PROVINCE).getText());
+		if (province != null && city.getProvinceID() != province.getID()) {
 			city.setProvince(province);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(city);
+			viewer.update(city);
 		}
 	}
 
 	private void editCityLocation(CityLocation cl) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(cl.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(cl.getName())) {
 			cl.setName(name);
 			changed = true;
 		}
-		double lat = Double.parseDouble(texts.get("Latitude").getText());
+		double lat = Double.parseDouble(texts.get(Constants.LAT).getText());
 		if (cl.getLat() != lat) {
 			cl.setLat(lat);
 			changed = true;
 		}
-		double lon = Double.parseDouble(texts.get("Longitude").getText());
+		double lon = Double.parseDouble(texts.get(Constants.LON).getText());
 		if (cl.getLon() != lon) {
 			cl.setLon(lon);
 			changed = true;
 		}
-		City city = (City) viewer.cities.get(autoTexts.get("City").toString());
-		if (cl.getCityID() != city.getID()) {
+		City city = (City) viewer.cities.get(autoTexts.get(Constants.CITY)
+				.getText());
+		if (city != null && cl.getCityID() != city.getID()) {
 			cl.setCity(city);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(cl);
+			viewer.update(cl);
 		}
 	}
 
 	private void editStore(Store store) {
 
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(store.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(store.getName())) {
 			store.setName(name);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(store);
+			viewer.update(store);
 		}
 	}
 
 	private void editBranch(Branch branch) {
 
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(branch.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(branch.getName())) {
 			branch.setName(name);
 			changed = true;
 		}
-		Store store = (Store) viewer.stores.get(autoTexts.get("Store")
-				.toString());
-		if (branch.getStoreID() != store.getID()) {
+		Store store = (Store) viewer.stores.get(autoTexts.get(Constants.STORE)
+				.getText());
+		if (store != null && branch.getStoreID() != store.getID()) {
 			branch.setStore(store);
 			changed = true;
 		}
 		CityLocation cl = (CityLocation) viewer.locations.get(autoTexts.get(
-				"CityLocation").toString());
-		if (branch.getLocationID() != cl.getID()) {
+				Constants.CITYLOCATION).getText());
+		if (cl != null && branch.getLocationID() != cl.getID()) {
 			branch.setLocation(cl);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(branch);
+			viewer.update(branch);
 		}
 	}
 
 	private void editBrand(Brand brand) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(brand.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(brand.getName())) {
 			brand.setName(name);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(brand);
+			viewer.update(brand);
 		}
 	}
 
 	private void editProduct(Product product) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(product.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(product.getName())) {
 			product.setName(name);
 			changed = true;
 		}
-		String measure = texts.get("Measure").getText();
-		if (measure.equals(product.getMeasurement())) {
+		String measure = texts.get(Constants.MEASURE).getText();
+		if (measure != null && measure.equals(product.getMeasurement())) {
 			product.setMeasurement(measure);
 			changed = true;
 		}
-		double size = Double.parseDouble(texts.get("Size").getText());
+		double size = Double.parseDouble(texts.get(Constants.SIZE).getText());
 		if (product.getSize() != size) {
 			product.setSize(size);
 			changed = true;
 		}
-		Brand brand = (Brand) viewer.brands.get(autoTexts.get("Brand")
+		Brand brand = (Brand) viewer.brands.get(autoTexts.get(Constants.BRAND)
 				.getText());
-		if (product.getBrandID() != brand.getID()) {
+		if (brand != null && product.getBrandID() != brand.getID()) {
 			product.setBrand(brand);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(product);
+			viewer.update(product);
 		}
 	}
 
 	private void editCategory(Category category) {
 		boolean changed = false;
-		String name = texts.get("Name").getText();
-		if (name.equals(category.getName())) {
+		String name = texts.get(Constants.NAME).getText();
+		if (name != null && name.equals(category.getName())) {
 			category.setName(name);
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(category);
+			viewer.update(category);
 		}
 	}
 
 	private void editBranchProduct(BranchProduct bp) {
 		boolean changed = false;
-		Branch b = (Branch) viewer.branches.get(autoTexts.get("Branch")
-				.toString());
-		if (b.getID() != bp.getBranchID()) {
+		Branch b = (Branch) viewer.branches.get(autoTexts.get(Constants.BRANCH)
+				.getText());
+		System.out.println(autoTexts.get(Constants.BRANCH).getText());
+		if (b != null && b.getID() != bp.getBranchID()) {
 			bp.setBranch(b);
 			changed = true;
 		}
-		Product p = (Product) viewer.products.get(autoTexts.get("Product")
-				.toString());
-		if (p.getID() != bp.getProductID()) {
+		Product p = (Product) viewer.products.get(autoTexts.get(
+				Constants.PRODUCT).getText());
+		if (p != null && p.getID() != bp.getProductID()) {
 			bp.setProduct(p);
 			changed = true;
 		}
-		double price = Double.parseDouble(texts.get("Price").getText());
-		Date d = db.getValue();
-		if (!d.equals(bp.getDatePrice().getDate())
-				|| price != bp.getDatePrice().getActualPrice()) {
-			bp.setDatePrice(new DatePrice(d, (int) (price * 100), bp.getID()));
+		Date currentDate = bp.getDatePrice().getDate();
+		Date foundDate = db.getValue();
+		int foundPrice = (int) (Double.parseDouble(texts.get(Constants.PRICE)
+				.getText()) * 100);
+		if (foundDate != null && !foundDate.equals(currentDate)) {
+			bp.setDatePrice(new DatePrice(foundDate, foundPrice, bp.getID()));
+			changed = true;
+		} else if (foundPrice != bp.getDatePrice().getPrice()) {
+			bp.setDatePrice(new DatePrice(currentDate, foundPrice, bp.getID()));
 			changed = true;
 		}
 		if (changed) {
-			viewer.change(bp);
+			viewer.update(bp);
 		}
 	}
 

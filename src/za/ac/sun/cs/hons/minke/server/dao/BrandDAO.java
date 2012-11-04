@@ -22,8 +22,10 @@ public class BrandDAO extends ObjectifyDAO<Brand> {
 	public void delete(Brand brand) {
 		List<Product> products = DAOService.productDAO.listByProperties(
 				new String[] { "brandID" }, new Object[] { brand.getID() });
-		for (Product p : products) {
-			DAOService.productDAO.delete(p);
+		if (products != null) {
+			for (Product p : products) {
+				DAOService.productDAO.delete(p);
+			}
 		}
 		super.delete(brand);
 	}

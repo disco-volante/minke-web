@@ -42,14 +42,15 @@
         field="selectionStyle"
         type="za.ac.sun.cs.hons.minke.client.util.CSSUtils.SelectionStyle" >
 			.selectedRow {
-				background: #ffffff;
+				background: #33b5e5;
 	opacity: 0.6;
 
 			}
 			
 			.selectedRow td {
-				border-top: 1px solid #88a4d6;
-				border-bottom: 1px solid #7b97d0;
+	opacity: 0.9;
+				border-top: 1px solid #0099cc;
+				border-bottom: 1px solid #0099cc;
 			}
     </ui:style>
 

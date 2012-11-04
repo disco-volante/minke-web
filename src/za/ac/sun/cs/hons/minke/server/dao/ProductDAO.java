@@ -9,33 +9,34 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.ProductCate
 import com.googlecode.objectify.ObjectifyService;
 
 public class ProductDAO extends ObjectifyDAO<Product> {
-    static {
+	static {
 
-	ObjectifyService.register(Product.class);
+		ObjectifyService.register(Product.class);
 
-    }
+	}
 
-    public ProductDAO() {
-	super(Product.class);
-    }
-    
-    @Override
+	public ProductDAO() {
+		super(Product.class);
+	}
+
+	@Override
 	public void delete(Product product) {
-		List<BranchProduct> bps = DAOService.branchProductDAO
-				.listByProperties(new String[] { "productID" },
-						new Object[] { product.getID() });
-		for (BranchProduct bp : bps) {
-			DAOService.branchProductDAO.delete(bp);
+		List<BranchProduct> bps = DAOService.branchProductDAO.listByProperties(
+				new String[] { "productID" }, new Object[] { product.getID() });
+		if (bps != null) {
+			for (BranchProduct bp : bps) {
+				DAOService.branchProductDAO.delete(bp);
+			}
 		}
-		
 		List<ProductCategory> pcs = DAOService.productCategoryDAO
 				.listByProperties(new String[] { "productID" },
 						new Object[] { product.getID() });
-		for (ProductCategory pc : pcs) {
-			DAOService.productCategoryDAO.delete(pc);
+		if (pcs != null) {
+			for (ProductCategory pc : pcs) {
+				DAOService.productCategoryDAO.delete(pc);
+			}
 		}
 		super.delete(product);
 	}
-
 
 }

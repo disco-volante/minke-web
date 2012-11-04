@@ -15,8 +15,8 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocati
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Province;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
+import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Brand;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Category;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
@@ -26,14 +26,17 @@ import za.ac.sun.cs.hons.minke.client.util.ImageUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class DataViewer extends TableView {
 
 	private String[] headings;
 
-	public HashMap<String, IsEntity> brands, branches, products, stores, locations,
-			cities, provinces,countries;
+	public HashMap<String, IsEntity> brands, branches, products, stores,
+			locations, cities, provinces, countries;
+
+	private String entity;
+
 	public DataViewer(WebPage webPage) {
 		super(webPage);
 		viewButton.setText("Choose Entity");
@@ -48,7 +51,7 @@ public class DataViewer extends TableView {
 			}
 
 		};
-		HorizontalPanel holder = new HorizontalPanel();
+		SimplePanel holder = new SimplePanel();
 		holder.add(editButton);
 		if (obj instanceof Category) {
 			table.setText(pos, 0, ((Category) obj).getName());
@@ -57,11 +60,15 @@ public class DataViewer extends TableView {
 			table.setText(pos, 1, ((Product) obj).getBrand().toString());
 			table.setText(pos, 2, String.valueOf(((Product) obj).getSize()));
 			table.setText(pos, 3, ((Product) obj).getMeasurement());
+		} else if (obj instanceof Brand) {
+			table.setText(pos, 0, ((Brand) obj).getName());
 		} else if (obj instanceof BranchProduct) {
 			table.setText(pos, 0, ((BranchProduct) obj).getProduct().toString());
 			table.setText(pos, 1, ((BranchProduct) obj).getBranch().toString());
 			table.setText(pos, 2, ((BranchProduct) obj).getDatePrice()
-					.toString());
+					.getDate().toString());
+			table.setText(pos, 3, String.valueOf(((BranchProduct) obj)
+					.getDatePrice().getActualPrice()));
 		} else if (obj instanceof Branch) {
 			table.setText(pos, 0, ((Branch) obj).getName());
 			table.setText(pos, 1, ((Branch) obj).getStore().toString());
@@ -74,7 +81,6 @@ public class DataViewer extends TableView {
 			table.setText(pos, 1, cl.getCity().toString());
 			table.setText(pos, 2, String.valueOf(cl.getLat()));
 			table.setText(pos, 3, String.valueOf(cl.getLon()));
-
 		} else if (obj instanceof City) {
 			table.setText(pos, 0, ((City) obj).getName());
 			table.setText(pos, 1, ((City) obj).getProvince().toString());
@@ -85,10 +91,6 @@ public class DataViewer extends TableView {
 			table.setText(pos, 1, ((Province) obj).getCountry().toString());
 		} else if (obj instanceof Country) {
 			table.setText(pos, 0, ((Country) obj).getName());
-		} else if (obj instanceof DatePrice) {
-			table.setText(pos, 0, ((DatePrice) obj).getDate().toString());
-			table.setText(pos, 1,
-					String.valueOf(((DatePrice) obj).getActualPrice()));
 		}
 		table.setWidget(pos, getTableCols(), holder);
 	}
@@ -169,97 +171,106 @@ public class DataViewer extends TableView {
 			headings = FIELDS.PROVINCE;
 		} else if (entity.equals(Constants.COUNTRY)) {
 			headings = FIELDS.COUNTRY;
-		} else if (entity.equals(Constants.DATEPRICE)) {
-			headings = FIELDS.DATEPRICE;
+		} else {
+			return;
 		}
+		this.entity = entity;
 		initTable(getTableCols(), getHeadings());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setEntities(List<? extends IsEntity> result) {
-		setItemSet(new HashSet<Object>(result));
-		if (result != null && result.size() > 0) {
-			if (result.get(0) instanceof Product) {
-				getBrands((List<Product>) result);
-			} else if (result.get(0) instanceof BranchProduct) {
-				getProducts((List<BranchProduct>) result);
-				getBranches((List<BranchProduct>) result);
-			} else if (result.get(0) instanceof Branch) {
-				getStores((List<Branch>) result);
-				getLocations((List<Branch>) result);
-			} else if (result.get(0) instanceof CityLocation) {
-				getCities((List<CityLocation>) result);
-			} else if (result.get(0) instanceof City) {
-				getProvinces((List<City>) result);
-			}else if(result.get(0) instanceof Province){
-				getCounries((List<Province>) result);
+		if (result != null) {
+			setItemSet(new HashSet<Object>(result));
+			if (result != null && result.size() > 0) {
+				if (result.get(0) instanceof Product) {
+					getBrands((List<Product>) result);
+				} else if (result.get(0) instanceof BranchProduct) {
+					getProducts((List<BranchProduct>) result);
+					getBranches((List<BranchProduct>) result);
+				} else if (result.get(0) instanceof Branch) {
+					getStores((List<Branch>) result);
+					getLocations((List<Branch>) result);
+				} else if (result.get(0) instanceof CityLocation) {
+					getCities((List<CityLocation>) result);
+				} else if (result.get(0) instanceof City) {
+					getProvinces((List<City>) result);
+				} else if (result.get(0) instanceof Province) {
+					getCounries((List<Province>) result);
+				}
 			}
 		}
 	}
+
 	private void getCounries(List<Province> provinces) {
 		countries = new HashMap<String, IsEntity>();
 		for (Province p : provinces) {
-			countries.put(p.getCountry().toString(),p.getCountry());
+			countries.put(p.getCountry().toString(), p.getCountry());
 		}
 	}
 
 	private void getCities(List<CityLocation> cls) {
 		cities = new HashMap<String, IsEntity>();
 		for (CityLocation cl : cls) {
-			cities.put(cl.getCity().toString(),cl.getCity());
+			cities.put(cl.getCity().toString(), cl.getCity());
 		}
 	}
 
 	private void getProvinces(List<City> cities) {
 		provinces = new HashMap<String, IsEntity>();
 		for (City c : cities) {
-			provinces.put(c.getProvince().toString(),c.getProvince());
+			provinces.put(c.getProvince().toString(), c.getProvince());
 		}
 	}
 
 	private void getLocations(List<Branch> branches) {
 		locations = new HashMap<String, IsEntity>();
 		for (Branch b : branches) {
-			locations.put(b.getLocation().toString(),b.getLocation());
+			locations.put(b.getLocation().toString(), b.getLocation());
 		}
 	}
 
 	private void getStores(List<Branch> branches) {
 		stores = new HashMap<String, IsEntity>();
 		for (Branch b : branches) {
-			stores.put(b.getStore().toString(),b.getStore());
+			stores.put(b.getStore().toString(), b.getStore());
 		}
 	}
 
 	private void getBranches(List<BranchProduct> bps) {
 		branches = new HashMap<String, IsEntity>();
 		for (BranchProduct bp : bps) {
-			branches.put(bp.getBranch().toString(),bp.getBranch());
+			branches.put(bp.getBranch().toString(), bp.getBranch());
 		}
 	}
 
 	private void getProducts(List<BranchProduct> bps) {
 		products = new HashMap<String, IsEntity>();
 		for (BranchProduct bp : bps) {
-			products.put(bp.getProduct().toString(),bp.getProduct());
+			products.put(bp.getProduct().toString(), bp.getProduct());
 		}
 	}
 
 	private void getBrands(List<Product> products) {
 		brands = new HashMap<String, IsEntity>();
 		for (Product p : products) {
-			brands.put(p.getBrand().toString(),p.getBrand());
+			brands.put(p.getBrand().toString(), p.getBrand());
 		}
 	}
 
 	public void delete(IsEntity item) {
-		itemSet.remove(item);
+		entity = item.getClass().getName()
+				.substring(item.getClass().getName().lastIndexOf('.') + 1);
 		webPage.delete(item);
-		update();
 	}
 
-	public void change(IsEntity item) {
+	public void update(IsEntity item) {
+		entity = item.getClass().getName()
+				.substring(item.getClass().getName().lastIndexOf('.') + 1);
 		webPage.update(item);
-		update();		
+	}
+
+	public void notifySuccess() {
+		getEntities(entity);
 	}
 }

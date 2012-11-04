@@ -23,8 +23,10 @@ public class CategoryDAO extends ObjectifyDAO<Category> {
 		List<ProductCategory> pcs = DAOService.productCategoryDAO
 				.listByProperties(new String[] { "categoryID" },
 						new Object[] { category.getID() });
-		for (ProductCategory pc : pcs) {
-			DAOService.productCategoryDAO.delete(pc);
+		if (pcs != null) {
+			for (ProductCategory pc : pcs) {
+				DAOService.productCategoryDAO.delete(pc);
+			}
 		}
 		super.delete(category);
 	}

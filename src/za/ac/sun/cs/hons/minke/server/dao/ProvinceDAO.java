@@ -17,14 +17,16 @@ public class ProvinceDAO extends ObjectifyDAO<Province> {
 	public ProvinceDAO() {
 		super(Province.class);
 	}
-	
+
 	@Override
 	public void delete(Province province) {
-		List<City> cities = DAOService.cityDAO
-				.listByProperties(new String[] { "provinceID" },
-						new Object[] { province.getID() });
-		for (City c : cities) {
-			DAOService.cityDAO.delete(c);
+		List<City> cities = DAOService.cityDAO.listByProperties(
+				new String[] { "provinceID" },
+				new Object[] { province.getID() });
+		if (cities != null) {
+			for (City c : cities) {
+				DAOService.cityDAO.delete(c);
+			}
 		}
 		super.delete(province);
 	}

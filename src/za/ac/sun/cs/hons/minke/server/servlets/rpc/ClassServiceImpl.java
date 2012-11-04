@@ -31,13 +31,12 @@ public class ClassServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void deleteEntity(IsEntity item) {
-		EntityUtils.delete(item);		
+		EntityUtils.delete(item);
 	}
 
 	@Override
 	public void updateEntity(IsEntity item) {
 		EntityUtils.update(item);		
-		
 	}
 
 	

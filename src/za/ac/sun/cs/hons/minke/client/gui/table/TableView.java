@@ -49,7 +49,6 @@ public abstract class TableView extends ResizeComposite {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	public static final int VISIBLE_COUNT = 20;
 
 	@UiField(provided = true)
 	HTML tableHeader;
@@ -63,8 +62,7 @@ public abstract class TableView extends ResizeComposite {
 	SelectionStyle selectionStyle;
 	@UiField
 	Button viewButton;
-	private int startIndex, selectedRow = -1;
-	private NavBar navBar;
+	private int selectedRow = -1;
 	protected WebPage webPage;
 	protected Set<?> itemSet;
 	protected HashMap<Integer, Object> indexMap;
@@ -78,7 +76,6 @@ public abstract class TableView extends ResizeComposite {
 		initWidget(binder.createAndBindUi(this));
 		this.webPage = webPage;
 		indexMap = new HashMap<Integer, Object>();
-		navBar = new NavBar(this);
 		initTable(getTableCols(), getHeadings());
 		update();
 	}
@@ -168,40 +165,10 @@ public abstract class TableView extends ResizeComposite {
 	 */
 	public void setItemSet(Set<?> itemSet) {
 		this.itemSet = itemSet;
-		startIndex = 0;
+		System.out.println("using "+this.itemSet);
 		update();
 	}
 
-	/**
-	 * Moves the table to a newer page.
-	 */
-	protected void newer() {
-		if (available()) {
-			startIndex -= VISIBLE_COUNT;
-			if (startIndex < 0) {
-				startIndex = 0;
-			} else {
-				styleRow(selectedRow, false);
-				selectedRow = -1;
-			}
-		}
-	}
-
-	/**
-	 * Moves the table to an older page.
-	 */
-	protected void older() {
-		if (available()) {
-			startIndex += VISIBLE_COUNT;
-			if (startIndex >= getMaxIndex()) {
-				startIndex -= VISIBLE_COUNT;
-			} else {
-				styleRow(selectedRow, false);
-				selectedRow = -1;
-				update();
-			}
-		}
-	}
 
 	/**
 	 * Processes the {@link #viewButton}'s ClickEvent.
@@ -239,8 +206,8 @@ public abstract class TableView extends ResizeComposite {
 	 */
 	protected void initTable(int cols, String[] headings) {
 		String width = "150px";
-		table.clear();
-		header.clear();
+		table.removeAllRows();
+		header.removeAllRows();
 		for (int i = 0; i < cols; i++) {
 			header.getColumnFormatter().setWidth(i, width);
 			table.getColumnFormatter().setWidth(i, width);
@@ -249,13 +216,6 @@ public abstract class TableView extends ResizeComposite {
 			}
 			header.getCellFormatter().setHorizontalAlignment(0, cols,
 					HasHorizontalAlignment.ALIGN_LEFT);
-		}
-		header.getColumnFormatter().setWidth(cols, width);
-		table.getColumnFormatter().setWidth(cols, width);
-		header.setWidget(0, cols, navBar);
-		if (cols > 0) {
-			header.getCellFormatter().setHorizontalAlignment(0, cols,
-					HasHorizontalAlignment.ALIGN_RIGHT);
 		}
 	}
 
@@ -295,32 +255,16 @@ public abstract class TableView extends ResizeComposite {
 	 * Updates the data in the table.
 	 */
 	protected void update() {
+		table.removeAllRows();
 		if (!available()) {
 			return;
 		}
-		int count = getMaxIndex();
-		int max = startIndex + VISIBLE_COUNT;
-		if (max > count) {
-			max = count;
-		}
-		navBar.update(startIndex, count, max);
 		int i = 0;
 		indexMap.clear();
 		for (Object item : itemSet) {
-			if (startIndex + i >= getMaxIndex() || i == VISIBLE_COUNT) {
-				break;
-			}
 			indexMap.put(i, item);
-			addItem(item, startIndex + i);
+			addItem(item, i);
 			i++;
-		}
-		if (table.getRowCount() > i) {
-			for (; i < VISIBLE_COUNT; ++i) {
-				if (table.getRowCount() > 0) {
-					table.removeRow(table.getRowCount() - 1);
-					indexMap.remove(table.getRowCount() - 1);
-				}
-			}
 		}
 	}
 

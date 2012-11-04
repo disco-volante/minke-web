@@ -15,6 +15,9 @@ public abstract class IsEntity extends GWTSerializable implements HasID {
 
 	@Override
 	public long getID() {
+		if(ID == null){
+			return -1;
+		}
 		return ID;
 	}
 

@@ -17,25 +17,30 @@ public class DatePriceDAO extends ObjectifyDAO<DatePrice> {
 	public DatePriceDAO() {
 		super(DatePrice.class);
 	}
-	
+
 	@Override
 	public void delete(DatePrice dp) {
-		BranchProduct bp = DAOService.branchProductDAO
-				.getByProperties(new String[] { "datePriceID" },
-						new Object[] { dp.getID() });
-		List<DatePrice> dps = DAOService.datePriceDAO
-   				.listByProperties(new String[] { "branchProductID" },
-   						new Object[] { bp.getID() });
-		DatePrice curMax = null;
-   		for (DatePrice _dp : dps) {
-			if(!_dp.equals(dp) && (curMax == null || _dp.getDate().after(curMax.getDate()))){
-   				curMax = _dp;
-   			}
-   		}
-   		if(curMax != null){
-   			bp.setDatePrice(curMax);
-			DAOService.branchProductDAO.add(bp);
-   		}
+		BranchProduct bp = DAOService.branchProductDAO.getByProperties(
+				new String[] { "datePriceID" }, new Object[] { dp.getID() });
+		if (bp != null) {
+			List<DatePrice> dps = DAOService.datePriceDAO.listByProperties(
+					new String[] { "branchProductID" },
+					new Object[] { bp.getID() });
+			if (dps != null) {
+				DatePrice curMax = null;
+				for (DatePrice _dp : dps) {
+					if (!_dp.equals(dp)
+							&& (curMax == null || _dp.getDate().after(
+									curMax.getDate()))) {
+						curMax = _dp;
+					}
+				}
+				if (curMax != null) {
+					bp.setDatePrice(curMax);
+					DAOService.branchProductDAO.add(bp);
+				}
+			}
+		}
 		super.delete(dp);
 	}
 

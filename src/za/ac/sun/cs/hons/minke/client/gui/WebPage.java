@@ -387,6 +387,10 @@ public class WebPage {
 		GuiUtils.hideLoader();
 	}
 
+	public void notifySuccess() {
+		dataViewer.notifySuccess();
+	}
+
 	public void delete(IsEntity item) {
 		GuiUtils.showLoader();
 		system.delete(item);
@@ -394,7 +398,7 @@ public class WebPage {
 
 	public void update(IsEntity item) {
 		GuiUtils.showLoader();
-		system.update(item);		
+		system.update(item);
 	}
 
 }

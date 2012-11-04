@@ -22,8 +22,10 @@ public class CityLocationDAO extends ObjectifyDAO<CityLocation> {
 	public void delete(CityLocation cl) {
 		List<Branch> branches = DAOService.branchDAO.listByProperties(
 				new String[] { "locationID" }, new Object[] { cl.getID() });
-		for (Branch b : branches) {
-			DAOService.branchDAO.delete(b);
+		if (branches != null) {
+			for (Branch b : branches) {
+				DAOService.branchDAO.delete(b);
+			}
 		}
 		super.delete(cl);
 	}

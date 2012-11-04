@@ -402,8 +402,9 @@ public class RPC {
 			}
 
 			@Override
-			public void onSuccess(Void arg0) {
+			public void onSuccess(Void nothing) {
 				GuiUtils.hideLoader();
+				system.notifySuccess();
 			}
 		});
 	}
@@ -418,8 +419,9 @@ public class RPC {
 			}
 
 			@Override
-			public void onSuccess(Void arg0) {
+			public void onSuccess(Void nothing) {
 				GuiUtils.hideLoader();
+				system.notifySuccess();
 			}
 		});
 	}

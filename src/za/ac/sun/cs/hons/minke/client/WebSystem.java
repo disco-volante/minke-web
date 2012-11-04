@@ -191,6 +191,12 @@ public class WebSystem implements EntryPoint {
 	public void displayEntities(List<? extends IsEntity> result) {
 		webPage.showEntities(result);
 	}
+	
+	public void notifySuccess() {
+		webPage.notifySuccess();		
+	}
+	
+
 
 	/**
 	 * Requests {@link BranchProduct}'s from the db.
@@ -284,4 +290,5 @@ public class WebSystem implements EntryPoint {
 		
 	}
 
+	
 }

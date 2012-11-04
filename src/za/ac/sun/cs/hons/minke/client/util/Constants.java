@@ -6,7 +6,7 @@ import java.util.List;
 public class Constants {
 	public static final List<String> entities = Arrays.asList(new String[] {
 			"Category", "Product", "Brand", "BranchProduct", "Branch", "Store",
-			"CityLocation", "City", "Province", "Country", "DatePrice" });
+			"CityLocation", "City", "Province", "Country" });
 	public static final String CATEGORY = "Category";
 	public static final String PRODUCT = "Product";
 	public static final String BRAND = "Brand";
@@ -19,5 +19,12 @@ public class Constants {
 	public static final String COUNTRY = "Country";
 	public static final String DATEPRICE = "DatePrice";
 	public static final String LOCATION = "Location";
+	public static final String DATE = "Date";
+	public static final String PRICE = "Price";
+	public static final String NAME = "Name";
+	public static final String LAT = "Latitude";
+	public static final String LON = "Longitude";
+	public static final String SIZE = "Size";
+	public static final String MEASURE = "Measure";
 
 }

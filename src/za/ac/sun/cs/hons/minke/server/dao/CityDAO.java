@@ -22,8 +22,10 @@ public class CityDAO extends ObjectifyDAO<City> {
 	public void delete(City city) {
 		List<CityLocation> cls = DAOService.cityLocationDAO.listByProperties(
 				new String[] { "cityID" }, new Object[] { city.getID() });
-		for (CityLocation cl : cls) {
-			DAOService.cityLocationDAO.delete(cl);
+		if (cls != null) {
+			for (CityLocation cl : cls) {
+				DAOService.cityLocationDAO.delete(cl);
+			}
 		}
 		super.delete(city);
 	}

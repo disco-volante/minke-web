@@ -5,14 +5,14 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import com.googlecode.objectify.ObjectifyService;
 
 public class LocationDAO extends ObjectifyDAO<Location> {
-    static {
+	static {
 
-	ObjectifyService.register(Location.class);
+		ObjectifyService.register(Location.class);
 
-    }
+	}
 
-    public LocationDAO() {
-	super(Location.class);
-    }
+	public LocationDAO() {
+		super(Location.class);
+	}
 
 }
