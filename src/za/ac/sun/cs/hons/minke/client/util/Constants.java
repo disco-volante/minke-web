@@ -26,5 +26,10 @@ public class Constants {
 	public static final String LON = "Longitude";
 	public static final String SIZE = "Size";
 	public static final String MEASURE = "Measure";
+	public static final String DECIMALS_0 = "([1-9][0-9]*)+(\\.[0-9]{1,2}+)?";
+	public static final String DECIMALS_1 = "[0-9]+(\\.[0-9][1-9])";
+	public static final String DECIMALS_2 = "[0-9]+(\\.[1-9][0-9]?)";
+	public static final String INTS = "([1-9][0-9]*)";
+	public static final String STRING = "[a-zA-ZäöüßÄÖÜ\\s'-,]+";
 
 }

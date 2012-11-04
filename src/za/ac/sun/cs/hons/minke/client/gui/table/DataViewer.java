@@ -7,6 +7,7 @@ import java.util.List;
 
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.gui.button.ImageButton;
+import za.ac.sun.cs.hons.minke.client.gui.popup.CreatePopup;
 import za.ac.sun.cs.hons.minke.client.gui.popup.EditPopup;
 import za.ac.sun.cs.hons.minke.client.gui.popup.EntityPopup;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
@@ -25,7 +26,9 @@ import za.ac.sun.cs.hons.minke.client.util.FIELDS;
 import za.ac.sun.cs.hons.minke.client.util.ImageUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class DataViewer extends TableView {
@@ -34,12 +37,25 @@ public class DataViewer extends TableView {
 
 	public HashMap<String, IsEntity> brands, branches, products, stores,
 			locations, cities, provinces, countries;
-
 	private String entity;
+	private Button createButton;
 
 	public DataViewer(WebPage webPage) {
 		super(webPage);
 		viewButton.setText("Choose Entity");
+		createButton = new Button("New Entity");
+		createButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				if(entity == null){
+					onButtonClicked(null);
+				}else{
+					new CreatePopup(DataViewer.this, entity).center();
+				}
+				
+			}
+		});
+		addToFooter(createButton);
 	}
 
 	@Override
@@ -96,8 +112,7 @@ public class DataViewer extends TableView {
 	}
 
 	protected void editItem(IsEntity item) {
-		EditPopup edit = new EditPopup(this, item);
-		edit.center();
+		new EditPopup(this, item).center();
 	}
 
 	@Override
@@ -272,5 +287,11 @@ public class DataViewer extends TableView {
 
 	public void notifySuccess() {
 		getEntities(entity);
+	}
+
+	public void create(IsEntity item) {
+		entity = item.getClass().getName()
+				.substring(item.getClass().getName().lastIndexOf('.') + 1);
+		webPage.update(item);		
 	}
 }

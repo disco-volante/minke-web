@@ -2,6 +2,7 @@ package za.ac.sun.cs.hons.minke.client.gui.popup;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import za.ac.sun.cs.hons.minke.client.gui.table.DataViewer;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
@@ -17,6 +18,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.Product;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.client.util.Constants;
+import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -39,7 +41,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
+public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 
 	interface Binder extends UiBinder<Widget, EditPopup> {
 	}
@@ -53,7 +55,8 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 	private IsEntity item;
 	private HashMap<String, TextBox> texts;
 	private HashMap<String, SuggestBox> autoTexts;
-	private DateBox db;
+	private DateBox dateBox;
+	private StringBuilder errors;
 
 	public EditPopup(DataViewer _viewer, IsEntity item) {
 		super(true);
@@ -84,14 +87,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 			createProvinceUi((Province) item);
 		} else if (item instanceof Country) {
 			createSimpleUi(((Country) item).getName());
-		} else if (item instanceof DatePrice) {
-			createDatePriceUi((DatePrice) item);
 		}
-	}
-
-	private void createDatePriceUi(DatePrice item) {
-		addBasicRow(Constants.DATE, item.getDate().toString());
-		addBasicRow(Constants.PRICE, String.valueOf(item.getActualPrice()));
 	}
 
 	private void createProvinceUi(Province item) {
@@ -161,7 +157,8 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 				public void execute() {
 					suggest.setFocus(true);
 				}
-			});		}
+			});
+		}
 	}
 
 	private void addBasicRow(String ident, String contents) {
@@ -184,7 +181,8 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 				public void execute() {
 					text.setFocus(true);
 				}
-			});		}
+			});
+		}
 	}
 
 	private void addDateRow(Date date) {
@@ -192,15 +190,13 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 		row.setWidth("400px");
 		row.addStyleName("paddedHorizontalPanel");
 		Label lbl = new Label(Constants.DATE);
-		db = new DateBox();
-		db.setValue(date);
+		dateBox = new DateBox();
+		dateBox.setValue(date);
 		row.add(lbl);
 		row.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		row.add(db);
+		row.add(dateBox);
 		holder.add(row);
 	}
-
-	
 
 	private void editCountry(Country country) {
 		boolean changed = false;
@@ -392,7 +388,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 			changed = true;
 		}
 		Date currentDate = bp.getDatePrice().getDate();
-		Date foundDate = db.getValue();
+		Date foundDate = dateBox.getValue();
 		int foundPrice = (int) (Double.parseDouble(texts.get(Constants.PRICE)
 				.getText()) * 100);
 		if (foundDate != null && !foundDate.equals(currentDate)) {
@@ -406,10 +402,46 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 			viewer.update(bp);
 		}
 	}
-	
+
+	private boolean validate() {
+		errors = new StringBuilder();
+		if (dateBox != null && dateBox.getValue() == null) {
+			errors.append(Constants.DATE+", ");
+		}
+		for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
+			if (!sb.getValue().getText().matches(Constants.STRING)) {
+				errors.append(sb.getKey()+", ");
+			}
+		}
+		for (Entry<String, TextBox> entry : texts.entrySet()) {
+			String input = entry.getValue().getText();
+			String type = entry.getKey();
+			if ((type.equals(Constants.SIZE) || type.equals(Constants.PRICE)
+					|| type.equals(Constants.LAT) || type.equals(Constants.LON))) {
+				if (!(input.matches(Constants.DECIMALS_0)
+						|| input.matches(Constants.DECIMALS_0) || input
+							.matches(Constants.DECIMALS_0))) {
+					errors.append(type+", ");
+				}
+			} else if (!input.matches(Constants.STRING)) {
+				errors.append(type+", ");
+			}
+			if(errors.length() > 0){
+				errors.delete(errors.length()-2, errors.length());
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@UiHandler("editButton")
 	void editClicked(ClickEvent event) {
 		hide();
+		if (!validate()) {
+			GuiUtils.showError("Invalid Input",
+					"Some fields contain invalid input: "+errors.toString());
+			return;
+		}
 		if (item instanceof Category) {
 			editCategory((Category) item);
 		} else if (item instanceof Product) {
@@ -438,17 +470,17 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 		hide();
 		viewer.delete(item);
 	}
-	
+
 	@UiHandler("cancelButton")
 	void cancelClicked(ClickEvent event) {
 		hide();
 	}
-	
+
 	@Override
 	public void onKeyPress(KeyPressEvent kpe) {
 		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
 			editClicked(null);
-		}else if(kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE){
+		} else if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
 			cancelClicked(null);
 		}
 	}

@@ -2,18 +2,15 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 	<g:FlowPanel>
 	            <g:HTML>
-<h2>Edit</h2>
+<h2>New</h2>
             <br>
             </br>
         </g:HTML>
         <g:FlowPanel ui:field = 'holder'/>
         <g:HorizontalPanel width="300px">
             <g:cell width="100px" horizontalAlignment="ALIGN_LEFT">
-            <g:Button ui:field='editButton' text="Apply" />
+            <g:Button ui:field='createButton' text="Create" />
             </g:cell>
-            <g:cell width="100px" horizontalAlignment="ALIGN_CENTER">
-			<g:Button ui:field='deleteButton' text="Delete" />
-			</g:cell>
 			<g:cell width="100px" horizontalAlignment="ALIGN_RIGHT">		                
 			<g:Button ui:field='cancelButton' text="Cancel" />
 			</g:cell>
