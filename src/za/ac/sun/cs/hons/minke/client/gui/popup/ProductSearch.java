@@ -10,9 +10,12 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityID;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,7 +24,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProductSearch extends FocusedPopupPanel {
+public class ProductSearch extends FocusedPopupPanel implements KeyPressHandler{
 
 	interface Binder extends UiBinder<Widget, ProductSearch> {
 	}
@@ -47,6 +50,12 @@ public class ProductSearch extends FocusedPopupPanel {
 		productRB.setValue(true);
 		categoryRB.setValue(false);
 		productRBClick(null);
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				locationBox.setFocus(true);
+			}
+		});
+		
 	}
 
 	private void initSuggestBoxes() {
@@ -217,6 +226,7 @@ public class ProductSearch extends FocusedPopupPanel {
 		hide();
 	}
 
+
 	@UiHandler("cancelButton")
 	void cancelClicked(ClickEvent event) {
 		hide();
@@ -236,6 +246,15 @@ public class ProductSearch extends FocusedPopupPanel {
 			addedCountries.remove(name);
 
 		}
+	}
+
+	@Override
+	public void onKeyPress(KeyPressEvent kpe) {
+		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+			handleClick(null);
+		}	else if(kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE){
+			cancelClicked(null);
+		}	
 	}
 
 }

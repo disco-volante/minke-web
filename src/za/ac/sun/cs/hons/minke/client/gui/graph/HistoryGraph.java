@@ -53,8 +53,10 @@ public class HistoryGraph extends ResizeComposite {
 
 	@UiHandler("redrawButton")
 	void redrawClicked(ClickEvent event) {
-		popup.setItems();
-		popup.center();
+		if (allItems != null && allItems.size() > 0) {
+			popup.setItems();
+			popup.center();
+		}
 	}
 
 	public void addHistories(
@@ -69,8 +71,8 @@ public class HistoryGraph extends ResizeComposite {
 	public HashMap<BranchProduct, List<DatePrice>> getItems() {
 		return allItems;
 	}
-	
-	public boolean showing(BranchProduct bp){
+
+	public boolean showing(BranchProduct bp) {
 		return items.containsKey(bp);
 	}
 

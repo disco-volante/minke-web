@@ -43,5 +43,6 @@ public class ProductDetail extends FocusedPopupPanel {
 	void cancelClicked(ClickEvent event) {
 		hide();
 	}
+	
 
 }

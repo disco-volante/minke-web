@@ -5,6 +5,8 @@ import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -27,17 +29,29 @@ public class PasswordPopup extends FocusedPopupPanel {
 	private ViewTree tree;
 
 	public PasswordPopup(ViewTree _tree) {
-		super(true);
+		super(false);
 		add(binder.createAndBindUi(this));
 		this.tree = _tree;
-		password.setFocus(true);
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				password.setFocus(true);
+			}
+		});
 	}
 
 	@UiHandler("password")
-	void locationPress(KeyPressEvent kpe) {
+	void passwordPress(KeyPressEvent kpe) {
 		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
 			confirmClicked(null);
+		} else if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+			cancelClicked(null);
 		}
+	}
+
+	@UiHandler("cancelButton")
+	void cancelClicked(ClickEvent event) {
+		tree.setHome();
+		hide();
 	}
 
 	@UiHandler("confirmButton")

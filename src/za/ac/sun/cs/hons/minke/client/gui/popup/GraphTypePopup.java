@@ -9,6 +9,9 @@ import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,7 +20,8 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GraphTypePopup extends FocusedPopupPanel {
+public class GraphTypePopup extends FocusedPopupPanel implements
+		KeyPressHandler {
 	interface Binder extends UiBinder<Widget, GraphTypePopup> {
 	}
 
@@ -51,8 +55,7 @@ public class GraphTypePopup extends FocusedPopupPanel {
 					public void onClick(ClickEvent arg0) {
 						if (checkBox.getValue()) {
 							items.add(bp);
-						}
-						else{
+						} else {
 							items.remove(bp);
 						}
 					}
@@ -64,14 +67,22 @@ public class GraphTypePopup extends FocusedPopupPanel {
 
 	@UiHandler("graphButton")
 	void itemClicked(ClickEvent event) {
-		if(items.size() == 0){
+		if (items.size() == 0) {
 			GuiUtils.showError("Selection Error", "No Product Selected");
-		}
-		else{
+		} else {
 			GuiUtils.showLoader();
 			productList.getGraph(items);
 		}
 		hide();
+	}
+
+	@Override
+	public void onKeyPress(KeyPressEvent kpe) {
+		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+			itemClicked(null);
+		} else if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+			cancelClicked(null);
+		}
 	}
 
 	@UiHandler("cancelButton")

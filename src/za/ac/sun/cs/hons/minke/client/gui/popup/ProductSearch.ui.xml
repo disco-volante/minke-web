@@ -30,7 +30,7 @@ Product Search
                     <g:HorizontalPanel>
                         <g:SuggestBox
                             title="Enter the location of the product you want to search for."
-                            ui:field="locationBox" focus="true"/>
+                            ui:field="locationBox"/>
                         <g:Button
                             text="Add"
                             ui:field="addLocationButton" />

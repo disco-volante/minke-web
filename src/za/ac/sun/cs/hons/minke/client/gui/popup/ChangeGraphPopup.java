@@ -9,6 +9,9 @@ import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,7 +20,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ChangeGraphPopup extends FocusedPopupPanel {
+public class ChangeGraphPopup extends FocusedPopupPanel implements KeyPressHandler{
 	interface Binder extends UiBinder<Widget, ChangeGraphPopup> {
 	}
 
@@ -79,6 +82,16 @@ public class ChangeGraphPopup extends FocusedPopupPanel {
 	@UiHandler("cancelButton")
 	void cancelClicked(ClickEvent event) {
 		hide();
+	}
+	
+
+	@Override
+	public void onKeyPress(KeyPressEvent kpe) {
+		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+			itemClicked(null);
+		}	else if(kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE){
+			cancelClicked(null);
+		}
 	}
 
 }

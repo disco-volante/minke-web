@@ -19,7 +19,12 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.client.util.Constants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,7 +39,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class EditPopup extends FocusedPopupPanel {
+public class EditPopup extends FocusedPopupPanel implements KeyPressHandler{
 
 	interface Binder extends UiBinder<Widget, EditPopup> {
 	}
@@ -139,19 +144,24 @@ public class EditPopup extends FocusedPopupPanel {
 			autoTexts = new HashMap<String, SuggestBox>();
 		}
 		HorizontalPanel row = new HorizontalPanel();
+		row.setWidth("400px");
+		row.addStyleName("paddedHorizontalPanel");
 		Label lbl = new Label(ident);
 		row.add(lbl);
 		row.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		oracle.addAll(viewer.getSupportEntities(ident));
-		SuggestBox suggest = new SuggestBox(oracle);
+		final SuggestBox suggest = new SuggestBox(oracle);
 		suggest.setText(contents);
 		autoTexts.put(ident, suggest);
 		row.add(suggest);
 		holder.add(row);
 		if (autoTexts.size() == 1 && texts == null) {
-			suggest.setFocus(true);
-		}
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					suggest.setFocus(true);
+				}
+			});		}
 	}
 
 	private void addBasicRow(String ident, String contents) {
@@ -159,22 +169,27 @@ public class EditPopup extends FocusedPopupPanel {
 			texts = new HashMap<String, TextBox>();
 		}
 		HorizontalPanel row = new HorizontalPanel();
+		row.setWidth("400px");
 		row.addStyleName("paddedHorizontalPanel");
 		Label lbl = new Label(ident);
 		row.add(lbl);
 		row.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		TextBox text = new TextBox();
+		final TextBox text = new TextBox();
 		text.setText(contents);
 		texts.put(ident, text);
 		row.add(text);
 		holder.add(row);
 		if (texts.size() == 1 && autoTexts == null) {
-			text.setFocus(true);
-		}
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					text.setFocus(true);
+				}
+			});		}
 	}
 
 	private void addDateRow(Date date) {
 		HorizontalPanel row = new HorizontalPanel();
+		row.setWidth("400px");
 		row.addStyleName("paddedHorizontalPanel");
 		Label lbl = new Label(Constants.DATE);
 		db = new DateBox();
@@ -185,36 +200,12 @@ public class EditPopup extends FocusedPopupPanel {
 		holder.add(row);
 	}
 
-	@UiHandler("editButton")
-	void editClicked(ClickEvent event) {
-		hide();
-		if (item instanceof Category) {
-			editCategory((Category) item);
-		} else if (item instanceof Product) {
-			editProduct((Product) item);
-		} else if (item instanceof Brand) {
-			editBrand((Brand) item);
-		} else if (item instanceof BranchProduct) {
-			editBranchProduct((BranchProduct) item);
-		} else if (item instanceof Branch) {
-			editBranch((Branch) item);
-		} else if (item instanceof Store) {
-			editStore((Store) item);
-		} else if (item instanceof CityLocation) {
-			editCityLocation((CityLocation) item);
-		} else if (item instanceof City) {
-			editCity((City) item);
-		} else if (item instanceof Province) {
-			editProvince((Province) item);
-		} else if (item instanceof Country) {
-			editCountry((Country) item);
-		}
-	}
+	
 
 	private void editCountry(Country country) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(country.getName())) {
+		if (name != null && !name.equals(country.getName())) {
 			country.setName(name);
 			changed = true;
 		}
@@ -226,7 +217,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editProvince(Province province) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(province.getName())) {
+		if (name != null && !name.equals(province.getName())) {
 			province.setName(name);
 			changed = true;
 		}
@@ -244,7 +235,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editCity(City city) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(city.getName())) {
+		if (name != null && !name.equals(city.getName())) {
 			city.setName(name);
 			changed = true;
 		}
@@ -272,7 +263,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editCityLocation(CityLocation cl) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(cl.getName())) {
+		if (name != null && !name.equals(cl.getName())) {
 			cl.setName(name);
 			changed = true;
 		}
@@ -301,7 +292,7 @@ public class EditPopup extends FocusedPopupPanel {
 
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(store.getName())) {
+		if (name != null && !name.equals(store.getName())) {
 			store.setName(name);
 			changed = true;
 		}
@@ -311,10 +302,9 @@ public class EditPopup extends FocusedPopupPanel {
 	}
 
 	private void editBranch(Branch branch) {
-
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(branch.getName())) {
+		if (name != null && !name.equals(branch.getName())) {
 			branch.setName(name);
 			changed = true;
 		}
@@ -338,7 +328,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editBrand(Brand brand) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(brand.getName())) {
+		if (name != null && !name.equals(brand.getName())) {
 			brand.setName(name);
 			changed = true;
 		}
@@ -350,7 +340,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editProduct(Product product) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(product.getName())) {
+		if (name != null && !name.equals(product.getName())) {
 			product.setName(name);
 			changed = true;
 		}
@@ -378,7 +368,7 @@ public class EditPopup extends FocusedPopupPanel {
 	private void editCategory(Category category) {
 		boolean changed = false;
 		String name = texts.get(Constants.NAME).getText();
-		if (name != null && name.equals(category.getName())) {
+		if (name != null && !name.equals(category.getName())) {
 			category.setName(name);
 			changed = true;
 		}
@@ -391,7 +381,6 @@ public class EditPopup extends FocusedPopupPanel {
 		boolean changed = false;
 		Branch b = (Branch) viewer.branches.get(autoTexts.get(Constants.BRANCH)
 				.getText());
-		System.out.println(autoTexts.get(Constants.BRANCH).getText());
 		if (b != null && b.getID() != bp.getBranchID()) {
 			bp.setBranch(b);
 			changed = true;
@@ -417,11 +406,51 @@ public class EditPopup extends FocusedPopupPanel {
 			viewer.update(bp);
 		}
 	}
+	
+	@UiHandler("editButton")
+	void editClicked(ClickEvent event) {
+		hide();
+		if (item instanceof Category) {
+			editCategory((Category) item);
+		} else if (item instanceof Product) {
+			editProduct((Product) item);
+		} else if (item instanceof Brand) {
+			editBrand((Brand) item);
+		} else if (item instanceof BranchProduct) {
+			editBranchProduct((BranchProduct) item);
+		} else if (item instanceof Branch) {
+			editBranch((Branch) item);
+		} else if (item instanceof Store) {
+			editStore((Store) item);
+		} else if (item instanceof CityLocation) {
+			editCityLocation((CityLocation) item);
+		} else if (item instanceof City) {
+			editCity((City) item);
+		} else if (item instanceof Province) {
+			editProvince((Province) item);
+		} else if (item instanceof Country) {
+			editCountry((Country) item);
+		}
+	}
 
 	@UiHandler("deleteButton")
 	void deleteClicked(ClickEvent event) {
 		hide();
 		viewer.delete(item);
+	}
+	
+	@UiHandler("cancelButton")
+	void cancelClicked(ClickEvent event) {
+		hide();
+	}
+	
+	@Override
+	public void onKeyPress(KeyPressEvent kpe) {
+		if (kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+			editClicked(null);
+		}else if(kpe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE){
+			cancelClicked(null);
+		}
 	}
 
 }

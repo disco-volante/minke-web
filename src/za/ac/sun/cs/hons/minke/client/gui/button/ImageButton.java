@@ -11,7 +11,7 @@ public abstract class ImageButton extends Button {
 	public ImageButton(ImageResource img) {
 		super();
 		setStyleName("ImageButton");
-		setHTML(ImageUtils.imageItemHTML(img));
+		setHTML(ImageUtils.imageHTML(img));
 		addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

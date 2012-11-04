@@ -37,14 +37,14 @@ public class ViewTree extends ResizeComposite {
 
 	private void buildTree(Images images) {
 		tree = new Tree(images);
-		browsing = new TreeItem(ImageUtils.imageItemHTML(images.browsing(),
+		browsing = new TreeItem(ImageUtils.getImage(images.browsing(),
 				"Product Browsing"));
-		shopping = new TreeItem(ImageUtils.imageItemHTML(images.shopping(),
-				"Shopping List")); //$NON-NLS-1$
-		map = new TreeItem(ImageUtils.imageItemHTML(images.map(), "Location"));
-		graph = new TreeItem(ImageUtils.imageItemHTML(images.graph(),
+		shopping = new TreeItem(ImageUtils.getImage(images.shopping(),
+				"Shopping List"));
+		map = new TreeItem(ImageUtils.getImage(images.map(), "Location"));
+		graph = new TreeItem(ImageUtils.getImage(images.graph(),
 				"Product Timelines"));
-		admin = new TreeItem(ImageUtils.imageItemHTML(images.admin(), "Admin"));
+		admin = new TreeItem(ImageUtils.getImage(images.admin(), "Admin"));
 		tree.addItem(browsing);
 		tree.addItem(shopping);
 		tree.addItem(map);

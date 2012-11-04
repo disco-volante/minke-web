@@ -2,7 +2,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 	<g:FlowPanel>
 		<g:Label ui:text='Choose Entity' />
-				<g:SuggestBox ui:field='entityBox' focus="true"/>
+				<g:SuggestBox ui:field='entityBox'/>
 	<g:Button ui:field='confirmButton' text="Get" />
 	</g:FlowPanel>
 </ui:UiBinder>

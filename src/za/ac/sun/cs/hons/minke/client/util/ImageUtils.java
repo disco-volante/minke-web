@@ -5,6 +5,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,13 +45,14 @@ public class ImageUtils {
 		ImageResource admin();
 	}
 
-	public static String imageItemHTML(ImageResource imageProto) {
-		return AbstractImagePrototype.create(imageProto).getHTML();
+	public static Image getImage(ImageResource imageProto) {
+		return new Image(imageProto);
 	}
 
-	public static String imageItemHTML(ImageResource imageProto, String title) {
-		return AbstractImagePrototype.create(imageProto).getHTML() + "<br>"
-				+ title;
+	public static Image getImage(ImageResource imageProto, String title) {
+		Image img = new Image(imageProto);
+		img.setAltText(title);
+		return img;
 	}
 
 	public static Images getImages() {
@@ -64,6 +66,10 @@ public class ImageUtils {
 
 	public static void hideLoadingBanner(Widget widget) {
 		DOM.setInnerHTML(widget.getElement(), "<br>");
+	}
+
+	public static String imageHTML(ImageResource imageProto) {
+		return AbstractImagePrototype.create(imageProto).getHTML();
 	}
 
 }

@@ -1,11 +1,11 @@
 package za.ac.sun.cs.hons.minke.server.servlets;
 
-import javax.servlet.http.HttpServlet;
-
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import za.ac.sun.cs.hons.minke.server.crawler.controller.StoreController;
 

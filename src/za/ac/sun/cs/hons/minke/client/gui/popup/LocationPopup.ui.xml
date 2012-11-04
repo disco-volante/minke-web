@@ -9,7 +9,7 @@
 			<g:VerticalPanel>
 				<g:Label text="Location" />
 				<g:SuggestBox ui:field="locationBox"
-					title="Enter the location nearest to you." focus="true"/>
+					title="Enter the location nearest to you."/>
 			</g:VerticalPanel>
 		<g:HTMLPanel>
 			<br></br>
