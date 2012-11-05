@@ -3,7 +3,9 @@ package za.ac.sun.cs.hons.minke.client.gui.popup;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
+import za.ac.sun.cs.hons.minke.client.SystemData;
 import za.ac.sun.cs.hons.minke.client.gui.table.DataViewer;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.IsEntity;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
@@ -404,43 +406,63 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 	}
 
 	private boolean validate() {
-		errors = new StringBuilder();
-		if (dateBox != null && dateBox.getValue() == null) {
-			errors.append(Constants.DATE + ", ");
-		}
-		for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
-			if (!sb.getValue().getText().matches(Constants.STRING)) {
-				if (sb.getKey().equals(Constants.BRANCH)
-						&& sb.getValue().getText().replace('@', ' ')
-								.matches(Constants.STRING)) {
-					continue;
+		try {
+			errors = new StringBuilder();
+			if (dateBox != null && dateBox.getValue() == null) {
+				errors.append(Constants.DATE + ", ");
+			}
+			if (autoTexts != null) {
+				for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
+					if (!Constants.STRING.test(sb.getValue().getText())) {
+						if (sb.getKey().equals(Constants.BRANCH)
+								&& Constants.STRING.test(sb.getValue()
+										.getText().replace('@', ' '))) {
+							continue;
+						}
+						errors.append(sb.getKey() + ", ");
+					}
 				}
-				errors.append(sb.getKey() + ", ");
 			}
-		}
-		for (Entry<String, TextBox> entry : texts.entrySet()) {
-			String input = entry.getValue().getText();
-			String type = entry.getKey();
-			if ((type.equals(Constants.SIZE) || type.equals(Constants.PRICE)
-					|| type.equals(Constants.LAT) || type.equals(Constants.LON))) {
-				if (!(input.matches(Constants.DECIMALS_0)
-						|| input.matches(Constants.DECIMALS_0) || input
-							.matches(Constants.DECIMALS_0))) {
-					errors.append(type + ", ");
+			if (texts != null) {
+				for (Entry<String, TextBox> entry : texts.entrySet()) {
+					String input = entry.getValue().getText();
+					String type = entry.getKey();
+					if ((type.equals(Constants.SIZE)
+							|| type.equals(Constants.PRICE)
+							|| type.equals(Constants.LAT) || type
+								.equals(Constants.LON))) {
+						if (input == null
+								|| !(Constants.DECIMALS_0.test(input))) {
+							errors.append(type + ", ");
+						}
+					} else if (!Constants.STRING.test(input)) {
+						errors.append(type + ", ");
+					}
+					if (errors.length() > 0) {
+						errors.delete(errors.length() - 2, errors.length());
+						return false;
+					}
 				}
-			} else if (!input.matches(Constants.STRING)) {
-				errors.append(type + ", ");
 			}
-			if (errors.length() > 0) {
-				errors.delete(errors.length() - 2, errors.length());
-				return false;
+			return true;
+		} catch (Exception e) {
+			SystemData.log.log(Level.SEVERE, e.getMessage());
+			if (item != null) {
+				SystemData.log.log(Level.SEVERE, "editing " + item.toString());
+			} else {
+				SystemData.log.log(Level.SEVERE, "editing null entity");
 			}
+			return false;
 		}
-		return true;
 	}
 
 	@UiHandler("editButton")
 	void editClicked(ClickEvent event) {
+		if (item != null) {
+			SystemData.log.log(Level.SEVERE, "editing " + item.toString());
+		} else {
+			SystemData.log.log(Level.SEVERE, "editing null entity");
+		}
 		hide();
 		if (!validate()) {
 			GuiUtils.showError("Invalid Input",
@@ -467,7 +489,11 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 			editProvince((Province) item);
 		} else if (item instanceof Country) {
 			editCountry((Country) item);
+		} else {
+			GuiUtils.showError("Data error",
+					"Data you are editing is corrupt. " + item.toString());
 		}
+
 	}
 
 	@UiHandler("deleteButton")

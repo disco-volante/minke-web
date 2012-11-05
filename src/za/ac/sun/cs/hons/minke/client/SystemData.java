@@ -2,6 +2,7 @@ package za.ac.sun.cs.hons.minke.client;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import za.ac.sun.cs.hons.minke.client.serialization.entities.EntityNameMap;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
@@ -18,6 +19,7 @@ public class SystemData {
 	private EntityNameMap categories, cities, provinces, countries, products;
 	private HashMap<BranchProduct, List<DatePrice>> branchProducts;
 	private HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> branches;
+	public static Logger log = Logger.getLogger("SERVER");
 
 	private boolean loaded;
 	private HashMap<Long, Integer> addedProducts;

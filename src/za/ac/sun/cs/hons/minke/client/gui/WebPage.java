@@ -31,6 +31,8 @@ import za.ac.sun.cs.hons.minke.client.util.CSSUtils;
 import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.logging.client.LogConfiguration;
+import com.google.gwt.logging.client.LoggingPopup;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -85,7 +87,8 @@ public class WebPage {
 	public WebPage(WebSystem system) {
 		setWebSystem(system);
 		buildPage();
-	}
+	
+		}
 
 	/**
 	 * Setter for the {@link WebSystem}.

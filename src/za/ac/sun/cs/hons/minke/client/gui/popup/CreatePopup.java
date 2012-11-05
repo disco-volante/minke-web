@@ -3,7 +3,9 @@ package za.ac.sun.cs.hons.minke.client.gui.popup;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
+import za.ac.sun.cs.hons.minke.client.SystemData;
 import za.ac.sun.cs.hons.minke.client.gui.table.DataViewer;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.City;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
@@ -318,17 +320,15 @@ public class CreatePopup extends FocusedPopupPanel implements KeyPressHandler {
 	}
 
 	private boolean validate() {
+		try{
 		errors = new StringBuilder();
 		if (dateBox != null && dateBox.getValue() == null) {
 			errors.append(Constants.DATE + ", ");
 		}
 		for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
-			if (!sb.getValue().getText().matches(Constants.STRING)
-					|| !viewer.getSupportEntities(sb.getKey()).contains(
-							sb.getValue().getText())) {
+			if (!Constants.STRING.test(sb.getValue().getText())) {
 				if (sb.getKey().equals(Constants.BRANCH)
-						&& sb.getValue().getText().replace('@', ' ')
-								.matches(Constants.STRING)) {
+						&& Constants.STRING.test(sb.getValue().getText().replace('@', ' '))) {
 					continue;
 				}
 				errors.append(sb.getKey() + ", ");
@@ -339,20 +339,27 @@ public class CreatePopup extends FocusedPopupPanel implements KeyPressHandler {
 			String type = entry.getKey();
 			if ((type.equals(Constants.SIZE) || type.equals(Constants.PRICE)
 					|| type.equals(Constants.LAT) || type.equals(Constants.LON))) {
-				if (!(input.matches(Constants.DECIMALS_0)
-						|| input.matches(Constants.DECIMALS_0) || input
-							.matches(Constants.DECIMALS_0))) {
+				if (input == null || !(Constants.DECIMALS_0.test(input))){
 					errors.append(type + ", ");
 				}
-			} else if (!input.matches(Constants.STRING)) {
+			} else if (!Constants.STRING.test(input) ){
 				errors.append(type + ", ");
 			}
-		}
-		if (errors.length() > 0) {
-			errors.delete(errors.length() - 2, errors.length());
-			return false;
+			if (errors.length() > 0) {
+				errors.delete(errors.length() - 2, errors.length());
+				return false;
+			}
 		}
 		return true;
+		}catch (Exception e){
+			SystemData.log.log(Level.SEVERE, e.getMessage());
+			if (entity != null) {
+				SystemData.log.log(Level.SEVERE, "editing " + entity);
+			} else {
+				SystemData.log.log(Level.SEVERE, "editing null entity");
+			}
+			return false;
+		}
 	}
 
 	@UiHandler("cancelButton")

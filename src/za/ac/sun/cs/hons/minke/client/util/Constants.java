@@ -3,6 +3,8 @@ package za.ac.sun.cs.hons.minke.client.util;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gwt.regexp.shared.RegExp;
+
 public class Constants {
 	public static final List<String> entities = Arrays.asList(new String[] {
 			"Category", "Product", "Brand", "BranchProduct", "Branch", "Store",
@@ -26,10 +28,10 @@ public class Constants {
 	public static final String LON = "Longitude";
 	public static final String SIZE = "Size";
 	public static final String MEASURE = "Measure";
-	public static final String DECIMALS_0 = "([1-9][0-9]*)+(\\.[0-9]{1,2}+)?";
-	public static final String DECIMALS_1 = "[0-9]+(\\.[0-9][1-9])";
-	public static final String DECIMALS_2 = "[0-9]+(\\.[1-9][0-9]?)";
-	public static final String INTS = "([1-9][0-9]*)";
-	public static final String STRING = "[a-zA-ZäöüßÄÖÜ\\s'-,]+";
+	public static final RegExp DECIMALS_0 = RegExp.compile("^\\d+(\\.\\d{0,2})?$");
+	//public static final RegExp DECIMALS_1 = RegExp.compile("[0-9]+(\\.[0-9][1-9])");
+	//public static final RegExp DECIMALS_2 = RegExp.compile("[0-9]+(\\.[1-9][0-9]?)");
+	public static final RegExp INTS = RegExp.compile("([1-9][0-9]*)");
+	public static final RegExp STRING = RegExp.compile("[a-zA-ZäöüßÄÖÜ\\s'-,]+");
 
 }
