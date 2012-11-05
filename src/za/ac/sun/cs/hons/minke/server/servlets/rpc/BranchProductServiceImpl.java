@@ -27,23 +27,31 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public HashMap<BranchProduct, List<DatePrice>> getBranchProductsP(
-			HashMap<EntityID, HashSet<Long>> locations,
-			HashSet<Long> products) {
+			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> products) {
 		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
-		HashMap<BranchProduct, List<DatePrice>> branchProducts = EntityUtils.getBranchProductsByID(products,
-				branches);
+		HashMap<BranchProduct, List<DatePrice>> branchProducts;
+		if (products.size() > 0) {
+			branchProducts = EntityUtils.getBranchProductsByID(products,
+					branches);
+		} else {
+			branchProducts = EntityUtils.getBranchProducts(branches);
+		}
 		return branchProducts;
 	}
 
 	@Override
 	public HashMap<BranchProduct, List<DatePrice>> getBranchProductsC(
-			HashMap<EntityID, HashSet<Long>> locations,
-			HashSet<Long> categories) {
+			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> categories) {
 		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
-		HashSet<Product> products = new HashSet<Product>();
-		products.addAll(EntityUtils.getProductsByID(categories));
-		HashMap<BranchProduct, List<DatePrice>> branchProducts = EntityUtils.getBranchProducts(products,
-				branches);
+		HashMap<BranchProduct, List<DatePrice>> branchProducts;
+		if (categories.size() > 0) {
+			HashSet<Product> products = new HashSet<Product>();
+			products.addAll(EntityUtils.getProductsByID(categories));
+			branchProducts = EntityUtils.getBranchProducts(products,
+					branches);
+		} else {
+			branchProducts = EntityUtils.getBranchProducts(branches);
+		}
 		return branchProducts;
 	}
 
@@ -75,14 +83,5 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
 		}
 		return histories;
 	}
-
-	
-	
-
-
-
-
-
-	
 
 }

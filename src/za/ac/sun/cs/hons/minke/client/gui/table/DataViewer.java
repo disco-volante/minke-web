@@ -23,6 +23,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.client.util.Constants;
 import za.ac.sun.cs.hons.minke.client.util.FIELDS;
+import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 import za.ac.sun.cs.hons.minke.client.util.ImageUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,10 +36,18 @@ public class DataViewer extends TableView {
 
 	private String[] headings;
 
-	public HashMap<String, IsEntity> brands, branches, products, stores,
-			locations, cities, provinces, countries;
+	public HashMap<String, IsEntity> brands = new HashMap<String, IsEntity>(),
+			branches = new HashMap<String, IsEntity>(),
+			products = new HashMap<String, IsEntity>(),
+			stores = new HashMap<String, IsEntity>(),
+			locations = new HashMap<String, IsEntity>(),
+			cities = new HashMap<String, IsEntity>(),
+			provinces = new HashMap<String, IsEntity>(),
+			countries = new HashMap<String, IsEntity>();
 	private String entity;
 	private Button createButton;
+
+	private int loading = 0;
 
 	public DataViewer(WebPage webPage) {
 		super(webPage);
@@ -47,12 +56,12 @@ public class DataViewer extends TableView {
 		createButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				if(entity == null){
+				if (entity == null) {
 					onButtonClicked(null);
-				}else{
+				} else {
 					new CreatePopup(DataViewer.this, entity).center();
 				}
-				
+
 			}
 		});
 		addToFooter(createButton);
@@ -112,7 +121,11 @@ public class DataViewer extends TableView {
 	}
 
 	protected void editItem(IsEntity item) {
-		new EditPopup(this, item).center();
+		if (loading > 0) {
+			GuiUtils.showError("Loading", "Loading data please wait...");
+		} else {
+			new EditPopup(this, item).center();
+		}
 	}
 
 	@Override
@@ -143,6 +156,23 @@ public class DataViewer extends TableView {
 	public void getEntities(String entity) {
 		setEntity(entity);
 		webPage.requestEntities(entity);
+		loading  = 1;
+		if (entity.equals(Constants.PRODUCT)) {
+			requestSupportEntities(Constants.BRAND);
+		} else if (entity.equals(Constants.BRANCH)) {
+			requestSupportEntities(Constants.STORE);
+			requestSupportEntities(Constants.CITYLOCATION);
+		} else if (entity.equals(Constants.BRANCHPRODUCT)) {
+			requestSupportEntities(Constants.BRANCH);
+			requestSupportEntities(Constants.PRODUCT);
+		} else if (entity.equals(Constants.CITYLOCATION)
+				|| entity.equals(Constants.LOCATION)) {
+			requestSupportEntities(Constants.CITY);
+		} else if (entity.equals(Constants.CITY)) {
+			requestSupportEntities(Constants.PROVINCE);
+		} else if (entity.equals(Constants.PROVINCE)) {
+			requestSupportEntities(Constants.COUNTRY);
+		}
 	}
 
 	public Collection<String> getSupportEntities(String entity) {
@@ -193,84 +223,16 @@ public class DataViewer extends TableView {
 		initTable(getTableCols(), getHeadings());
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setEntities(List<? extends IsEntity> result) {
 		if (result != null) {
 			setItemSet(new HashSet<Object>(result));
-			if (result != null && result.size() > 0) {
-				if (result.get(0) instanceof Product) {
-					getBrands((List<Product>) result);
-				} else if (result.get(0) instanceof BranchProduct) {
-					getProducts((List<BranchProduct>) result);
-					getBranches((List<BranchProduct>) result);
-				} else if (result.get(0) instanceof Branch) {
-					getStores((List<Branch>) result);
-					getLocations((List<Branch>) result);
-				} else if (result.get(0) instanceof CityLocation) {
-					getCities((List<CityLocation>) result);
-				} else if (result.get(0) instanceof City) {
-					getProvinces((List<City>) result);
-				} else if (result.get(0) instanceof Province) {
-					getCounries((List<Province>) result);
-				}
-			}
 		}
+		loading --;
 	}
 
-	private void getCounries(List<Province> provinces) {
-		countries = new HashMap<String, IsEntity>();
-		for (Province p : provinces) {
-			countries.put(p.getCountry().toString(), p.getCountry());
-		}
-	}
-
-	private void getCities(List<CityLocation> cls) {
-		cities = new HashMap<String, IsEntity>();
-		for (CityLocation cl : cls) {
-			cities.put(cl.getCity().toString(), cl.getCity());
-		}
-	}
-
-	private void getProvinces(List<City> cities) {
-		provinces = new HashMap<String, IsEntity>();
-		for (City c : cities) {
-			provinces.put(c.getProvince().toString(), c.getProvince());
-		}
-	}
-
-	private void getLocations(List<Branch> branches) {
-		locations = new HashMap<String, IsEntity>();
-		for (Branch b : branches) {
-			locations.put(b.getLocation().toString(), b.getLocation());
-		}
-	}
-
-	private void getStores(List<Branch> branches) {
-		stores = new HashMap<String, IsEntity>();
-		for (Branch b : branches) {
-			stores.put(b.getStore().toString(), b.getStore());
-		}
-	}
-
-	private void getBranches(List<BranchProduct> bps) {
-		branches = new HashMap<String, IsEntity>();
-		for (BranchProduct bp : bps) {
-			branches.put(bp.getBranch().toString(), bp.getBranch());
-		}
-	}
-
-	private void getProducts(List<BranchProduct> bps) {
-		products = new HashMap<String, IsEntity>();
-		for (BranchProduct bp : bps) {
-			products.put(bp.getProduct().toString(), bp.getProduct());
-		}
-	}
-
-	private void getBrands(List<Product> products) {
-		brands = new HashMap<String, IsEntity>();
-		for (Product p : products) {
-			brands.put(p.getBrand().toString(), p.getBrand());
-		}
+	private void requestSupportEntities(String entity) {
+		loading ++;
+		webPage.requestSupportEntities(entity);
 	}
 
 	public void delete(IsEntity item) {
@@ -292,6 +254,38 @@ public class DataViewer extends TableView {
 	public void create(IsEntity item) {
 		entity = item.getClass().getName()
 				.substring(item.getClass().getName().lastIndexOf('.') + 1);
-		webPage.update(item);		
+		webPage.update(item);
 	}
+
+	public void setSupportEntities(List<? extends IsEntity> result) {
+		if (result != null && result.size() > 0) {
+			if (result.get(0) instanceof Product) {
+				createSupportEntity(result, products);
+			} else if (result.get(0) instanceof Brand) {
+				createSupportEntity(result, brands);
+			} else if (result.get(0) instanceof Branch) {
+				createSupportEntity(result, branches);
+			} else if (result.get(0) instanceof Store) {
+				createSupportEntity(result, stores);
+			} else if (result.get(0) instanceof CityLocation) {
+				createSupportEntity(result, locations);
+			} else if (result.get(0) instanceof City) {
+				createSupportEntity(result, cities);
+			} else if (result.get(0) instanceof Province) {
+				createSupportEntity(result, provinces);
+			} else if (result.get(0) instanceof Country) {
+				createSupportEntity(result, countries);
+			}
+		}
+		loading --;
+	}
+
+	private void createSupportEntity(List<? extends IsEntity> entities,
+			HashMap<String, IsEntity> map) {
+		map.clear();
+		for (IsEntity e : entities) {
+			map.put(e.toString(), e);
+		}
+	}
+
 }

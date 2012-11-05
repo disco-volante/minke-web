@@ -32,9 +32,17 @@ public class EntityUtils {
 	public static HashSet<Branch> getLocationBranches(
 			HashMap<EntityID, HashSet<Long>> locations) {
 		HashSet<Branch> branches = new HashSet<Branch>();
-		for (Entry<EntityID, HashSet<Long>> entry : locations.entrySet()) {
-			branches.addAll(getLocationBranches(entry.getKey(),
-					entry.getValue()));
+		if (locations == null
+				|| (locations.get(EntityID.PROVINCE).size() == 0
+						&& locations.get(EntityID.CITY).size() == 0 && locations
+						.get(EntityID.COUNTRY).size() == 0)) {
+			branches.addAll(DAOService.branchDAO.listAll());
+
+		} else {
+			for (Entry<EntityID, HashSet<Long>> entry : locations.entrySet()) {
+				branches.addAll(getLocationBranches(entry.getKey(),
+						entry.getValue()));
+			}
 		}
 		return branches;
 	}
@@ -311,10 +319,10 @@ public class EntityUtils {
 		Object[] propValues;
 		for (Key<CityLocation> loc : cityLocations) {
 			propValues = new Object[] { loc.getId() };
-			Branch branch = DAOService.branchDAO.getByProperties(propNames,
+			List<Branch> list = DAOService.branchDAO.listByProperties(propNames,
 					propValues);
-			if (branch != null) {
-				branches.add(branch);
+			if (branches != null) {
+				branches.addAll(list);
 			}
 		}
 		return branches;
@@ -353,6 +361,25 @@ public class EntityUtils {
 	}
 
 	public static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+			HashSet<Branch> branches) {
+		Object[] propValues;
+		String[] propNames;
+		HashMap<BranchProduct, List<DatePrice>> branchProducts = new HashMap<BranchProduct, List<DatePrice>>();
+		for (Branch b : branches) {
+			propValues = new Object[] { b.getID() };
+			propNames = new String[] { "branchID" };
+			List<BranchProduct> bps = DAOService.branchProductDAO
+					.listByProperties(propNames, propValues);
+			if (bps != null) {
+				for (BranchProduct bp : bps) {
+					branchProducts.put(bp, getDatePrices(bp.getID()));
+				}
+			}
+		}
+		return branchProducts;
+	}
+
+	public static HashMap<BranchProduct, List<DatePrice>> getBranchProductsByID(
 			HashSet<Long> branches) {
 		Object[] propValues;
 		String[] propNames;
@@ -360,10 +387,12 @@ public class EntityUtils {
 		for (Long id : branches) {
 			propValues = new Object[] { id };
 			propNames = new String[] { "branchID" };
-			BranchProduct bp = DAOService.branchProductDAO.getByProperties(
-					propNames, propValues);
-			if (bp != null) {
-				branchProducts.put(bp, getDatePrices(bp.getID()));
+			List<BranchProduct> bps = DAOService.branchProductDAO
+					.listByProperties(propNames, propValues);
+			if (bps != null) {
+				for (BranchProduct bp : bps) {
+					branchProducts.put(bp, getDatePrices(bp.getID()));
+				}
 			}
 		}
 		return branchProducts;
@@ -707,7 +736,7 @@ public class EntityUtils {
 
 	public static void delete(IsEntity entity) {
 		if (entity instanceof Category) {
-			DAOService.categoryDAO.delete((Category) entity);		
+			DAOService.categoryDAO.delete((Category) entity);
 		} else if (entity instanceof Product) {
 			DAOService.productDAO.delete((Product) entity);
 		} else if (entity instanceof BranchProduct) {

@@ -192,6 +192,11 @@ public class WebSystem implements EntryPoint {
 		webPage.showEntities(result);
 	}
 	
+	public void setSupportEntities(List<? extends IsEntity> result) {
+		webPage.showSupportEntities(result);
+		
+	}
+	
 	public void notifySuccess() {
 		webPage.notifySuccess();		
 	}
@@ -242,6 +247,11 @@ public class WebSystem implements EntryPoint {
 	public void requestEntities(String entity) {
 		rpcs.getEntites(entity);
 	}
+	
+	public void requestSupportEntities(String entity) {
+		rpcs.getSupportEntities(entity);
+		
+	}
 
 	/**
 	 * Getter for this {@link Argyle's} {@link WebPage}.
@@ -289,6 +299,10 @@ public class WebSystem implements EntryPoint {
 		rpcs.update(item);
 		
 	}
+
+
+
+
 
 	
 }

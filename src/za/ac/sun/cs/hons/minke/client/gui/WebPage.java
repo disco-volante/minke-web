@@ -208,6 +208,11 @@ public class WebPage {
 		system.requestEntities(entity);
 		GuiUtils.showLoader();
 	}
+	
+	public void requestSupportEntities(String entity) {
+		system.requestSupportEntities(entity);
+		GuiUtils.showLoader();		
+	}
 
 	public void showBrowsing() {
 		views.setSelected("browsing");
@@ -400,5 +405,12 @@ public class WebPage {
 		GuiUtils.showLoader();
 		system.update(item);
 	}
+
+	public void showSupportEntities(List<? extends IsEntity> result) {
+		dataViewer.setSupportEntities(result);
+		GuiUtils.hideLoader();		
+	}
+
+
 
 }

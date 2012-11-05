@@ -132,13 +132,7 @@ public class RPC {
 		}
 	};
 
-	/**
-	 * {@link AsyncCallback} implementation for registering classes with
-	 * Objectify.
-	 * 
-	 * @author godfried
-	 * 
-	 */
+
 	protected class EntityAsyncCallback implements
 			AsyncCallback<List<? extends IsEntity>> {
 		@Override
@@ -154,6 +148,22 @@ public class RPC {
 			system.displayEntities(result);
 		}
 	};
+	
+	protected class EntityAsyncCallback2 implements
+	AsyncCallback<List<? extends IsEntity>> {
+@Override
+public void onFailure(Throwable caught) {
+	GuiUtils.hideLoader();
+	GuiUtils.showError("Startup Error",
+			"Something went wrong, please reopen this page.");
+	caught.printStackTrace();
+}
+
+@Override
+public void onSuccess(List<? extends IsEntity> result) {
+	system.setSupportEntities(result);
+}
+};
 
 	/**
 	 * {@link AsyncCallback} implementation for getting {@link ProductCategory}
@@ -424,6 +434,11 @@ public class RPC {
 				system.notifySuccess();
 			}
 		});
+	}
+
+	public void getSupportEntities(String entity) {
+		classSvc.getEntities(entity, new EntityAsyncCallback2());
+		
 	}
 
 }
