@@ -326,6 +326,11 @@ public class CreatePopup extends FocusedPopupPanel implements KeyPressHandler {
 			if (!sb.getValue().getText().matches(Constants.STRING)
 					|| !viewer.getSupportEntities(sb.getKey()).contains(
 							sb.getValue().getText())) {
+				if (sb.getKey().equals(Constants.BRANCH)
+						&& sb.getValue().getText().replace('@', ' ')
+								.matches(Constants.STRING)) {
+					continue;
+				}
 				errors.append(sb.getKey() + ", ");
 			}
 		}

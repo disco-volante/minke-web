@@ -406,11 +406,16 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 	private boolean validate() {
 		errors = new StringBuilder();
 		if (dateBox != null && dateBox.getValue() == null) {
-			errors.append(Constants.DATE+", ");
+			errors.append(Constants.DATE + ", ");
 		}
 		for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
 			if (!sb.getValue().getText().matches(Constants.STRING)) {
-				errors.append(sb.getKey()+", ");
+				if (sb.getKey().equals(Constants.BRANCH)
+						&& sb.getValue().getText().replace('@', ' ')
+								.matches(Constants.STRING)) {
+					continue;
+				}
+				errors.append(sb.getKey() + ", ");
 			}
 		}
 		for (Entry<String, TextBox> entry : texts.entrySet()) {
@@ -421,13 +426,13 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 				if (!(input.matches(Constants.DECIMALS_0)
 						|| input.matches(Constants.DECIMALS_0) || input
 							.matches(Constants.DECIMALS_0))) {
-					errors.append(type+", ");
+					errors.append(type + ", ");
 				}
 			} else if (!input.matches(Constants.STRING)) {
-				errors.append(type+", ");
+				errors.append(type + ", ");
 			}
-			if(errors.length() > 0){
-				errors.delete(errors.length()-2, errors.length());
+			if (errors.length() > 0) {
+				errors.delete(errors.length() - 2, errors.length());
 				return false;
 			}
 		}
@@ -439,7 +444,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		hide();
 		if (!validate()) {
 			GuiUtils.showError("Invalid Input",
-					"Some fields contain invalid input: "+errors.toString());
+					"Some fields contain invalid input: " + errors.toString());
 			return;
 		}
 		if (item instanceof Category) {
