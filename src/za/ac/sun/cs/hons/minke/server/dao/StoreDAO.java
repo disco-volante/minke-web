@@ -5,6 +5,7 @@ import java.util.List;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 
 public class StoreDAO extends ObjectifyDAO<Store> {
@@ -28,6 +29,21 @@ public class StoreDAO extends ObjectifyDAO<Store> {
 			}
 		}
 		super.delete(store);
+	}
+
+	@Override
+	public Key<Store> add(Store store) {
+		if (store != null && get(store.getID()) != null) {
+			List<Branch> branches = DAOService.branchDAO.listByProperties(
+					new String[] { "storeID" }, new Object[] { store.getID() });
+			if (branches != null) {
+				for (Branch branch : branches) {
+					branch.setStore(store);
+					DAOService.branchDAO.add(branch);
+				}
+			}
+		}
+		return super.add(store);
 	}
 
 }

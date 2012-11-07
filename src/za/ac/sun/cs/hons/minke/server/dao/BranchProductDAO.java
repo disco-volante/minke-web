@@ -24,7 +24,9 @@ public class BranchProductDAO extends ObjectifyDAO<BranchProduct> {
 		if (bp.getDatePriceID() == -1) {
 			bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO
 					.add(bp.getDatePrice())));
-		}if(bp.getDatePrice() != null && bp.getDatePrice().getBranchProductID()== -1){
+		}
+		if (bp.getDatePrice() != null
+				&& bp.getDatePrice().getBranchProductID() == -1) {
 			Key<BranchProduct> key = super.add(bp);
 			bp.getDatePrice().setBranchProductID(key.getId());
 			bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO

@@ -343,7 +343,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 			changed = true;
 		}
 		String measure = texts.get(Constants.MEASURE).getText();
-		if (measure != null && measure.equals(product.getMeasurement())) {
+		if (measure != null && !measure.equals(product.getMeasurement())) {
 			product.setMeasurement(measure);
 			changed = true;
 		}

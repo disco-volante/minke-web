@@ -5,6 +5,7 @@ import java.util.List;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocation;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 
 public class CityLocationDAO extends ObjectifyDAO<CityLocation> {
@@ -28,6 +29,21 @@ public class CityLocationDAO extends ObjectifyDAO<CityLocation> {
 			}
 		}
 		super.delete(cl);
+	}
+
+	@Override
+	public Key<CityLocation> add(CityLocation cl) {
+		if (cl != null && get(cl.getID()) != null) {
+			List<Branch> branches = DAOService.branchDAO.listByProperties(
+					new String[] { "locationID" }, new Object[] { cl.getID() });
+			if (branches != null) {
+				for (Branch b : branches) {
+					b.setLocation(cl);
+					DAOService.branchDAO.add(b);
+				}
+			}
+		}
+		return super.add(cl);
 	}
 
 }

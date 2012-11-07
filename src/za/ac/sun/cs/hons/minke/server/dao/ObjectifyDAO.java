@@ -3,9 +3,7 @@ package za.ac.sun.cs.hons.minke.server.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyOpts;
 import com.googlecode.objectify.Query;
 import com.googlecode.objectify.util.DAOBase;
@@ -69,16 +67,9 @@ public class ObjectifyDAO<T> extends DAOBase {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws EntityNotFoundException
 	 */
 	public T get(Long id) {
-		T obj;
-		try {
-			obj = ofy().get(this.clazz, id);
-		} catch (NotFoundException nfe) {
-			return null;
-		}
-		return obj;
+		return ofy().find(this.clazz, id);
 	}
 
 	/**
@@ -87,8 +78,7 @@ public class ObjectifyDAO<T> extends DAOBase {
 	 * @return
 	 */
 	public T get(Key<T> key) {
-		T obj = ofy().get(key);
-		return obj;
+		return  ofy().find(key);
 	}
 
 	/**
@@ -160,5 +150,6 @@ public class ObjectifyDAO<T> extends DAOBase {
 		List<T> list = q.list();
 		return list;
 	}
+	
 
 }
