@@ -45,4 +45,42 @@ public class City extends Location {
 		this.provinceID = provinceID;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((province == null) ? 0 : province.hashCode());
+		result = prime * result + (int) (provinceID ^ (provinceID >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		City other = (City) obj;
+		if (province == null) {
+			if (other.province != null)
+				return false;
+		} else if (!province.equals(other.province)){
+			return false;
+		}else if(getLat() != other.getLat()){
+			return false;
+		}else if(getLon() != other.getLon()){
+			return false;
+		}else if(!getName().equals(other.getName())){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		if (provinceID != other.provinceID)
+			return false;
+		return true;
+	}
+
 }

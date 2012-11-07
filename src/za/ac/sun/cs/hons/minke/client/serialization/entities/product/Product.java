@@ -84,4 +84,53 @@ public class Product extends IsEntity {
 		this.brandID = id;
 
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((brand == null) ? 0 : brand.hashCode());
+		result = prime * result + (int) (brandID ^ (brandID >>> 32));
+		result = prime * result
+				+ ((measurement == null) ? 0 : measurement.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		long temp;
+		temp = (long)(size);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (brand == null) {
+			if (other.brand != null)
+				return false;
+		} else if (!brand.equals(other.brand))
+			return false;
+		if (brandID != other.brandID)
+			return false;
+		if (measurement == null) {
+			if (other.measurement != null)
+				return false;
+		} else if (!measurement.equals(other.measurement))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (size != other.size){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		return true;
+	}
 }

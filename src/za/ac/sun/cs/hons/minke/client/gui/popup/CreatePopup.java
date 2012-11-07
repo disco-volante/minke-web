@@ -320,38 +320,44 @@ public class CreatePopup extends FocusedPopupPanel implements KeyPressHandler {
 	}
 
 	private boolean validate() {
-		try{
-		errors = new StringBuilder();
-		if (dateBox != null && dateBox.getValue() == null) {
-			errors.append(Constants.DATE + ", ");
-		}
-		for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
-			if (!Constants.STRING.test(sb.getValue().getText())) {
-				if (sb.getKey().equals(Constants.BRANCH)
-						&& Constants.STRING.test(sb.getValue().getText().replace('@', ' '))) {
-					continue;
-				}
-				errors.append(sb.getKey() + ", ");
+		try {
+			errors = new StringBuilder();
+			if (dateBox != null && dateBox.getValue() == null) {
+				errors.append(Constants.DATE + ", ");
 			}
-		}
-		for (Entry<String, TextBox> entry : texts.entrySet()) {
-			String input = entry.getValue().getText();
-			String type = entry.getKey();
-			if ((type.equals(Constants.SIZE) || type.equals(Constants.PRICE)
-					|| type.equals(Constants.LAT) || type.equals(Constants.LON))) {
-				if (input == null || !(Constants.DECIMALS_0.test(input))){
+			for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
+				if (!Constants.STRING.test(sb.getValue().getText())) {
+					if (sb.getKey().equals(Constants.BRANCH)
+							&& Constants.STRING.test(sb.getValue().getText()
+									.replace('@', ' '))) {
+						continue;
+					}
+					errors.append(sb.getKey() + ", ");
+				}
+			}
+			for (Entry<String, TextBox> entry : texts.entrySet()) {
+				String input = entry.getValue().getText();
+				String type = entry.getKey();
+				if ((type.equals(Constants.SIZE) || type
+						.equals(Constants.PRICE))) {
+					if (input == null || !(Constants.DECIMALS_0.test(input))) {
+						errors.append(type + ", ");
+					}
+				} else if (type.equals(Constants.LAT)
+						|| type.equals(Constants.LON)) {
+					if (input == null || !(Constants.DECIMALS_1.test(input))) {
+						errors.append(type + ", ");
+					}
+				} else if (!Constants.STRING.test(input)) {
 					errors.append(type + ", ");
 				}
-			} else if (!Constants.STRING.test(input) ){
-				errors.append(type + ", ");
+				if (errors.length() > 0) {
+					errors.delete(errors.length() - 2, errors.length());
+					return false;
+				}
 			}
-			if (errors.length() > 0) {
-				errors.delete(errors.length() - 2, errors.length());
-				return false;
-			}
-		}
-		return true;
-		}catch (Exception e){
+			return true;
+		} catch (Exception e) {
 			SystemData.log.log(Level.SEVERE, e.getMessage());
 			if (entity != null) {
 				SystemData.log.log(Level.SEVERE, "editing " + entity);

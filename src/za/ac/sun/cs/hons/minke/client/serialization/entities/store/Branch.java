@@ -88,4 +88,51 @@ public class Branch extends IsEntity {
 		this.storeID = storeID;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((location == null) ? 0 : location.hashCode());
+		result = prime * result + (int) (locationID ^ (locationID >>> 32));
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((store == null) ? 0 : store.hashCode());
+		result = prime * result + (int) (storeID ^ (storeID >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Branch other = (Branch) obj;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
+		if (locationID != other.locationID)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (store == null) {
+			if (other.store != null)
+				return false;
+		} else if (!store.equals(other.store))
+			return false;
+		if (storeID != other.storeID){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		return true;
+	}
+
 }

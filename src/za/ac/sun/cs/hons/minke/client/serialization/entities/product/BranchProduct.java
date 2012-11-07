@@ -110,4 +110,54 @@ public class BranchProduct extends IsEntity implements
 	public void setProductID(long productID) {
 		this.productID = productID;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((branch == null) ? 0 : branch.hashCode());
+		result = prime * result + (int) (branchID ^ (branchID >>> 32));
+		result = prime * result
+				+ ((datePrice == null) ? 0 : datePrice.hashCode());
+		result = prime * result + (int) (datePriceID ^ (datePriceID >>> 32));
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + (int) (productID ^ (productID >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BranchProduct other = (BranchProduct) obj;
+		if (branch == null) {
+			if (other.branch != null)
+				return false;
+		} else if (!branch.equals(other.branch))
+			return false;
+		if (branchID != other.branchID)
+			return false;
+		if (datePrice == null) {
+			if (other.datePrice != null)
+				return false;
+		} else if (!datePrice.equals(other.datePrice))
+			return false;
+		if (datePriceID != other.datePriceID)
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (productID != other.productID){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		return true;
+	}
 }

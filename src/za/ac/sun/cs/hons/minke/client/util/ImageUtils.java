@@ -1,11 +1,17 @@
 package za.ac.sun.cs.hons.minke.client.util;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,9 +55,30 @@ public class ImageUtils {
 		return new Image(imageProto);
 	}
 
-	public static Image getImage(ImageResource imageProto, String title) {
+	public static Image getImage(ImageResource imageProto, final String title) {
+		final PopupPanel p = new PopupPanel(true);
+		p.add(new Label(title));
+		p.hide();
 		Image img = new Image(imageProto);
-		img.setAltText(title);
+		img.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				Widget source = (Widget) event.getSource();
+				int x = source.getAbsoluteLeft() + 10;
+				int y = source.getAbsoluteTop() + 10;
+				p.setPopupPosition(x, y);
+				p.show();
+			}
+		});
+		img.addMouseOutHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent arg0) {
+				if (p != null) {
+					p.hide();
+				}
+			}
+		});
 		return img;
 	}
 

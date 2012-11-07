@@ -46,4 +46,41 @@ public class CityLocation extends Location {
 		this.cityID = cityID;		
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + (int) (cityID ^ (cityID >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CityLocation other = (CityLocation) obj;
+		if (city == null) {
+			if (other.city != null)
+				return false;
+		} else if (!city.equals(other.city))
+			return false;
+		if (cityID != other.cityID){
+			return false;
+		}else if(getLat() != other.getLat()){
+			return false;
+		}else if(getLon() != other.getLon()){
+			return false;
+		}else if(!getName().equals(other.getName())){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		return true;
+	}
+
 }

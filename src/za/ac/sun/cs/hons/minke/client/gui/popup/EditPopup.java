@@ -221,7 +221,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		Country country = (Country) viewer.countries.get(autoTexts.get(
 				Constants.COUNTRY).getText());
-		if (country != null && province.getCountryID() != country.getID()) {
+		if (country != null && !country.equals(province.getCountry())) {
 			province.setCountry(country);
 			changed = true;
 		}
@@ -249,7 +249,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		Province province = (Province) viewer.provinces.get(autoTexts.get(
 				Constants.PROVINCE).getText());
-		if (province != null && city.getProvinceID() != province.getID()) {
+		if (province != null && !province.equals(city.getProvince())) {
 			city.setProvince(province);
 			changed = true;
 		}
@@ -277,7 +277,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		City city = (City) viewer.cities.get(autoTexts.get(Constants.CITY)
 				.getText());
-		if (city != null && cl.getCityID() != city.getID()) {
+		if (city != null && !city.equals(cl.getCity())) {
 			cl.setCity(city);
 			changed = true;
 		}
@@ -308,13 +308,13 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		Store store = (Store) viewer.stores.get(autoTexts.get(Constants.STORE)
 				.getText());
-		if (store != null && branch.getStoreID() != store.getID()) {
+		if (store != null && !store.equals(branch.getStore())) {
 			branch.setStore(store);
 			changed = true;
 		}
 		CityLocation cl = (CityLocation) viewer.locations.get(autoTexts.get(
 				Constants.CITYLOCATION).getText());
-		if (cl != null && branch.getLocationID() != cl.getID()) {
+		if (cl != null && !branch.getLocation().equals(cl)) {
 			branch.setLocation(cl);
 			changed = true;
 		}
@@ -354,7 +354,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		Brand brand = (Brand) viewer.brands.get(autoTexts.get(Constants.BRAND)
 				.getText());
-		if (brand != null && product.getBrandID() != brand.getID()) {
+		if (brand != null && !brand.equals(product.getBrand())) {
 			product.setBrand(brand);
 			changed = true;
 		}
@@ -385,7 +385,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		}
 		Product p = (Product) viewer.products.get(autoTexts.get(
 				Constants.PRODUCT).getText());
-		if (p != null && p.getID() != bp.getProductID()) {
+		if (p != null && !p.equals(bp.getProduct())) {
 			bp.setProduct(p);
 			changed = true;
 		}
@@ -428,14 +428,19 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 					String input = entry.getValue().getText();
 					String type = entry.getKey();
 					if ((type.equals(Constants.SIZE)
-							|| type.equals(Constants.PRICE)
-							|| type.equals(Constants.LAT) || type
-								.equals(Constants.LON))) {
+							|| type.equals(Constants.PRICE))) {
 						if (input == null
 								|| !(Constants.DECIMALS_0.test(input))) {
 							errors.append(type + ", ");
 						}
-					} else if (!Constants.STRING.test(input)) {
+					}else if(type.equals(Constants.LAT) || type
+								.equals(Constants.LON)){
+						if (input == null
+								|| !(Constants.DECIMALS_1.test(input))) {
+							errors.append(type + ", ");
+						}
+					}
+					else if (!Constants.STRING.test(input)) {
 						errors.append(type + ", ");
 					}
 					if (errors.length() > 0) {

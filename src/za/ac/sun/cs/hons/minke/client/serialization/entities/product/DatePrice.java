@@ -75,4 +75,39 @@ public class DatePrice extends IsEntity implements Comparable<DatePrice> {
 		return "R " + price+" on "+ date.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ (int) (branchProductID ^ (branchProductID >>> 32));
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + price;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DatePrice other = (DatePrice) obj;
+		if (branchProductID != other.branchProductID)
+			return false;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (price != other.price){
+			return false;
+		}else if(getID() != other.getID()){
+			return false;
+		}
+		return true;
+	}
+
 }
