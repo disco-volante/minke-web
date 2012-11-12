@@ -358,14 +358,9 @@ public void onSuccess(List<? extends IsEntity> result) {
 		prodSvc.getProducts(new ProductAsyncCallback());
 	}
 
-	public void getBranchProductsP(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> p) {
-		brProdSvc.getBranchProductsP(l, p, new BranchProductAsyncCallback1());
-	}
-
-	public void getBranchProductsC(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> c) {
-		brProdSvc.getBranchProductsC(l, c, new BranchProductAsyncCallback1());
+	public void getBranchProducts(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> c,HashSet<Long> p) {
+		brProdSvc.getBranchProducts(l, c, p, new BranchProductAsyncCallback1());
 	}
 
 	/**

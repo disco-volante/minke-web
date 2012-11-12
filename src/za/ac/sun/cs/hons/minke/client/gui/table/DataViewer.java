@@ -1,5 +1,6 @@
 package za.ac.sun.cs.hons.minke.client.gui.table;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,8 @@ public class DataViewer extends TableView {
 	private Button createButton;
 
 	private int loading = 0;
+
+	private Collection<String> measures = Arrays.asList("ml","l","mg","g","kg","ea");
 
 	public DataViewer(WebPage webPage) {
 		super(webPage);
@@ -191,6 +194,8 @@ public class DataViewer extends TableView {
 			return cities.keySet();
 		} else if (entity.equals(Constants.PROVINCE)) {
 			return provinces.keySet();
+		}else if (entity.equals(Constants.MEASURE)) {
+			return measures ;
 		}
 		return null;
 	}

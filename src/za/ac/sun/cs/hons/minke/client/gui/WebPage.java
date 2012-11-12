@@ -31,8 +31,6 @@ import za.ac.sun.cs.hons.minke.client.util.CSSUtils;
 import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.logging.client.LogConfiguration;
-import com.google.gwt.logging.client.LoggingPopup;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -190,15 +188,10 @@ public class WebPage {
 	 *            the {@link ProductCategory} which the {@link BranchProduct}s
 	 *            must have.
 	 */
-	public void requestBrowsingP(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> p) {
-		system.requestBranchProductsP(l, p);
-		GuiUtils.showLoader();
-	}
 
 	public void requestBrowsingC(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> c) {
-		system.requestBranchProductsC(l, c);
+			HashSet<Long> c, HashSet<Long> p) {
+		system.requestBranchProducts(l, c, p);
 		GuiUtils.showLoader();
 	}
 

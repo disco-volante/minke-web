@@ -15,19 +15,14 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("branchproduct")
 public interface BranchProductService extends RemoteService {
-
-	HashMap<BranchProduct, List<DatePrice>> getBranchProductsP(
-			HashMap<EntityID, HashSet<Long>> locations,
-			HashSet<Long> products);
-
 	HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>> getBranches(
 			HashMap<Long, Integer> addedProducts);
 
 	HashMap<BranchProduct, List<DatePrice>> getHistories(
 			Set<BranchProduct> branchProducts);
 
-	HashMap<BranchProduct, List<DatePrice>> getBranchProductsC(
-			HashMap<EntityID, HashSet<Long>> locations,
-			HashSet<Long> categories);
+	HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+			HashMap<EntityID, HashSet<Long>> l, HashSet<Long> categories,
+			HashSet<Long> p);
 
 }

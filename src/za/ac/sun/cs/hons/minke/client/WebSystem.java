@@ -213,14 +213,9 @@ public class WebSystem implements EntryPoint {
 	 *            the ID of the {@link ProductCategory} of the
 	 *            {@link BranchProduct}s.
 	 */
-	public void requestBranchProductsP(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> p) {
-		rpcs.getBranchProductsP(l, p);
-	}
-
-	public void requestBranchProductsC(HashMap<EntityID, HashSet<Long>> l,
-			HashSet<Long> c) {
-		rpcs.getBranchProductsC(l, c);
+	public void requestBranchProducts(HashMap<EntityID, HashSet<Long>> l,
+			HashSet<Long> c, HashSet<Long> p) {
+		rpcs.getBranchProducts(l, c, p);
 	}
 
 	/**

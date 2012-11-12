@@ -14,17 +14,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface BranchProductServiceAsync {
 
-	void getBranchProductsP(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> p,
+	void getBranchProducts(HashMap<EntityID, HashSet<Long>> l, HashSet<Long> categories,HashSet<Long> p,
 			AsyncCallback<HashMap<BranchProduct, List<DatePrice>>> callback);
 
 	void getBranches(HashMap<Long, Integer> addedProducts,
 			AsyncCallback<HashMap<Branch, HashMap<BranchProduct, List<DatePrice>>>> callback);
 
 	void getHistories(Set<BranchProduct> branchProducts,
-			AsyncCallback<HashMap<BranchProduct, List<DatePrice>>> callback);
-
-	void getBranchProductsC(HashMap<EntityID, HashSet<Long>> locations,
-			HashSet<Long> categories,
 			AsyncCallback<HashMap<BranchProduct, List<DatePrice>>> callback);
 
 }

@@ -20,7 +20,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -32,8 +31,6 @@ public class ProductSearch extends FocusedPopupPanel implements KeyPressHandler{
 	private static final Binder binder = GWT.create(Binder.class);
 	@UiField(provided = true)
 	SuggestBox locationBox, searchBox;
-	@UiField
-	RadioButton productRB, categoryRB;
 	@UiField
 	DynamicList locationList, searchList;
 	private MultiWordSuggestOracle locationOracle, searchOracle;
@@ -47,9 +44,6 @@ public class ProductSearch extends FocusedPopupPanel implements KeyPressHandler{
 		initSuggestBoxes();
 		this.webPage = webPage;
 		add(binder.createAndBindUi(this));
-		productRB.setValue(true);
-		categoryRB.setValue(false);
-		productRBClick(null);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
 				locationBox.setFocus(true);
@@ -110,16 +104,12 @@ public class ProductSearch extends FocusedPopupPanel implements KeyPressHandler{
 
 	public void addCategories(EntityNameMap categories) {
 		this.categories = categories;
-		if (categoryRB.getValue()) {
-			searchOracle.addAll(categories.getNames());
-		}
+		searchOracle.addAll(categories.getNames());
 	}
 
 	public void addProducts(EntityNameMap products) {
 		this.products = products;
-		if (productRB.getValue()) {
-			searchOracle.addAll(products.getNames());
-		}
+		searchOracle.addAll(products.getNames());
 	}
 
 	@UiHandler("searchBox")
@@ -186,43 +176,17 @@ public class ProductSearch extends FocusedPopupPanel implements KeyPressHandler{
 		}
 	}
 
-	@UiHandler("productRB")
-	void productRBClick(ClickEvent event) {
-		addedProducts = new HashMap<String, Long>();
-		searchList.clear();
-		searchOracle.clear();
-		if (products != null) {
-			searchOracle.addAll(products.getNames());
-		}
-		searchBox.setText("");
-	}
-
-	@UiHandler("categoryRB")
-	void categoryRBClick(ClickEvent event) {
-		addedCategories = new HashMap<String, Long>();
-		searchList.clear();
-		searchOracle.clear();
-		if (categories != null) {
-			searchOracle.addAll(categories.getNames());
-		}
-		searchBox.setText("");
-	}
-
 	@UiHandler("productButton")
 	void handleClick(ClickEvent e) {
 		HashMap<EntityID, HashSet<Long>> l = new HashMap<EntityID, HashSet<Long>>();
 		l.put(EntityID.CITY, new HashSet<Long>(addedCities.values()));
 		l.put(EntityID.PROVINCE, new HashSet<Long>(addedProvinces.values()));
 		l.put(EntityID.COUNTRY, new HashSet<Long>(addedCountries.values()));
-		if (productRB.getValue()) {
-			HashSet<Long> p = new HashSet<Long>();
-			p.addAll(addedProducts.values());
-			webPage.requestBrowsingP(l, p);
-		} else if (categoryRB.getValue()) {
-			HashSet<Long> c = new HashSet<Long>();
-			c.addAll(addedCategories.values());
-			webPage.requestBrowsingC(l, c);
-		}
+		HashSet<Long> p = new HashSet<Long>();
+		p.addAll(addedProducts.values());
+		HashSet<Long> c = new HashSet<Long>();
+		c.addAll(addedCategories.values());
+		webPage.requestBrowsingC(l, c, p);
 		hide();
 	}
 

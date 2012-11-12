@@ -279,20 +279,30 @@ public class EntityUtils {
 		}
 		return branchProducts;
 	}
-
-	public static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+	public static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(HashSet<Long> pIds,
 			HashSet<Product> products, HashSet<Branch> branches) {
 		Object[] propValues;
 		String[] propNames;
 		HashMap<BranchProduct, List<DatePrice>> branchProducts = new HashMap<BranchProduct, List<DatePrice>>();
-		for (Product p : products) {
-			for (Branch b : branches) {
+		for (Branch b : branches) {
+			for (Product p : products) {
 				if (p != null && b != null) {
 					propValues = new Object[] { p.getID(), b.getID() };
 					propNames = new String[] { "productID", "branchID" };
 					BranchProduct bp = DAOService.branchProductDAO
 							.getByProperties(propNames, propValues);
-					if (bp != null) {
+					if (bp != null&& !branchProducts.containsKey(bp)) {
+						branchProducts.put(bp, getDatePrices(bp.getID()));
+					}
+				}
+			}
+			for (long id : pIds) {
+				if (id != 0L && b != null) {
+					propValues = new Object[] { id, b.getID() };
+					propNames = new String[] { "productID", "branchID" };
+					BranchProduct bp = DAOService.branchProductDAO
+							.getByProperties(propNames, propValues);
+					if (bp != null && !branchProducts.containsKey(bp)) {
 						branchProducts.put(bp, getDatePrices(bp.getID()));
 					}
 				}
@@ -785,5 +795,7 @@ public class EntityUtils {
 			DAOService.datePriceDAO.add((DatePrice) entity);
 		}
 	}
+
+
 
 }

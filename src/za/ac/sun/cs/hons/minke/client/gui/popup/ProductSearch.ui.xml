@@ -39,19 +39,7 @@ Product Search
                     <r:DynamicList
                         styleName="{style.header}"
                         ui:field="locationList" />
-                    <g:HorizontalPanel>
-                            <g:Label text="Search for:" />
-
-                            <g:RadioButton
-                                name="rbs"
-                                text="Product"
-                                ui:field="productRB" />
-
-                            <g:RadioButton
-                                name="rbs"
-                                text="Category"
-                                ui:field="categoryRB" />
-                    </g:HorizontalPanel>
+                    <g:Label text="Product" />
                     <g:HorizontalPanel>
                         <g:SuggestBox
                             title="Enter the your search parameters."

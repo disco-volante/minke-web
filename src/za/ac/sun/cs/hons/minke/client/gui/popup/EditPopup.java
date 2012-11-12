@@ -130,7 +130,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 		addBasicRow(Constants.NAME, item.getName());
 		addSuggestRow(Constants.BRAND, item.getBrand().toString());
 		addBasicRow(Constants.SIZE, String.valueOf(item.getSize()));
-		addBasicRow(Constants.MEASURE, item.getMeasurement());
+		addSuggestRow(Constants.MEASURE, item.getMeasurement());
 	}
 
 	private void createSimpleUi(String name) {
@@ -342,7 +342,7 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 			product.setName(name);
 			changed = true;
 		}
-		String measure = texts.get(Constants.MEASURE).getText();
+		String measure = autoTexts.get(Constants.MEASURE).getText();
 		if (measure != null && !measure.equals(product.getMeasurement())) {
 			product.setMeasurement(measure);
 			changed = true;

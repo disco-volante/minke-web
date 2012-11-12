@@ -26,28 +26,18 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = -1072938579303987439L;
 
 	@Override
-	public HashMap<BranchProduct, List<DatePrice>> getBranchProductsP(
-			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> products) {
+	public HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> categories, HashSet<Long> products) {
 		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
-		HashMap<BranchProduct, List<DatePrice>> branchProducts;
-		if (products.size() > 0) {
-			branchProducts = EntityUtils.getBranchProductsByID(products,
-					branches);
-		} else {
-			branchProducts = EntityUtils.getBranchProducts(branches);
-		}
-		return branchProducts;
-	}
-
-	@Override
-	public HashMap<BranchProduct, List<DatePrice>> getBranchProductsC(
-			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> categories) {
-		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
-		HashMap<BranchProduct, List<DatePrice>> branchProducts;
+		HashMap<BranchProduct, List<DatePrice>> branchProducts = new HashMap<BranchProduct, List<DatePrice>>();
 		if (categories.size() > 0) {
-			HashSet<Product> products = new HashSet<Product>();
-			products.addAll(EntityUtils.getProductsByID(categories));
-			branchProducts = EntityUtils.getBranchProducts(products,
+			HashSet<Product> foundProducts = new HashSet<Product>();
+			foundProducts.addAll(EntityUtils.getProductsByID(categories));
+			branchProducts = EntityUtils.getBranchProducts(products,foundProducts,
+					branches);
+		}
+		else if (products.size() > 0) {
+			branchProducts = EntityUtils.getBranchProductsByID(products,
 					branches);
 		} else {
 			branchProducts = EntityUtils.getBranchProducts(branches);
