@@ -30,13 +30,13 @@ public class BranchProductServiceImpl extends RemoteServiceServlet implements
 			HashMap<EntityID, HashSet<Long>> locations, HashSet<Long> categories, HashSet<Long> products) {
 		HashSet<Branch> branches = EntityUtils.getLocationBranches(locations);
 		HashMap<BranchProduct, List<DatePrice>> branchProducts = new HashMap<BranchProduct, List<DatePrice>>();
-		if (categories.size() > 0) {
+		if (categories != null && categories.size() > 0) {
 			HashSet<Product> foundProducts = new HashSet<Product>();
 			foundProducts.addAll(EntityUtils.getProductsByID(categories));
 			branchProducts = EntityUtils.getBranchProducts(products,foundProducts,
 					branches);
 		}
-		else if (products.size() > 0) {
+		else if (products != null && products.size() > 0) {
 			branchProducts = EntityUtils.getBranchProductsByID(products,
 					branches);
 		} else {

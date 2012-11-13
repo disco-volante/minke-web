@@ -33,6 +33,9 @@ public class BranchProductDAO extends ObjectifyDAO<BranchProduct> {
 					.add(bp.getDatePrice())));
 			return key;
 		}
+		Key<BranchProduct> key = super.add(bp);
+		bp.getDatePrice().setBranchProductID(key.getId());
+		bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO.add(bp.getDatePrice())));
 		return super.add(bp);
 	}
 

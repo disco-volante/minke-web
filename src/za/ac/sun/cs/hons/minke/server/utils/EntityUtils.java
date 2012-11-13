@@ -301,14 +301,16 @@ public class EntityUtils {
 					}
 				}
 			}
-			for (long id : pIds) {
-				if (id != 0L && b != null) {
-					propValues = new Object[] { id, b.getID() };
-					propNames = new String[] { "productID", "branchID" };
-					BranchProduct bp = DAOService.branchProductDAO
-							.getByProperties(propNames, propValues);
-					if (bp != null && !branchProducts.containsKey(bp)) {
-						branchProducts.put(bp, getDatePrices(bp.getID()));
+			if (pIds != null) {
+				for (long id : pIds) {
+					if (id != 0L && b != null) {
+						propValues = new Object[] { id, b.getID() };
+						propNames = new String[] { "productID", "branchID" };
+						BranchProduct bp = DAOService.branchProductDAO
+								.getByProperties(propNames, propValues);
+						if (bp != null && !branchProducts.containsKey(bp)) {
+							branchProducts.put(bp, getDatePrices(bp.getID()));
+						}
 					}
 				}
 			}

@@ -23,6 +23,9 @@ public class CategoryServiceImpl extends RemoteServiceServlet implements
 	public EntityNameMap getCategories() {
 		EntityNameMap map = DAOService.entityMapDAO
 				.get((long) EntityID.CATEGORY.getID());
+		if(map == null){
+			map = new EntityNameMap(EntityID.CATEGORY);
+		}
 		List<Category> cats = DAOService.categoryDAO.listAll();
 		map.add(cats.toArray(new Category[cats.size()]));
 		DAOService.entityMapDAO.add(map);
