@@ -33,9 +33,12 @@ public class EntityUtils {
 			HashMap<EntityID, HashSet<Long>> locations) {
 		HashSet<Branch> branches = new HashSet<Branch>();
 		if (locations == null
-				|| (locations.get(EntityID.PROVINCE).size() == 0
-						&& locations.get(EntityID.CITY).size() == 0 && locations
-						.get(EntityID.COUNTRY).size() == 0)) {
+				|| ((locations.get(EntityID.PROVINCE) == null || locations.get(
+						EntityID.PROVINCE).size() == 0)
+						&& (locations.get(EntityID.CITY) == null || locations
+								.get(EntityID.CITY).size() == 0) && (locations
+						.get(EntityID.COUNTRY) == null || locations.get(
+						EntityID.COUNTRY).size() == 0))) {
 			branches.addAll(DAOService.branchDAO.listAll());
 
 		} else {
@@ -279,8 +282,10 @@ public class EntityUtils {
 		}
 		return branchProducts;
 	}
-	public static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(HashSet<Long> pIds,
-			HashSet<Product> products, HashSet<Branch> branches) {
+
+	public static HashMap<BranchProduct, List<DatePrice>> getBranchProducts(
+			HashSet<Long> pIds, HashSet<Product> products,
+			HashSet<Branch> branches) {
 		Object[] propValues;
 		String[] propNames;
 		HashMap<BranchProduct, List<DatePrice>> branchProducts = new HashMap<BranchProduct, List<DatePrice>>();
@@ -291,7 +296,7 @@ public class EntityUtils {
 					propNames = new String[] { "productID", "branchID" };
 					BranchProduct bp = DAOService.branchProductDAO
 							.getByProperties(propNames, propValues);
-					if (bp != null&& !branchProducts.containsKey(bp)) {
+					if (bp != null && !branchProducts.containsKey(bp)) {
 						branchProducts.put(bp, getDatePrices(bp.getID()));
 					}
 				}
@@ -329,8 +334,8 @@ public class EntityUtils {
 		Object[] propValues;
 		for (Key<CityLocation> loc : cityLocations) {
 			propValues = new Object[] { loc.getId() };
-			List<Branch> list = DAOService.branchDAO.listByProperties(propNames,
-					propValues);
+			List<Branch> list = DAOService.branchDAO.listByProperties(
+					propNames, propValues);
 			if (branches != null) {
 				branches.addAll(list);
 			}
@@ -795,7 +800,5 @@ public class EntityUtils {
 			DAOService.datePriceDAO.add((DatePrice) entity);
 		}
 	}
-
-
 
 }

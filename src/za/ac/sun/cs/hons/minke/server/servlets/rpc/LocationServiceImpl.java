@@ -10,7 +10,6 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.location.CityLocati
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Country;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Location;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.location.Province;
-import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.server.dao.DAOService;
 
@@ -29,6 +28,9 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
 	public EntityNameMap getCities() {
 		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.CITY
 				.getID());
+		if(map == null){
+			map = new EntityNameMap(EntityID.CITY);
+		}
 		List<City> cities = DAOService.cityDAO.listAll();
 		map.add(cities.toArray(new City[cities.size()]));
 		DAOService.entityMapDAO.add(map);
@@ -40,6 +42,9 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
 	public EntityNameMap getCountries() {
 		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.COUNTRY
 				.getID());
+		if(map == null){
+			map = new EntityNameMap(EntityID.COUNTRY);
+		}
 		List<Country> countries = DAOService.countryDAO.listAll();
 		map.add(countries.toArray(new Country[countries.size()]));
 		DAOService.entityMapDAO.add(map);
@@ -51,6 +56,9 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
 	public EntityNameMap getProvinces() {
 		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.PROVINCE
 				.getID());
+		if(map == null){
+			map = new EntityNameMap(EntityID.PROVINCE);
+		}
 		List<Province> provinces = DAOService.provinceDAO.listAll();
 		map.add(provinces.toArray(new Province[provinces.size()]));
 		DAOService.entityMapDAO.add(map);
@@ -62,18 +70,6 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
 		CityLocation retrieved = DAOService.cityLocationDAO.get(branch
 				.getLocationID());
 		return DAOService.cityDAO.get(retrieved.getCityID());
-
-	}
-
-	@Override
-	public Location getLocation(Branch branch) {
-		return DAOService.cityLocationDAO.get(branch.getLocationID());
-	}
-
-	@Override
-	public City getCity(BranchProduct bp) {
-		Branch retrieved = DAOService.branchDAO.get(bp.getBranchID());
-		return retrieved.getLocation().getCity();
 
 	}
 
