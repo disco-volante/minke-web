@@ -51,11 +51,18 @@ public class Utils {
 	 * @return the total cost of the shopping list.
 	 */
 	public static double calcTotal(Set<BranchProduct> bps,
-			HashMap<Long, Integer> products) {
+			Map<Long, Integer> products) {
 		double total = 0;
+		if(bps == null || products == null){
+			return 0;
+		}
 		for (BranchProduct bp : bps) {
+			Integer qty = products.get(bp.getProductID());
+			if(qty == null || bp == null || bp.getDatePrice() == null){
+				continue;
+			}
 			total += bp.getDatePrice().getActualPrice()
-					* products.get(bp.getProductID());
+					* qty;
 		}
 		return total;
 	}
@@ -69,9 +76,9 @@ public class Utils {
 	
 
 	public static DataTable toDataTable(
-			HashMap<BranchProduct, List<DatePrice>> priceHistories) {
+			Map<BranchProduct, List<DatePrice>> priceHistories) {
 		DataTable data = DataTable.create();
-		HashMap<Date, Integer> dates = new HashMap<Date, Integer>();
+		Map<Date, Integer> dates = new HashMap<Date, Integer>();
 		data.addColumn(ColumnType.DATETIME, "Date");
 		for (Entry<BranchProduct, List<DatePrice>> productHistory : priceHistories
 				.entrySet()) {

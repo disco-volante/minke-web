@@ -21,6 +21,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Store;
 import za.ac.sun.cs.hons.minke.client.util.Constants;
 import za.ac.sun.cs.hons.minke.client.util.GuiUtils;
+import za.ac.sun.cs.hons.minke.client.util.REGEX;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -413,9 +414,9 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 			}
 			if (autoTexts != null) {
 				for (Entry<String, SuggestBox> sb : autoTexts.entrySet()) {
-					if (!Constants.STRING.test(sb.getValue().getText())) {
+					if (!REGEX.STRING.test(sb.getValue().getText())) {
 						if (sb.getKey().equals(Constants.BRANCH)
-								&& Constants.STRING.test(sb.getValue()
+								&& REGEX.STRING.test(sb.getValue()
 										.getText().replace('@', ' '))) {
 							continue;
 						}
@@ -430,17 +431,17 @@ public class EditPopup extends FocusedPopupPanel implements KeyPressHandler {
 					if ((type.equals(Constants.SIZE)
 							|| type.equals(Constants.PRICE))) {
 						if (input == null
-								|| !(Constants.DECIMALS_0.test(input))) {
+								|| !(REGEX.DECIMALS_0.test(input))) {
 							errors.append(type + ", ");
 						}
 					}else if(type.equals(Constants.LAT) || type
 								.equals(Constants.LON)){
 						if (input == null
-								|| !(Constants.DECIMALS_1.test(input))) {
+								|| !(REGEX.DECIMALS_1.test(input))) {
 							errors.append(type + ", ");
 						}
 					}
-					else if (!Constants.STRING.test(input)) {
+					else if (!REGEX.STRING.test(input)) {
 						errors.append(type + ", ");
 					}
 					if (errors.length() > 0) {
