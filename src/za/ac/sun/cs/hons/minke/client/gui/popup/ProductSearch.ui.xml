@@ -15,9 +15,12 @@
 			padding: 2px 0 1px 10px;
 			color: #646572;
 		}
+		.padding {
+	padding-left:10em
+		}
     </ui:style>
 
-    <g:FlowPanel>
+    <g:VerticalPanel>
         <g:HTML>
             <h2>
 Product Search
@@ -60,6 +63,6 @@ Product Search
                 text="Cancel"
                 ui:field="cancelButton" />
         </g:HorizontalPanel>
-    </g:FlowPanel>
+    </g:VerticalPanel>
 
 </ui:UiBinder>

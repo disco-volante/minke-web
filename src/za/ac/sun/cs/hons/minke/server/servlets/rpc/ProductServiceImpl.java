@@ -22,15 +22,10 @@ public class ProductServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getProducts() {
-		EntityNameMap map = DAOService.entityMapDAO
-				.get((long) EntityID.PRODUCT.getID());
-		if(map == null){
-			map = new EntityNameMap(EntityID.PRODUCT);
-		}
+		EntityNameMap map = new EntityNameMap(EntityID.PRODUCT);
 		List<Product> products = DAOService.productDAO.listAll();
 		map.add(products.toArray(new Product[products.size()]));
-		DAOService.entityMapDAO.add(map);
-		return DAOService.entityMapDAO.get(EntityID.PRODUCT);
+		return map;
 
 	}
 

@@ -26,43 +26,28 @@ public class LocationServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getCities() {
-		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.CITY
-				.getID());
-		if(map == null){
-			map = new EntityNameMap(EntityID.CITY);
-		}
+		EntityNameMap map = new EntityNameMap(EntityID.CITY);
 		List<City> cities = DAOService.cityDAO.listAll();
 		map.add(cities.toArray(new City[cities.size()]));
-		DAOService.entityMapDAO.add(map);
-		return DAOService.entityMapDAO.get(EntityID.CITY);
+		return map;
 
 	}
 
 	@Override
 	public EntityNameMap getCountries() {
-		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.COUNTRY
-				.getID());
-		if(map == null){
-			map = new EntityNameMap(EntityID.COUNTRY);
-		}
+		EntityNameMap map = new EntityNameMap(EntityID.COUNTRY);
 		List<Country> countries = DAOService.countryDAO.listAll();
 		map.add(countries.toArray(new Country[countries.size()]));
-		DAOService.entityMapDAO.add(map);
-		return DAOService.entityMapDAO.get(EntityID.COUNTRY);
+		return map;
 
 	}
 
 	@Override
 	public EntityNameMap getProvinces() {
-		EntityNameMap map = DAOService.entityMapDAO.get((long) EntityID.PROVINCE
-				.getID());
-		if(map == null){
-			map = new EntityNameMap(EntityID.PROVINCE);
-		}
+		EntityNameMap map = new EntityNameMap(EntityID.PROVINCE);
 		List<Province> provinces = DAOService.provinceDAO.listAll();
 		map.add(provinces.toArray(new Province[provinces.size()]));
-		DAOService.entityMapDAO.add(map);
-		return DAOService.entityMapDAO.get(EntityID.PROVINCE);
+		return map;
 	}
 
 	@Override

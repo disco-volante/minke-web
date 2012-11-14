@@ -10,6 +10,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -50,6 +51,8 @@ public class ViewTree extends ResizeComposite {
 		tree.addItem(map);
 		tree.addItem(graph);
 		tree.addItem(admin);
+		tree.addItem(new TreeItem(new Anchor(  "minke for Android",  "http://pieterjordaan.github.com/minke-android")));
+		tree.addItem(new TreeItem(new Anchor( "About", "http://pieterjordaan.github.com/minke-web")));
 		tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
 			@Override
 			public void onSelection(SelectionEvent<TreeItem> event) {

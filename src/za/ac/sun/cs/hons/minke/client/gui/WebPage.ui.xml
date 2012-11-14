@@ -8,7 +8,15 @@
 	xmlns:graph="urn:import:za.ac.sun.cs.hons.minke.client.gui.graph">
 	<ui:with field="images"
 		type="za.ac.sun.cs.hons.minke.client.util.ImageUtils.Images" />
-
+	<ui:style>
+	
+		.padding {
+	padding-left:19em
+		}
+	.lesspadding {
+	padding-left:1em
+		}
+	</ui:style>
 	<g:DockLayoutPanel unit="EM">
 
 		<g:north size="10">
@@ -17,7 +25,7 @@
 			</g:HTML>
 		</g:north>
 		<g:west size="12">
-			<webpage:ViewTree ui:field="views" />
+				<webpage:ViewTree ui:field="views" />       		        
 		</g:west>
 		<g:center>
 			<g:DeckPanel ui:field="deck">

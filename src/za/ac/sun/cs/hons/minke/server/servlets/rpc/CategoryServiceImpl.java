@@ -21,15 +21,10 @@ public class CategoryServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public EntityNameMap getCategories() {
-		EntityNameMap map = DAOService.entityMapDAO
-				.get((long) EntityID.CATEGORY.getID());
-		if(map == null){
-			map = new EntityNameMap(EntityID.CATEGORY);
-		}
+		EntityNameMap map = new EntityNameMap(EntityID.CATEGORY);
 		List<Category> cats = DAOService.categoryDAO.listAll();
 		map.add(cats.toArray(new Category[cats.size()]));
-		DAOService.entityMapDAO.add(map);
-		return DAOService.entityMapDAO.get((long) EntityID.CATEGORY.getID());
+		return map;
 	}
 
 }
