@@ -34,7 +34,7 @@ public class ProductDetail extends FocusedPopupPanel {
 		location.setText(item.getBranch().getLocation().getCity().getName());
 		String dateString = item.getDatePrice().getDate().toString();
 		date.setText(dateString.substring(0, dateString.indexOf(':')));
-		price.setText(Double.toString(item.getDatePrice().getPrice()));
+		price.setText(Double.toString(item.getDatePrice().getActualPrice()));
 		size.setText(item.getProduct().getSize() + " "
 				+ item.getProduct().getMeasurement());
 	}

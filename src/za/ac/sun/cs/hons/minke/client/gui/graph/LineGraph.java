@@ -29,7 +29,7 @@ public class LineGraph extends ResizeComposite {
 
 	public void setChartData(DataTable data) {
 		if (chart != null) {
-			chartPanel.remove(chart);
+			chartPanel.clear();
 		}
 		chart = new LineChart(data, createOptions());
 		chart.addSelectHandler(new GraphSelectHandler(chart));

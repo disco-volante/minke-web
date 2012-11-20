@@ -2,6 +2,8 @@ package za.ac.sun.cs.hons.minke.client.gui.table;
 
 import java.util.HashMap;
 
+import com.google.gwt.i18n.client.NumberFormat;
+
 import za.ac.sun.cs.hons.minke.client.gui.WebPage;
 import za.ac.sun.cs.hons.minke.client.gui.button.GraphButton;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.product.BranchProduct;
@@ -32,7 +34,8 @@ public class ShoppingListDetail extends TableView {
 		table.setText(pos, 1, bp.getProduct().getBrand().toString());
 		table.setText(pos, 2, "R" + bp.getDatePrice().getActualPrice()); 
 		table.setText(pos, 3, Integer.toString(products.get(bp.getProductID())));
-		table.setText(pos, 4, "R" + Double.toString(getPrice(bp))); 
+		NumberFormat df = NumberFormat.getFormat("#.##");
+		table.setText(pos, 4, "R" + df.format(getPrice(bp))); 
 		table.setText(pos, 5, bp.getDatePrice().getDate().toString());
 		table.setWidget(pos, 6, new GraphButton(getTableType(), item, webPage));
 	}

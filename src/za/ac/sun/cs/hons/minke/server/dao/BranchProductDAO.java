@@ -25,17 +25,27 @@ public class BranchProductDAO extends ObjectifyDAO<BranchProduct> {
 			bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO
 					.add(bp.getDatePrice())));
 		}
-		if (bp.getDatePrice() != null
-				&& bp.getDatePrice().getBranchProductID() == -1) {
+		if (bp.getDatePrice() != null) {
+			if (bp.getDatePrice().getBranchProductID() == -1) {
+				Key<BranchProduct> key = super.add(bp);
+				bp.getDatePrice().setBranchProductID(key.getId());
+				bp.setDatePrice(DAOService.datePriceDAO
+						.get(DAOService.datePriceDAO.add(bp.getDatePrice())));
+				return key;
+			}
 			Key<BranchProduct> key = super.add(bp);
-			bp.getDatePrice().setBranchProductID(key.getId());
-			bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO
-					.add(bp.getDatePrice())));
-			return key;
+
+			if (bp.getDatePrice().getID() == 0) {
+				DatePrice dp = new DatePrice(bp.getDatePrice().getDate(), bp
+						.getDatePrice().getPrice(), bp.getID());
+				bp.setDatePrice(DAOService.datePriceDAO
+						.get(DAOService.datePriceDAO.add(dp)));
+			} else {
+				bp.getDatePrice().setBranchProductID(key.getId());
+				bp.setDatePrice(DAOService.datePriceDAO
+						.get(DAOService.datePriceDAO.add(bp.getDatePrice())));
+			}
 		}
-		Key<BranchProduct> key = super.add(bp);
-		bp.getDatePrice().setBranchProductID(key.getId());
-		bp.setDatePrice(DAOService.datePriceDAO.get(DAOService.datePriceDAO.add(bp.getDatePrice())));
 		return super.add(bp);
 	}
 

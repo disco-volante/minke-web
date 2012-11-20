@@ -71,14 +71,22 @@ public class Product extends IsEntity {
 	public void setMeasurement(String measurement) {
 		this.measurement = measurement;
 	}
-
+	public CharSequence getSizeString() {
+		int intified = (int) size;
+		if (size / intified != 1) {
+			return size + " " + measurement;
+		}
+		return intified + " " + measurement;
+	}
 	@Override
 	public String toString() {
-		if(brand == null){
-			return name;
+		if (brand == null) {
+			return getSizeString() + " " + name;
 		}
-		return brand.getName() + " " + name;
+		return getSizeString() + " " + brand.toString() + " " + name;
+
 	}
+
 
 	public void setBrandID(long id) {
 		this.brandID = id;

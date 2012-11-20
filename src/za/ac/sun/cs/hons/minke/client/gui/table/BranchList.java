@@ -14,6 +14,7 @@ import za.ac.sun.cs.hons.minke.client.serialization.entities.product.DatePrice;
 import za.ac.sun.cs.hons.minke.client.serialization.entities.store.Branch;
 import za.ac.sun.cs.hons.minke.client.util.Utils;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class BranchList extends TableView {
@@ -50,7 +51,8 @@ public class BranchList extends TableView {
 				&& branch.getLocation().getCity() != null) {
 			table.setText(pos, 2, branch.getLocation().getCity().toString());
 		}
-		table.setText(pos, 3, "R" + Double.toString(entry.getValue()));
+		NumberFormat df = NumberFormat.getFormat("#.##");
+		table.setText(pos, 3, "R" +df.format(entry.getValue()));
 		table.setWidget(pos, 4, holder);
 	}
 

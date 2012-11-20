@@ -62,7 +62,13 @@ public class HistoryGraph extends ResizeComposite {
 	public void addHistories(
 			HashMap<BranchProduct, List<DatePrice>> priceHistories) {
 		if (graph != null) {
+			if (items != null) {
+				items.clear();
+			}
 			items = priceHistories;
+			if (allItems != null) {
+				allItems.clear();
+			}
 			allItems = priceHistories;
 			graph.setChartData(Utils.toDataTable(items));
 		}

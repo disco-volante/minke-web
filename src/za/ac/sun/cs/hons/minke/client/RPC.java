@@ -124,6 +124,7 @@ public class RPC {
 			GuiUtils.showError("Startup Error",
 					"Something went wrong, please reopen this page.");
 			caught.printStackTrace();
+			registerClasses();
 		}
 
 		@Override
